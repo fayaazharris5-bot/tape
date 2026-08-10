@@ -4794,6 +4794,10 @@ body.tpopen{overflow:hidden}
 .tpnav .btn{flex:1;min-height:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #grid .entry{cursor:pointer}
 #grid .entry:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-width:900px), (pointer: coarse){
+  #tpanel .btn,#tpanel .tag.link,#tpanel .tpstrat,#tpanel .tpclose{min-height:44px}
+  #tpanel .tag.link{padding:10px 12px}
+}
 @media (max-width:700px){
   #tpanel{width:100vw;border-left:0}
   .tphead{padding:18px 56px 12px 18px}
