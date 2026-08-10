@@ -445,6 +445,58 @@ starBtn.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
 eq(d.getElementById("tpanel").hidden,before,"clicking the save star does not open the panel");
 starBtn.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
 
+console.log("17. Chart walkthroughs");
+
+ok(w.__walkable>40,"a large share of charted terms can be walked bar by bar");
+ok(w.__walkCaptioned>=8,"the priority structural terms carry written step captions");
+
+/* opening a charted term mounts a walkthrough */
+d.getElementById("term-liquidity-sweep").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(120);
+ok(!!d.querySelector(".wkbox"),"walkthrough mounts inside the panel");
+ok(!!d.querySelector(".wkstage svg"),"walkthrough renders through the existing chart engine");
+var cnt=d.querySelector(".wkcount").textContent;
+ok(/^\d+ \/ \d+$/.test(cnt),"step counter shows position and total");
+
+/* restart draws a single bar, stepping forward adds bars */
+d.querySelector('[data-w="restart"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+eq(d.querySelector(".wkcount").textContent.split(" / ")[0],"1","restart returns to the first bar");
+var capOne=d.querySelector(".wkcap").textContent;
+ok(capOne.length>20,"the first step has a written caption");
+d.querySelector('[data-w="next"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+eq(d.querySelector(".wkcount").textContent.split(" / ")[0],"2","next advances one bar");
+ok(d.querySelector(".wkcap").textContent!==capOne,"the caption changes with the step");
+d.querySelector('[data-w="prev"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+eq(d.querySelector(".wkcount").textContent.split(" / ")[0],"1","previous steps back");
+ok(d.querySelector('[data-w="prev"]').disabled,"previous is disabled at the first bar");
+
+/* walkthrough controls must not close or navigate the panel */
+var titleBefore=d.getElementById("tp-title").textContent;
+d.querySelector('[data-w="next"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+eq(d.getElementById("tp-title").textContent,titleBefore,"stepping does not change the term");
+ok(!d.getElementById("tpanel").hidden,"stepping does not close the panel");
+
+/* equity-curve charts walk as well as candle charts */
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+d.getElementById("term-drawdown").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(120);
+ok(!!d.querySelector(".wkbox"),"equity-curve terms get a walkthrough too");
+ok(/\/ \d\d/.test(d.querySelector(".wkcount").textContent),"drawdown walkthrough has its full step count");
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+
+/* captions must not smuggle in claims the rest of the app refuses to make */
+var capText=Object.keys(w.__walkCaptionSample||{}).length?"":"";
+ok(!/\bbuy here\b|\bsell here\b|\bwill\s+(?:go|reverse|continue)\b/i.test(d.body.textContent),
+   "no walkthrough caption tells the reader to buy, sell, or predicts what price will do");
+
+/* offline guarantee still holds after adding walkthroughs */
+var htmlNow=fs.readFileSync(FILE,"utf8");
+var extNow=(htmlNow.match(/(?:href|src)="https?:\/\/[^"]+"/g)||[])
+  .filter(function(u){return !/s\.tradingview\.com/.test(u);});
+eq(extNow.length,0,"walkthroughs added no external requests — no video embeds, still offline");
+ok(!/youtube|youtu\.be|vimeo|iframe src="https/i.test(htmlNow.replace(/s\.tradingview\.com[^"]*/g,"")),
+   "no third-party video embeds were introduced");
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();

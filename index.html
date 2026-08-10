@@ -4806,3 +4806,227 @@ body.tpopen{overflow:hidden}
 }
 @media print{#tpanel,#tpback{display:none!important}}
 </style>
+
+<script>
+/* ====================================================================
+   WALKTHROUGHS — the honest version of "video"
+   Replays a chart bar by bar with a caption per step, using the chart
+   engine that is already here. No embeds, no network, works offline,
+   and it teaches the thing a static picture cannot: the ORDER events
+   happen in. Most patterns are only ambiguous live because you cannot
+   see the next bar — stepping forward one at a time reproduces that.
+   ==================================================================== */
+(function(){
+"use strict";
+if(typeof document==="undefined") return;
+
+function slugify(t){return String(t).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+function esc(x){return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+var MOTION=!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+/* Step captions. Written per term so each step says what actually
+   changed, not "candle 4". Terms without an entry still get a
+   walkthrough — the steps are just unlabelled. */
+var STEPS={
+"Liquidity sweep":[
+ "A prior high forms. Nothing special yet — this is just where price turned.",
+ "Price pulls back. The high is now a level other people can see.",
+ "It approaches again. Stop orders from short positions are resting above it.",
+ "Price trades THROUGH the high. Live, this is indistinguishable from a breakout.",
+ "It closes back below. Only now is it a sweep — the reclaim is the event, not the poke.",
+ "Continuation lower. Everything above was fuel, not demand."],
+"Spring":[
+ "A trading range establishes a floor.",
+ "Price works sideways. Sellers are being absorbed, though you cannot see by whom.",
+ "It drops through the floor. This looks like a breakdown and may be one.",
+ "It closes back inside the range. Wyckoff called this a spring; modern material calls it a sweep of the low.",
+ "The advance begins from the reclaim, not from the low."],
+"Fair value gap":[
+ "First candle. Note where its high sits.",
+ "A large candle moves through fast — one side is aggressive enough that levels get skipped.",
+ "Third candle. Its low is above the first candle's high, so that band was never traded two ways.",
+ "The gap is the untouched band between them. Nothing about it says price must return.",
+ "Price returns and trades through it. Common — but 'common' is not the same as 'tradeable after costs'."],
+"Bullish engulfing":[
+ "A down candle. Sellers had the period.",
+ "The next candle opens lower — still no reason to act.",
+ "It closes above the previous open, covering the whole body.",
+ "That is the pattern. What it means depends entirely on where it happened."],
+"Consolidation":[
+ "A wide swing. Volatility is high.",
+ "The next swing is smaller. The range is contracting.",
+ "Smaller again. Bar ranges are narrowing measurably, not just visually.",
+ "The coil tightens. This says an expansion is likely and says nothing about direction.",
+ "Expansion. It resolved — which way was not knowable from the coil."],
+"Break of structure":[
+ "A swing high forms. Where exactly depends on your swing lookback.",
+ "Price pulls back and makes a higher low.",
+ "It pushes into the prior high.",
+ "It CLOSES beyond it. A wick through would not count under this definition.",
+ "The trend is confirmed by the definition — which is a rule you chose, not a fact about the market."],
+"Drawdown":[
+ "The equity curve rises. This is the part people plan for.",
+ "A peak. From here every point down is drawdown.",
+ "It falls. Nothing is broken yet; this is normal.",
+ "It keeps falling. This is where most people abandon a system that was fine.",
+ "The trough — the maximum drawdown is measured to here.",
+ "Recovery. Note it takes longer to climb out than it took to fall in."],
+"Accumulation":[
+ "A decline into the area.",
+ "Selling stops making lower lows. Price goes sideways.",
+ "Range-bound. Supply is being absorbed — dull by design, because that is what patient buying looks like.",
+ "A dip below the range that recovers: the spring.",
+ "Markup. The trend that follows started back in the boring part, not at the breakout."],
+"Distribution":[
+ "An advance into the area.",
+ "Higher highs stop. Rallies begin failing at a similar level.",
+ "Range-bound near the top, while sentiment is usually at its most positive.",
+ "A push above the range that fails — the upthrust.",
+ "Markdown. Recognising this live means fighting a market that still looks strong."]
+};
+
+/* Build a spec showing only the first n candles, with annotations that
+   reference later bars filtered out so nothing dangles. */
+function truncate(v,n){
+  var out={k:"c",d:v.d.slice(0,n)};
+  if(v.hl) out.hl=v.hl;
+  if(v.bx) out.bx=v.bx.filter(function(b){return b.i1<n;});
+  if(v.mk) out.mk=v.mk.filter(function(m){return m.i<n;});
+  if(v.pl) out.pl=v.pl.map(function(p){
+    return {pts:p.pts.filter(function(pt){return pt[0]<n;}),c:p.c};
+  }).filter(function(p){return p.pts.length>1;});
+  return out;
+}
+function truncateEquity(v,n){
+  var out={k:"e",base:v.base,s:(v.s||[]).map(function(s){
+    return {v:s.v.slice(0,n),c:s.c,t:s.t,below:s.below};
+  })};
+  if(v.mk) out.mk=v.mk.filter(function(m){return m.i<n;});
+  return out;
+}
+
+function frames(v){
+  if(v.k==="c") return v.d.length;
+  if(v.k==="e") return (v.s&&v.s[0]&&v.s[0].v.length)||0;
+  return 0;
+}
+
+function mount(host,term,v){
+  var total=frames(v);
+  if(total<3) return null;
+  var steps=STEPS[term]||null;
+  var i=total;             /* start fully drawn */
+  var timer=null;
+
+  var box=document.createElement("div");
+  box.className="wkbox";
+  box.innerHTML='<div class="wkstage"></div>'+
+    '<p class="wkcap" aria-live="polite"></p>'+
+    '<div class="wkctl">'+
+      '<button class="btn" data-w="restart" aria-label="Restart walkthrough">⟲</button>'+
+      '<button class="btn" data-w="prev" aria-label="Previous step">◀</button>'+
+      '<button class="btn pri" data-w="play" aria-label="Play walkthrough">▶ Walk through</button>'+
+      '<button class="btn" data-w="next" aria-label="Next step">▶</button>'+
+      '<span class="wkcount"></span>'+
+    '</div>';
+  host.appendChild(box);
+
+  var stage=box.querySelector(".wkstage");
+  var cap=box.querySelector(".wkcap");
+  var count=box.querySelector(".wkcount");
+
+  function draw(){
+    var spec = v.k==="e" ? truncateEquity(v,i) : truncate(v,i);
+    stage.innerHTML=window.svgFor(spec);
+    count.textContent=i+" / "+total;
+    if(steps){
+      var si=Math.min(Math.max(i-1,0),steps.length-1);
+      cap.textContent = i>=1 ? steps[si] : "";
+      cap.hidden=false;
+    }else{
+      cap.hidden=true;
+    }
+    box.querySelector('[data-w="prev"]').disabled = i<=1;
+    box.querySelector('[data-w="next"]').disabled = i>=total;
+  }
+  function stop(){
+    if(timer){clearInterval(timer);timer=null;}
+    box.querySelector('[data-w="play"]').textContent="▶ Walk through";
+  }
+  function play(){
+    if(timer){stop();return;}
+    if(i>=total) i=0;
+    box.querySelector('[data-w="play"]').textContent="❚❚ Pause";
+    timer=setInterval(function(){
+      if(i>=total){ stop(); return; }
+      i++; draw();
+    }, MOTION?1100:1);
+    if(!MOTION){ i=total; draw(); stop(); }
+  }
+  box.addEventListener("click",function(e){
+    var b=e.target.closest("[data-w]");
+    if(!b) return;
+    e.stopPropagation();
+    var a=b.dataset.w;
+    if(a==="play") play();
+    else { stop();
+      if(a==="restart") i=1;
+      if(a==="prev"&&i>1) i--;
+      if(a==="next"&&i<total) i++;
+      draw();
+    }
+  });
+  draw();
+  return {stop:stop};
+}
+
+/* attach inside the detail panel whenever it renders a charted term */
+var active=null;
+function attach(){
+  var panel=document.getElementById("tpanel");
+  if(!panel||panel.hidden) return;
+  if(panel.querySelector(".wkbox")) return;
+  var title=document.getElementById("tp-title");
+  if(!title) return;
+  var term=title.textContent.trim();
+  var D=window.D||[];
+  var x=null;
+  for(var k=0;k<D.length;k++) if(D[k].t===term){x=D[k];break;}
+  if(!x||!x.v||(x.v.k!=="c"&&x.v.k!=="e")) return;
+  if(!window.svgFor) return;
+  var fig=panel.querySelector(".tpfig");
+  var host=document.createElement("section");
+  host.className="tpsect wksect";
+  host.innerHTML='<h3>Walk through it</h3>'+
+    '<p class="wknote">Step forward one bar at a time. Live you only ever see the left-hand side.</p>';
+  if(fig&&fig.parentNode) fig.parentNode.insertBefore(host,fig.nextSibling);
+  else panel.querySelector(".tpbody").appendChild(host);
+  if(active&&active.stop) active.stop();
+  active=mount(host,term,x.v);
+}
+
+/* the panel rewrites its own innerHTML, so watch for changes */
+var mo=new MutationObserver(function(){ setTimeout(attach,0); });
+var p=document.getElementById("tpanel");
+if(p) mo.observe(p,{childList:true});
+window.__attachWalk=attach;
+
+/* count how many terms can be walked, for the tests */
+window.__walkable=(window.D||[]).filter(function(x){
+  return x.v&&(x.v.k==="c"||x.v.k==="e")&&frames(x.v)>=3;
+}).length;
+window.__walkCaptioned=Object.keys(STEPS).length;
+})();
+</script>
+
+<style>
+.wksect .wknote{font-size:13px;color:var(--ink3);margin:0 0 10px}
+.wkbox{background:var(--tint);border-radius:4px;padding:12px}
+.wkstage svg{width:100%;height:auto;display:block}
+.wkcap{font-size:14.5px;line-height:1.55;color:var(--ink);margin:10px 0 0;min-height:2.9em;max-width:58ch}
+.wkctl{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.wkctl .btn{min-height:40px}
+.wkcount{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-left:auto}
+@media (max-width:900px), (pointer: coarse){ .wkctl .btn{min-height:44px} }
+@media print{.wkbox{display:none}}
+</style>
