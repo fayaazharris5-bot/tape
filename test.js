@@ -357,6 +357,94 @@ ok(!/fonts\.googleapis|fonts\.gstatic/.test(html),"no external webfonts — the 
 /* --- workbook --- */
 ok(!!d.getElementById("wbprint"),"print/PDF control present");
 
+console.log("16. Term detail panel");
+
+/* the panel exists and cards are reachable */
+ok(!!d.getElementById("tpanel"),"detail panel is in the DOM");
+ok(d.getElementById("tpanel").hidden,"panel starts closed");
+ok([...d.querySelectorAll("#grid .entry")].every(function(e){return e.getAttribute("role")==="button";}),
+   "every card is exposed as a button");
+ok([...d.querySelectorAll("#grid .entry")].every(function(e){return e.getAttribute("tabindex")==="0";}),
+   "every card is keyboard reachable");
+
+/* clicking a card opens it with the right content */
+var lsCard=d.getElementById("term-liquidity-sweep");
+ok(!!lsCard,"a known term card exists");
+lsCard.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+ok(!d.getElementById("tpanel").hidden,"card click opens the panel");
+eq(d.getElementById("tp-title").textContent,"Liquidity sweep","panel shows the clicked term");
+ok(d.querySelectorAll("#tpanel .tplong p").length>=3,"expanded write-up renders as paragraphs");
+ok(!!d.querySelector("#tpanel .tpfig svg"),"the term's chart is carried into the panel");
+ok(/typically used/i.test(d.getElementById("tpanel").textContent),"usage section present");
+ok(/Used in these strategies/i.test(d.getElementById("tpanel").textContent),"strategy section present");
+ok(d.querySelectorAll("#tpanel [data-goterm]").length>2,"related terms render as chips");
+ok(!/undefined|NaN/.test(d.getElementById("tpanel").textContent),"panel leaks no undefined or NaN");
+
+/* every term with a long body renders cleanly */
+var longTerms=(w.D||[]).filter(function(x){return x.long;});
+ok(longTerms.length>=20,"at least 20 terms carry an expanded body");
+ok(longTerms.every(function(x){return !/undefined|NaN/.test(x.long+(x.usage||""));}),
+   "no long body or usage string contains undefined or NaN");
+ok(longTerms.every(function(x){return x.long.split(/\s+/).length>80;}),
+   "every long body is substantially longer than the one-line definition");
+/* The rule is "never claim a PATTERN has an edge or a success rate". A worked
+   arithmetic illustration ("a system winning 40% of the time with 3:1 wins...")
+   is teaching the formula, not asserting a statistic, so target attribution
+   rather than any appearance of a percentage. */
+ok(longTerms.every(function(x){
+  return !/(this|the)\s+(pattern|setup|signal)[^.]{0,40}\d{1,3}\s?%/i.test(x.long)
+      && !/success rate/i.test(x.long)
+      && !/win rate of\s+\d/i.test(x.long)
+      && !/\d{1,3}\s?% (?:accurate|reliable|of trades win)/i.test(x.long);
+}),"no long body attributes a win rate or success percentage to a pattern");
+
+/* related links all resolve to real terms */
+var names={}; (w.D||[]).forEach(function(x){names[x.t]=1;});
+var badSee=[];
+(w.D||[]).filter(function(x){return x.see;}).forEach(function(x){
+  x.see.forEach(function(n){ if(!names[n]) badSee.push(x.t+" -> "+n); });
+});
+eq(badSee.length,0,"every manual see-link resolves"+(badSee.length?" ["+badSee.slice(0,2).join(", ")+"]":""));
+
+/* navigation without closing */
+var relBtn=d.querySelector('#tpanel [data-goterm="spring"]');
+if(relBtn){
+  relBtn.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+  eq(d.getElementById("tp-title").textContent,"Spring","related chip swaps the panel content");
+  ok(!d.getElementById("tpanel").hidden,"panel stays open while navigating");
+}
+ok(!!d.getElementById("tp-next")&&!!d.getElementById("tp-prev"),"previous and next controls exist");
+
+/* escape closes */
+d.dispatchEvent(new w.KeyboardEvent("keydown",{key:"Escape",bubbles:true}));
+ok(d.getElementById("tpanel").hidden,"Escape closes the panel");
+
+/* close button closes */
+d.getElementById("term-drawdown").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+ok(!d.getElementById("tpanel").hidden,"panel reopens on another card");
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+ok(d.getElementById("tpanel").hidden,"close button dismisses the panel");
+
+/* a term with no long body degrades rather than showing a hole */
+d.getElementById("term-pip").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+ok(!!d.querySelector("#tpanel .tpstub"),"terms without an expanded body show an honest placeholder");
+ok(!/undefined/.test(d.getElementById("tpanel").textContent),"placeholder path leaks no undefined");
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+
+/* deep link opens the panel directly */
+var domDeep=boot("https://example.com/a.html#t=order-block"); await wait(900);
+var dd=domDeep.window.document;
+ok(!dd.getElementById("tpanel").hidden,"#t=slug deep link opens the panel on load");
+eq(dd.getElementById("tp-title").textContent,"Order block","deep link opens the right term");
+eq(domDeep.__errs.length,0,"deep-link boot produces no console errors");
+
+/* clicking the star or copy button must not also open the panel */
+var starBtn=d.querySelector("#grid .star");
+var before=d.getElementById("tpanel").hidden;
+starBtn.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+eq(d.getElementById("tpanel").hidden,before,"clicking the save star does not open the panel");
+starBtn.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
