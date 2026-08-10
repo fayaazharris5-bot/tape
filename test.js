@@ -286,6 +286,77 @@ if(ictBtn){
   ok(/ict/i.test((d.getElementById("f-tags")||{}).value||""),"ICT template still pre-fills the tags");
 }
 
+console.log("15. Tape: config, exports, metadata");
+
+/* --- config: empty constants must leave the app untouched --- */
+ok(typeof w.TAPE==="object","TAPE config object exists");
+eq(w.TAPE.url,"","url ships empty");
+eq(w.TAPE.supportUrl,"","support link ships empty");
+eq(w.TAPE.workbookUrl,"","workbook link ships empty");
+eq(w.TAPE.accent,"","accent ships empty");
+eq(d.querySelectorAll(".tapefoot").length,0,"no commercial footer rendered while constants are empty");
+ok(!/Support this project/.test(d.getElementById("foot").textContent),"no support copy visible while unset");
+
+/* --- export plumbing --- */
+ok(typeof w.tapeExportPng==="function","export function is exposed");
+ok(!!w.TAPE_PRESETS.square&&!!w.TAPE_PRESETS.portrait&&!!w.TAPE_PRESETS.landscape,"three presets defined");
+eq(w.TAPE_PRESETS.square.w,1080,"square is 1080 wide");
+eq(w.TAPE_PRESETS.portrait.h,1920,"portrait is 1920 tall");
+eq(w.TAPE_PRESETS.landscape.w,1200,"landscape is 1200 wide");
+ok(d.querySelectorAll("#grid figure .expbar").length>50,"export controls mounted on the charts");
+eq(d.querySelectorAll("#grid figure .expbar").length,d.querySelectorAll("#grid figure svg").length,
+   "every chart has export controls");
+ok([...d.querySelectorAll(".expbtn")].every(function(b){return !!b.getAttribute("aria-label");}),
+   "export buttons are labelled for screen readers");
+
+/* the css-variable substitution is what stops exports rendering black */
+var inlined=w.tapeInlineVars('<rect fill="var(--up)" stroke="var(--rule2)"/>',{"--up":"#0f0","--rule2":"#333"});
+ok(!/var\(/.test(inlined),"css custom properties are substituted before rasterising");
+ok(/#0f0/.test(inlined)&&/#333/.test(inlined),"substituted values are the computed ones");
+eq(w.tapeInlineVars('<rect fill="var(--nope)"/>',{}),'<rect fill="#888"/>',"unknown variables fall back rather than breaking the svg");
+
+/* --- carousel + post builder --- */
+ok(typeof w.tapeCarousel==="function","carousel export is available");
+ok(typeof w.tapeCaptionFor==="function","caption builder is available");
+var capT=D.find(function(x){return x.t==="Liquidity sweep";});
+var cap=w.tapeCaptionFor(capT);
+ok(/LIQUIDITY SWEEP/.test(cap),"caption leads with the term");
+ok(cap.indexOf(capT.d)>-1,"caption carries the definition");
+ok(!/undefined|NaN/.test(cap),"caption has no undefined or NaN");
+ok(!!d.getElementById("postbuilder"),"post builder is mounted");
+ok(!!d.getElementById("pb-surprise")&&!!d.getElementById("pb-run"),"surprise and carousel controls exist");
+ok(d.querySelectorAll("#pb-sec option").length>5,"carousel offers sections that actually have charts");
+
+/* --- metadata --- */
+ok(!!d.querySelector('meta[property="og:title"]'),"open graph title present");
+ok(!!d.querySelector('meta[property="og:image"]'),"open graph image present");
+ok(!!d.querySelector('meta[name="twitter:card"]'),"twitter card present");
+ok(!!d.querySelector('link[rel="manifest"]'),"web app manifest linked");
+ok(!!d.querySelector('link[rel="apple-touch-icon"]'),"apple touch icon present");
+eq(d.querySelectorAll('meta[name="theme-color"]').length,2,"theme-color set for both colour schemes");
+var man=d.querySelector('link[rel="manifest"]').getAttribute("href");
+var manJson=JSON.parse(decodeURIComponent(man.replace(/^data:application\/manifest\+json,/,"")));
+eq(manJson.short_name,"Tape","manifest names the app Tape");
+eq(manJson.display,"standalone","manifest requests standalone display");
+
+var ld=d.querySelector('script[type="application/ld+json"]');
+ok(!!ld,"json-ld block injected");
+var parsed=JSON.parse(ld.textContent);
+eq(parsed["@type"],"DefinedTermSet","json-ld is a DefinedTermSet");
+ok(parsed.hasDefinedTerm.length>100,"json-ld carries the glossary entries");
+ok(parsed.hasDefinedTerm.every(function(t){return t.name&&t.description&&t.termCode;}),
+   "every json-ld term has a name, description and code");
+
+/* --- offline / no network --- */
+var html=fs.readFileSync(FILE,"utf8");
+var ext=(html.match(/(?:href|src)="https?:\/\/[^"]+"/g)||[])
+  .filter(function(u){return !/s\.tradingview\.com/.test(u);});
+eq(ext.length,0,"no external resource requests outside the live chart embed"+(ext.length?" ["+ext.slice(0,2).join(", ")+"]":""));
+ok(!/fonts\.googleapis|fonts\.gstatic/.test(html),"no external webfonts — the file works offline");
+
+/* --- workbook --- */
+ok(!!d.getElementById("wbprint"),"print/PDF control present");
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();

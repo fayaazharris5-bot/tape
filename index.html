@@ -1,17 +1,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trading terms — visual reference</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Tape — reading the tape</title>
+<meta name="description" content="Reading the tape. Trading terms, what they look like on a chart, and whether they hold up when tested. No signals, no predictions.">
+<!-- Self-contained: no external fonts, scripts or images. Works offline. -->
+
+<!-- social preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tape">
+<meta property="og:title" content="Tape — reading the tape">
+<meta property="og:description" content="Trading terms, what they look like on a chart, and whether they hold up when tested.">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2313141A'/%3E%3Crect x='14' y='30' width='6' height='18' fill='%233BB68F'/%3E%3Crect x='15.5' y='24' width='3' height='30' fill='%233BB68F'/%3E%3Crect x='29' y='18' width='6' height='26' fill='%23E5A93A'/%3E%3Crect x='30.5' y='13' width='3' height='38' fill='%23E5A93A'/%3E%3Crect x='44' y='26' width='6' height='14' fill='%23E0685A'/%3E%3Crect x='45.5' y='21' width='3' height='26' fill='%23E0685A'/%3E%3C/svg%3E">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tape — reading the tape">
+<meta name="twitter:description" content="Trading terms, what they look like on a chart, and whether they hold up when tested.">
+<meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2313141A'/%3E%3Crect x='14' y='30' width='6' height='18' fill='%233BB68F'/%3E%3Crect x='15.5' y='24' width='3' height='30' fill='%233BB68F'/%3E%3Crect x='29' y='18' width='6' height='26' fill='%23E5A93A'/%3E%3Crect x='30.5' y='13' width='3' height='38' fill='%23E5A93A'/%3E%3Crect x='44' y='26' width='6' height='14' fill='%23E0685A'/%3E%3Crect x='45.5' y='21' width='3' height='26' fill='%23E0685A'/%3E%3C/svg%3E">
+
+<!-- installable -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2313141A'/%3E%3Crect x='14' y='30' width='6' height='18' fill='%233BB68F'/%3E%3Crect x='15.5' y='24' width='3' height='30' fill='%233BB68F'/%3E%3Crect x='29' y='18' width='6' height='26' fill='%23E5A93A'/%3E%3Crect x='30.5' y='13' width='3' height='38' fill='%23E5A93A'/%3E%3Crect x='44' y='26' width='6' height='14' fill='%23E0685A'/%3E%3Crect x='45.5' y='21' width='3' height='26' fill='%23E0685A'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2313141A'/%3E%3Crect x='14' y='30' width='6' height='18' fill='%233BB68F'/%3E%3Crect x='15.5' y='24' width='3' height='30' fill='%233BB68F'/%3E%3Crect x='29' y='18' width='6' height='26' fill='%23E5A93A'/%3E%3Crect x='30.5' y='13' width='3' height='38' fill='%23E5A93A'/%3E%3Crect x='44' y='26' width='6' height='14' fill='%23E0685A'/%3E%3Crect x='45.5' y='21' width='3' height='26' fill='%23E0685A'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Tape%22%2C%22short_name%22%3A%22Tape%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2313141A%22%2C%22theme_color%22%3A%22%2313141A%22%2C%22description%22%3A%22Reading%20the%20tape.%20A%20trading%20glossary%20and%20journal.%22%7D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tape">
+<meta name="theme-color" content="#F6F5F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13141A" media="(prefers-color-scheme: dark)">
 <style>
 :root{
   --paper:#F6F5F2; --card:#FFFFFF; --ink:#16181D; --ink2:#5C616A; --ink3:#8B9099;
   --rule:#DFDCD5; --rule2:#C9C5BC;
   --up:#17795E; --down:#B23A2E; --accent:#1F4E8C; --signal:#C0800C;
   --tint:#EFEDE7;
-  --disp:"Space Grotesk",ui-sans-serif,system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --disp:"Segoe UI Variable Display",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
   --body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme:dark){
@@ -159,8 +178,8 @@ select.btn{padding:8px 8px}
 
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">Visual reference · shareable</p>
-    <h1>Trading terms,<br>and what they <em>look like</em>.</h1>
+    <p class="eyebrow">Tape · reading the tape</p>
+    <h1>Tape.<br>Reading what the chart <em>actually says</em>.</h1>
     <p class="lede">Every term with a plain definition and a concrete example. Concepts that live on a chart are drawn as charts — search or filter to find one.</p>
   </header>
 </div>
@@ -285,6 +304,29 @@ CAT.push(
 );
 var D = [];
 </script>
+
+<script>
+/* ====================================================================
+   STORAGE MIGRATION — tg.* keys become tape.*, read once and rewritten
+   so nothing saved under the old name is lost.
+   ==================================================================== */
+(function(){
+if(typeof window==="undefined") return;
+try{
+  if(localStorage.getItem("tape.migrated")) return;
+  var moved=0;
+  for(var i=localStorage.length-1;i>=0;i--){
+    var k=localStorage.key(i);
+    if(!k||k.indexOf("tg.")!==0) continue;
+    var nk="tape."+k.slice(3);
+    if(localStorage.getItem(nk)===null){ localStorage.setItem(nk, localStorage.getItem(k)); moved++; }
+  }
+  localStorage.setItem("tape.migrated","1");
+  window.__migrated=moved;
+}catch(e){}
+})();
+</script>
+
 
 <script>
 var W=320,H=150;
@@ -2607,7 +2649,6 @@ mark{background:color-mix(in srgb,var(--signal) 30%,transparent);color:inherit;b
 @media print{.lnk,#panel-quiz,.qcard{display:none!important}}
 </style>
 
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 /* ============ OVERHAUL: tokens ============ */
 :root{
@@ -2615,7 +2656,7 @@ mark{background:color-mix(in srgb,var(--signal) 30%,transparent);color:inherit;b
   --rule:#E6E2D9; --rule2:#CFCABE; --tint:#F2EFE7;
   --up:#0F7A55; --down:#B0342A; --accent:#1B4C86; --signal:#B0770A;
   --glow:transparent;
-  --serif:"Fraunces",Georgia,serif;
+  --serif:ui-serif,Georgia,"Times New Roman",serif;
   --r:3px;
   --sh:0 1px 2px rgba(16,18,21,.05),0 8px 24px -14px rgba(16,18,21,.18);
   --shh:0 1px 2px rgba(16,18,21,.06),0 18px 40px -20px rgba(16,18,21,.3);
@@ -2828,7 +2869,6 @@ mark{background:color-mix(in srgb,var(--signal) 30%,transparent);color:inherit;b
 @media print{.lnk,#panel-quiz,.qcard{display:none!important}}
 </style>
 
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 /* ============ OVERHAUL: tokens ============ */
 :root{
@@ -2836,7 +2876,7 @@ mark{background:color-mix(in srgb,var(--signal) 30%,transparent);color:inherit;b
   --rule:#E6E2D9; --rule2:#CFCABE; --tint:#F2EFE7;
   --up:#0F7A55; --down:#B0342A; --accent:#1B4C86; --signal:#B0770A;
   --glow:transparent;
-  --serif:"Fraunces",Georgia,serif;
+  --serif:ui-serif,Georgia,"Times New Roman",serif;
   --r:3px;
   --sh:0 1px 2px rgba(16,18,21,.05),0 8px 24px -14px rgba(16,18,21,.18);
   --shh:0 1px 2px rgba(16,18,21,.06),0 18px 40px -20px rgba(16,18,21,.3);
@@ -4038,14 +4078,23 @@ function tapeExportPng(svgEl, opts){
         var pad = Math.round(W * 0.075);
         var innerW = W - pad*2;
 
-        /* title */
-        var titleSize = Math.round(W * 0.062);
-        ctx.fillStyle = vars["--ink"];
-        ctx.font = "700 "+titleSize+"px ui-sans-serif, system-ui, sans-serif";
+        /* title.
+           Measured at a 200px thumbnail the first version only reached 4.25:1 —
+           antialiasing on downscale eats thin text. Heavier weight, larger size
+           and a solid plate behind it so the contrast survives shrinking. */
+        var titleSize = Math.round(W * 0.078);
         ctx.textBaseline = "top";
+        ctx.font = "800 "+titleSize+"px ui-sans-serif, system-ui, sans-serif";
         var titleLines = tapeWrapText(ctx, opts.title || "", innerW).slice(0,2);
+        var plateH = titleLines.length*titleSize*1.14 + Math.round(W*0.03);
+        ctx.fillStyle = vars["--card"];
+        ctx.fillRect(0, pad - Math.round(W*0.022), W, plateH);
+        ctx.fillStyle = vars["--signal"];
+        ctx.fillRect(0, pad - Math.round(W*0.022), Math.round(W*0.012), plateH);
+        ctx.fillStyle = vars["--ink"];
         var y = pad;
-        titleLines.forEach(function(L){ ctx.fillText(L, pad, y); y += titleSize*1.12; });
+        titleLines.forEach(function(L){ ctx.fillText(L, pad, y); y += titleSize*1.14; });
+        y += Math.round(W*0.012);
 
         /* one line of definition */
         if(opts.subtitle){
@@ -4218,4 +4267,228 @@ mountAll();
 .tapefoot{margin-top:10px}
 @media (max-width:900px), (pointer: coarse){ .expbtn{min-height:44px} }
 @media print{.expbar{display:none!important}}
+</style>
+
+<script>
+/* ====================================================================
+   STRUCTURED DATA
+   DefinedTermSet + DefinedTerm. Injected at runtime because the terms
+   live in JS; search engines execute JS, but a static block would mean
+   duplicating a megabyte of data into the head.
+   ==================================================================== */
+(function(){
+if(typeof document==="undefined") return;
+try{
+  var D=window.D||[], CAT=window.CAT||[];
+  if(!D.length) return;
+  var catName={}; CAT.forEach(function(c){catName[c[0]]=c[1];});
+  var ld={
+    "@context":"https://schema.org",
+    "@type":"DefinedTermSet",
+    "name":(window.TAPE&&TAPE.name)||"Tape",
+    "description":"Trading terms, what they look like on a chart, and whether they hold up when tested.",
+    "hasDefinedTerm": D.slice(0,400).map(function(x){
+      return {"@type":"DefinedTerm","name":x.t,"description":x.d,
+              "inDefinedTermSet":(window.TAPE&&TAPE.name)||"Tape",
+              "termCode":String(x.t).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")};
+    })
+  };
+  var sc=document.createElement("script");
+  sc.type="application/ld+json";
+  sc.textContent=JSON.stringify(ld);
+  document.head.appendChild(sc);
+  window.__ldCount=ld.hasDefinedTerm.length;
+}catch(e){}
+})();
+</script>
+
+<script>
+/* ====================================================================
+   POST BUILDER + CAROUSEL EXPORT
+   The growth engine: turn any term, or a whole section, into finished
+   images and a copyable caption. Everything client-side.
+   ==================================================================== */
+(function(){
+"use strict";
+if(typeof document==="undefined") return;
+
+var EKEY="tape.exported";
+function loadExported(){try{return JSON.parse(localStorage.getItem(EKEY)||"[]");}catch(e){return [];}}
+function saveExported(a){try{localStorage.setItem(EKEY,JSON.stringify(a));}catch(e){}}
+function markExported(slug){
+  var a=loadExported();
+  if(a.indexOf(slug)<0){a.push(slug);saveExported(a);}
+}
+function esc(x){return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function slugify(t){return String(t).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+
+function captionFor(x){
+  var lines=[];
+  lines.push(x.t.toUpperCase());
+  lines.push("");
+  lines.push(x.d);
+  if(x.e){lines.push("");lines.push(x.warn?("Careful: "+x.e):("Example: "+x.e));}
+  if(window.TAPE&&TAPE.url){lines.push("");lines.push(TAPE.url);}
+  return lines.join("\n");
+}
+
+/* find a rendered svg for a term, if it has one */
+function svgFor(slug){
+  var e=document.getElementById("term-"+slug);
+  return e?e.querySelector("figure svg"):null;
+}
+
+function exportTerm(x, preset){
+  var slug=slugify(x.t);
+  var svg=svgFor(slug);
+  if(!svg) return Promise.reject(new Error("no chart for "+x.t));
+  var e=document.getElementById("term-"+slug);
+  var cap=e?(e.querySelector("figcaption")||{}).textContent||"":"";
+  return window.tapeExportPng(svg,{preset:preset||"square",title:x.t,subtitle:x.d,caption:cap})
+    .then(function(b){markExported(slug);return b;});
+}
+
+/* ---- carousel: a whole section as numbered slides ---- */
+function carousel(sectionId, preset, onProgress){
+  var D=window.D||[];
+  var items=D.filter(function(x){return x.c===sectionId && svgFor(slugify(x.t));});
+  var out=[], i=0;
+  function step(){
+    if(i>=items.length) return Promise.resolve(out);
+    var x=items[i];
+    return exportTerm(x,preset).then(function(b){
+      var n=String(i+1).padStart(2,"0");
+      out.push({name:n+"-"+slugify(x.t)+".png",blob:b,term:x.t});
+      i++;
+      if(onProgress)onProgress(i,items.length,x.t);
+      return step();
+    }).catch(function(){ i++; return step(); });
+  }
+  return step();
+}
+window.tapeCarousel=carousel;
+window.tapeExportTerm=exportTerm;
+window.tapeCaptionFor=captionFor;
+
+/* ---- UI ---- */
+function mount(){
+  var host=document.getElementById("panel-terms");
+  if(!host||document.getElementById("postbuilder")) return;
+  var D=window.D||[], CAT=window.CAT||[];
+
+  var box=document.createElement("div");
+  box.id="postbuilder";
+  box.className="wrap";
+  var opts=CAT.filter(function(c){
+    return D.some(function(x){return x.c===c[0]&&svgFor(slugify(x.t));});
+  }).map(function(c){
+    var n=D.filter(function(x){return x.c===c[0]&&svgFor(slugify(x.t));}).length;
+    return '<option value="'+esc(c[0])+'">'+esc(c[1])+' ('+n+')</option>';
+  }).join("");
+
+  box.innerHTML=
+    '<details id="pbdet"><summary>Post builder — turn terms into images</summary>'+
+    '<div class="pbbody">'+
+    '<p class="pbnote">Exports run entirely in this browser. Nothing is uploaded.</p>'+
+    '<div class="pbrow">'+
+      '<label class="qlab" for="pb-preset">Size</label>'+
+      '<select id="pb-preset" class="btn"><option value="square">Square 1080</option>'+
+      '<option value="portrait">Portrait 1080×1920</option><option value="landscape">Landscape 1200×630</option></select>'+
+      '<button class="btn pri" id="pb-surprise">Surprise me</button>'+
+    '</div>'+
+    '<div class="pbrow">'+
+      '<label class="qlab" for="pb-sec">Carousel</label>'+
+      '<select id="pb-sec" class="btn">'+opts+'</select>'+
+      '<button class="btn" id="pb-run">Export section as slides</button>'+
+    '</div>'+
+    '<div id="pb-out" class="pbout" aria-live="polite"></div>'+
+    '</div></details>';
+  host.insertBefore(box, host.firstChild);
+
+  var out=document.getElementById("pb-out");
+
+  document.getElementById("pb-surprise").onclick=function(){
+    var done=loadExported();
+    var pool=D.filter(function(x){return svgFor(slugify(x.t))&&done.indexOf(slugify(x.t))<0;});
+    if(!pool.length){ out.textContent="Every term with a chart has been exported. Clear tape.exported to start again."; return; }
+    var x=pool[Math.floor(Math.random()*pool.length)];
+    var preset=document.getElementById("pb-preset").value;
+    out.textContent="Exporting "+x.t+"…";
+    exportTerm(x,preset).then(function(b){
+      window.tapeDownload(b,(TAPE.wordmark||"tape").toLowerCase()+"-"+slugify(x.t)+".png");
+      var cap=captionFor(x);
+      var copied=false;
+      try{ if(navigator.clipboard){ navigator.clipboard.writeText(cap); copied=true; } }catch(e){}
+      out.innerHTML='<b>'+esc(x.t)+'</b> exported. '+(copied?"Caption copied to clipboard.":"Caption below.")+
+        '<textarea class="pbcap" readonly rows="6">'+esc(cap)+'</textarea>'+
+        '<span class="pbleft">'+(pool.length-1)+' charted terms left to post</span>';
+    }).catch(function(e){ out.textContent="Export failed: "+e.message; });
+  };
+
+  document.getElementById("pb-run").onclick=function(){
+    var sec=document.getElementById("pb-sec").value;
+    var preset=document.getElementById("pb-preset").value;
+    var btn=this; btn.disabled=true;
+    out.textContent="Building slides…";
+    carousel(sec,preset,function(i,n,name){ out.textContent="Slide "+i+" of "+n+" — "+name; })
+      .then(function(files){
+        files.forEach(function(f,ix){
+          setTimeout(function(){ window.tapeDownload(f.blob,f.name); }, ix*250);
+        });
+        out.innerHTML='<b>'+files.length+' slides</b> exported, numbered in order. '+
+          'Your browser may ask to allow multiple downloads.';
+        btn.disabled=false;
+      }).catch(function(e){ out.textContent="Carousel failed: "+e.message; btn.disabled=false; });
+  };
+}
+mount();
+})();
+</script>
+
+<script>
+/* ====================================================================
+   PRINTABLE WORKBOOK — uses the existing print stylesheet, no library.
+   ==================================================================== */
+(function(){
+if(typeof document==="undefined") return;
+function mount(){
+  var f=document.getElementById("foot");
+  if(!f||document.getElementById("wbprint")) return;
+  var b=document.createElement("button");
+  b.id="wbprint"; b.type="button"; b.className="btn";
+  b.textContent="Print / save as PDF";
+  b.onclick=function(){
+    document.body.classList.add("printing");
+    var was=document.getElementById("panel-terms").hidden;
+    document.getElementById("panel-terms").hidden=false;
+    setTimeout(function(){
+      window.print();
+      document.body.classList.remove("printing");
+      document.getElementById("panel-terms").hidden=was;
+    },80);
+  };
+  var p=document.createElement("p");
+  p.appendChild(b);
+  f.appendChild(p);
+}
+mount();
+})();
+</script>
+
+<style>
+#postbuilder{margin:14px auto 0}
+#pbdet{border:1px solid var(--rule);border-radius:4px;background:var(--card);padding:0}
+#pbdet>summary{cursor:pointer;padding:12px 14px;font-size:14px;min-height:44px;display:flex;align-items:center}
+#pbdet[open]>summary{border-bottom:1px solid var(--rule)}
+.pbbody{padding:14px}
+.pbnote{font-family:var(--mono);font-size:11px;color:var(--ink3);margin:0 0 12px}
+.pbrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.pbout{font-size:13.5px;color:var(--ink2);min-height:20px;margin-top:6px}
+.pbcap{display:block;width:100%;margin-top:8px;font-family:var(--mono);font-size:12px;
+  background:var(--paper);border:1px solid var(--rule2);border-radius:3px;color:var(--ink);padding:9px}
+.pbleft{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:6px}
+@media print{
+  #postbuilder,#wbprint{display:none!important}
+  body.printing .entry{break-inside:avoid}
+}
 </style>
