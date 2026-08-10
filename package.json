@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "Reading the tape. A single-file trading glossary and trade journal.",
-  "scripts": { "test": "node test.js" },
-  "devDependencies": { "jsdom": "^24.0.0" }
+  "scripts": {
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.3"
+  }
 }

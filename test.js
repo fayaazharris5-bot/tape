@@ -19,6 +19,12 @@ function boot(url,opts){
       w.onerror=e=>errs.push(String(e));
       w.HTMLElement.prototype.scrollIntoView=function(){};
       Object.defineProperty(w,"isSecureContext",{value:true});
+      /* jsdom <30 doesn't expose these to the window; the share path needs them.
+         Node has them globally, so hand them over rather than pinning a version. */
+      if(typeof w.TextEncoder==="undefined") w.TextEncoder=TextEncoder;
+      if(typeof w.TextDecoder==="undefined") w.TextDecoder=TextDecoder;
+      if(typeof w.CompressionStream==="undefined"&&typeof CompressionStream!=="undefined") w.CompressionStream=CompressionStream;
+      if(typeof w.DecompressionStream==="undefined"&&typeof DecompressionStream!=="undefined") w.DecompressionStream=DecompressionStream;
       Object.defineProperty(w.navigator,"clipboard",{value:{writeText:t=>{dom.__copied=t;return Promise.resolve();}},configurable:true});
       if(opts.offline){
         Object.defineProperty(w.navigator,"onLine",{value:false,configurable:true});
