@@ -5252,3 +5252,288 @@ if(ts) ts.addEventListener("click",function(){ setTimeout(mount,0); });
 mount();
 })();
 </script>
+
+<script>
+/* ====================================================================
+   STATEMENT IMPORT
+   Reads a trade history CSV exported from a broker, a prop firm
+   dashboard or TradingView and turns it into real stats.
+
+   Deliberately NOT an API connection. A key stored in a browser app
+   that ships by share link is a key you have given away, and prop-firm
+   paper APIs sit behind the same credentials as the live account.
+   A CSV has no such problem, works offline, and covers venues no free
+   API reaches.
+
+   Nothing here is uploaded. The file is read with FileReader and never
+   leaves the machine.
+   ==================================================================== */
+(function(){
+"use strict";
+if(typeof document==="undefined") return;
+
+function el(id){return document.getElementById(id);}
+function esc(x){return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ---------- CSV parsing that survives quoted fields ---------- */
+function parseCsv(text){
+  var rows=[],row=[],cur="",q=false,i;
+  text=String(text).replace(/^﻿/,"");
+  for(i=0;i<text.length;i++){
+    var ch=text[i];
+    if(q){
+      if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; }
+      else cur+=ch;
+    }else{
+      if(ch==='"') q=true;
+      else if(ch===","){ row.push(cur); cur=""; }
+      else if(ch==="\n"){ row.push(cur); rows.push(row); row=[]; cur=""; }
+      else if(ch==="\r"){ /* skip */ }
+      else cur+=ch;
+    }
+  }
+  if(cur.length||row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(c){return String(c).trim()!==""; }); });
+}
+
+/* ---------- column detection across broker dialects ---------- */
+var FIELD_HINTS={
+  symbol:  ["symbol","instrument","contract","market","ticker","product","asset"],
+  side:    ["side","direction","type","b/s","buy/sell","action","position"],
+  qty:     ["qty","quantity","size","volume","contracts","lots","units","filled"],
+  entry:   ["entry","entryprice","openprice","avgentry","priceopen","open","buyprice","fillprice"],
+  exit:    ["exit","exitprice","closeprice","avgexit","priceclose","close","sellprice"],
+  pnl:     ["pnl","p/l","profit","netpnl","realized","realised","gross","net","result","profitloss"],
+  opened:  ["opened","opentime","entrytime","datetime","date","opendate","time","tradedate"],
+  closed:  ["closed","closetime","exittime","closedate"],
+  fees:    ["commission","fees","fee","charges","costs"]
+};
+function norm(h){ return String(h).toLowerCase().replace(/[^a-z/]/g,""); }
+function detect(header){
+  var map={};
+  header.forEach(function(h,idx){
+    var n=norm(h);
+    Object.keys(FIELD_HINTS).forEach(function(f){
+      if(map[f]!==undefined) return;
+      if(FIELD_HINTS[f].some(function(hint){ return n===hint||n.indexOf(hint)>-1; })) map[f]=idx;
+    });
+  });
+  return map;
+}
+function num(v){
+  if(v==null) return NaN;
+  var s=String(v).replace(/[()]/g,function(m){return m==="("?"-":"";}).replace(/[^0-9.\-]/g,"");
+  var n=parseFloat(s);
+  /* accounting negatives: (12.50) means -12.50 */
+  if(/^\(.*\)$/.test(String(v).trim())) n=-Math.abs(n);
+  return n;
+}
+
+function toTrades(rows){
+  if(rows.length<2) return {trades:[],map:{},skipped:0};
+  var header=rows[0], map=detect(header), out=[], skipped=0;
+  rows.slice(1).forEach(function(r){
+    var t={};
+    if(map.symbol!==undefined) t.symbol=String(r[map.symbol]||"").trim();
+    if(map.side!==undefined){
+      var sv=String(r[map.side]||"").toLowerCase();
+      t.dir=/sell|short|s\b/.test(sv)?"short":"long";
+    }
+    if(map.qty!==undefined) t.qty=num(r[map.qty]);
+    if(map.entry!==undefined) t.entry=num(r[map.entry]);
+    if(map.exit!==undefined) t.exit=num(r[map.exit]);
+    if(map.fees!==undefined) t.fees=num(r[map.fees]);
+    if(map.opened!==undefined) t.opened=String(r[map.opened]||"").trim();
+    if(map.closed!==undefined) t.closed=String(r[map.closed]||"").trim();
+
+    var p = map.pnl!==undefined ? num(r[map.pnl]) : NaN;
+    if(!isFinite(p) && isFinite(t.entry) && isFinite(t.exit) && isFinite(t.qty)){
+      p = (t.dir==="short" ? (t.entry-t.exit) : (t.exit-t.entry)) * t.qty;
+    }
+    if(isFinite(t.fees)) p = p - Math.abs(t.fees);
+    if(!isFinite(p)){ skipped++; return; }
+    t.pnl=p;
+    out.push(t);
+  });
+  return {trades:out,map:map,skipped:skipped};
+}
+
+/* ---------- stats, reusing the vocabulary the app already teaches ---------- */
+function stats(trades){
+  var n=trades.length;
+  if(!n) return null;
+  var wins=trades.filter(function(t){return t.pnl>0;});
+  var losses=trades.filter(function(t){return t.pnl<0;});
+  var gross=wins.reduce(function(a,t){return a+t.pnl;},0);
+  var grossLoss=Math.abs(losses.reduce(function(a,t){return a+t.pnl;},0));
+  var net=trades.reduce(function(a,t){return a+t.pnl;},0);
+  var avgWin=wins.length?gross/wins.length:0;
+  var avgLoss=losses.length?grossLoss/losses.length:0;
+  var eq=[],run=0,peak=0,dd=0;
+  trades.forEach(function(t){
+    run+=t.pnl; eq.push(run);
+    if(run>peak) peak=run;
+    if(peak-run>dd) dd=peak-run;
+  });
+  /* Wilson interval on the win rate — the same honesty the trade log uses */
+  var p=wins.length/n, z=1.96;
+  var den=1+z*z/n;
+  var centre=(p+z*z/(2*n))/den;
+  var half=(z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n)))/den;
+  return {
+    n:n, wins:wins.length, losses:losses.length,
+    winRate:p*100, ciLow:Math.max(0,(centre-half)*100), ciHigh:Math.min(100,(centre+half)*100),
+    net:net, expectancy:net/n, avgWin:avgWin, avgLoss:avgLoss,
+    payoff:avgLoss?avgWin/avgLoss:Infinity,
+    profitFactor:grossLoss?gross/grossLoss:Infinity,
+    maxDrawdown:dd, equity:eq
+  };
+}
+
+function money(v){
+  var a=Math.abs(v);
+  return (v<0?"-":"")+"$"+a.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function equitySpec(eq){
+  var step=Math.max(1,Math.ceil(eq.length/40));
+  var pts=[];
+  for(var i=0;i<eq.length;i+=step) pts.push(eq[i]);
+  if(pts[pts.length-1]!==eq[eq.length-1]) pts.push(eq[eq.length-1]);
+  return {k:"e",base:0,s:[{v:pts,c:pts[pts.length-1]>=0?"u":"d",t:"cumulative P&L"}]};
+}
+
+function report(s,fileName,skipped,map){
+  var found=Object.keys(map).filter(function(k){return map[k]!==undefined;});
+  var chart="";
+  try{ if(window.svgFor) chart='<figure class="impfig">'+window.svgFor(equitySpec(s.equity))+
+    '<figcaption>Cumulative P&L across '+s.n+' imported trades, in order.</figcaption></figure>'; }catch(e){}
+
+  var flags=[];
+  if(s.n<30) flags.push("Fewer than 30 trades. Treat every number here as provisional — the confidence interval below shows how wide the uncertainty still is.");
+  if(s.profitFactor>3&&s.n<100) flags.push("A profit factor above 3 on a small sample usually means a short favourable stretch, not an edge.");
+  if(map.fees===undefined) flags.push("No commission column was found, so these figures are gross. Real costs will be worse.");
+
+  return '<div class="impcard">'+
+    '<div class="imphead"><h3>'+esc(fileName)+'</h3>'+
+      '<span class="impmeta">'+s.n+' trades · columns matched: '+esc(found.join(", "))+
+      (skipped?' · '+skipped+' rows skipped':'')+'</span></div>'+
+    chart+
+    '<div class="impgrid">'+
+      '<div class="impstat"><span class="impk">Net</span><span class="impv '+(s.net>=0?"up":"down")+'">'+money(s.net)+'</span></div>'+
+      '<div class="impstat"><span class="impk">Expectancy / trade</span><span class="impv '+(s.expectancy>=0?"up":"down")+'">'+money(s.expectancy)+'</span></div>'+
+      '<div class="impstat"><span class="impk">Win rate</span><span class="impv">'+s.winRate.toFixed(1)+'%</span>'+
+        '<span class="impsub">95% CI '+s.ciLow.toFixed(0)+'–'+s.ciHigh.toFixed(0)+'%</span></div>'+
+      '<div class="impstat"><span class="impk">Payoff ratio</span><span class="impv">'+(isFinite(s.payoff)?s.payoff.toFixed(2):"—")+'</span></div>'+
+      '<div class="impstat"><span class="impk">Profit factor</span><span class="impv">'+(isFinite(s.profitFactor)?s.profitFactor.toFixed(2):"—")+'</span></div>'+
+      '<div class="impstat"><span class="impk">Max drawdown</span><span class="impv down">'+money(-s.maxDrawdown)+'</span></div>'+
+      '<div class="impstat"><span class="impk">Avg win</span><span class="impv">'+money(s.avgWin)+'</span></div>'+
+      '<div class="impstat"><span class="impk">Avg loss</span><span class="impv">'+money(-s.avgLoss)+'</span></div>'+
+    '</div>'+
+    (flags.length?'<ul class="impflags">'+flags.map(function(f){return "<li>"+esc(f)+"</li>";}).join("")+'</ul>':'')+
+    '<p class="impnote">Win rate never means anything on its own — read it beside the payoff ratio and the expectancy. '+
+    'This file was read in your browser and was not uploaded anywhere.</p>'+
+    '</div>';
+}
+
+window.__parseStatement=function(text,name){
+  var res=toTrades(parseCsv(text));
+  var s=stats(res.trades);
+  return {stats:s,skipped:res.skipped,map:res.map,trades:res.trades};
+};
+
+/* ---------- UI ---------- */
+function mount(){
+  var host=el("panel-strats");
+  if(!host||el("impbox")) return;
+  var box=document.createElement("div");
+  box.id="impbox"; box.className="wrap";
+  box.innerHTML='<details id="impdet"><summary>Import a statement — see your real stats</summary>'+
+    '<div class="impbody">'+
+      '<p class="impintro">Export your trade history as CSV from your broker, prop dashboard or TradingView and drop it here. '+
+      'No account linking, no API key, nothing uploaded — the file is read in this browser and stays on your machine.</p>'+
+      '<div id="impdrop" class="impdrop" tabindex="0" role="button" aria-label="Choose or drop a CSV statement">'+
+        'Drop a CSV here, or click to choose'+
+      '</div>'+
+      '<input type="file" id="impfile" accept=".csv,text/csv" class="sr-only">'+
+      '<div id="impout"></div>'+
+    '</div></details>';
+  host.insertBefore(box,host.firstChild);
+
+  var drop=el("impdrop"), file=el("impfile"), out=el("impout");
+
+  function handle(f){
+    if(!f) return;
+    if(!/\.csv$/i.test(f.name)&&f.type!=="text/csv"){
+      out.innerHTML='<p class="imperr">That doesn’t look like a CSV. Export your trade history as CSV and try again.</p>';
+      return;
+    }
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var res=window.__parseStatement(String(r.result),f.name);
+        if(!res.stats){
+          out.innerHTML='<p class="imperr">No trades could be read from that file. '+
+            'It needs a header row and either a profit/loss column, or entry, exit and quantity columns.</p>';
+          return;
+        }
+        out.innerHTML=report(res.stats,f.name,res.skipped,res.map);
+        if(window.__toast) window.__toast("Read "+res.stats.n+" trades");
+      }catch(e){
+        out.innerHTML='<p class="imperr">Could not read that file: '+esc(e.message)+'</p>';
+      }
+    };
+    r.onerror=function(){ out.innerHTML='<p class="imperr">The file could not be read.</p>'; };
+    r.readAsText(f);
+  }
+
+  drop.onclick=function(){ file.click(); };
+  drop.onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); file.click(); } };
+  file.onchange=function(){ handle(file.files&&file.files[0]); };
+  ["dragenter","dragover"].forEach(function(ev){
+    drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave","drop"].forEach(function(ev){
+    drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop",function(e){
+    var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+    handle(f);
+  });
+}
+var ts=el("tab-strats");
+if(ts) ts.addEventListener("click",function(){ setTimeout(mount,0); });
+mount();
+})();
+</script>
+
+<style>
+#impbox{margin:14px auto 0}
+#impdet{border:1px solid var(--rule);border-radius:4px;background:var(--card)}
+#impdet>summary{cursor:pointer;padding:12px 14px;font-size:14px;min-height:44px;display:flex;align-items:center}
+#impdet[open]>summary{border-bottom:1px solid var(--rule)}
+.impbody{padding:14px}
+.impintro{font-size:13.5px;color:var(--ink2);margin:0 0 12px;max-width:66ch;line-height:1.55}
+.impdrop{border:1.5px dashed var(--rule2);border-radius:5px;padding:26px 16px;text-align:center;
+  color:var(--ink3);font-size:14px;cursor:pointer;min-height:88px;display:flex;align-items:center;justify-content:center}
+.impdrop:hover,.impdrop.over{border-color:var(--accent);color:var(--accent);background:var(--tint)}
+.impdrop:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.imperr{color:var(--down);font-size:13.5px;margin:12px 0 0}
+.impcard{margin-top:14px;border:1px solid var(--rule);border-radius:4px;padding:14px;background:var(--paper)}
+.imphead h3{font-family:var(--disp);font-size:16px;margin:0}
+.impmeta{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.impfig{margin:12px 0;padding:10px;background:var(--tint);border-radius:3px}
+.impfig svg{width:100%;height:auto;display:block}
+.impfig figcaption{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:6px}
+.impgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px}
+.impstat{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:9px 11px;display:flex;flex-direction:column;gap:2px}
+.impk{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.impv{font-family:var(--mono);font-size:16px;color:var(--ink)}
+.impv.up{color:var(--up)} .impv.down{color:var(--down)}
+.impsub{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.impflags{margin:12px 0 0;padding-left:18px}
+.impflags li{font-size:13px;color:var(--signal);margin-bottom:5px;line-height:1.5}
+.impnote{font-size:12.5px;color:var(--ink3);margin:12px 0 0;line-height:1.6;border-top:1px solid var(--rule);padding-top:10px}
+@media (max-width:900px), (pointer: coarse){ .impdrop{min-height:110px} }
+@media print{#impbox{display:none}}
+</style>

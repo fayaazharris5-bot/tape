@@ -561,6 +561,87 @@ ok(stored.filter(function(s){return SEED.some(function(x){return x.name===s.name
 ok(SEED.some(function(s){return /buy and hold/i.test(s.name);}),"buy-and-hold benchmark is in the library");
 ok(SEED.some(function(s){return /random entry/i.test(s.name);}),"random-entry control is in the library");
 
+console.log("19. Statement import");
+
+ok(typeof w.__parseStatement==="function","statement parser is available");
+
+/* Dialect A: a prop-firm style export with a P&L column and accounting negatives.
+   Hand-computed: +150, -75, +300, -75, +200  ->  net 500 over 5 trades.
+   3 wins / 2 losses = 60% win rate. Gross win 650, gross loss 150 -> PF 4.333.
+   Expectancy 500/5 = 100. Equity 150,75,375,300,500 -> peak 375 then 300, so
+   max drawdown 75. */
+var propCsv=
+ "Symbol,Side,Qty,Entry Price,Exit Price,Realized P/L\n"+
+ "MNQ,Buy,2,17500,17575,150\n"+
+ "MNQ,Sell,2,17600,17637.5,(75)\n"+
+ "MNQ,Buy,4,17400,17475,300\n"+
+ "MNQ,Buy,2,17500,17462.5,(75)\n"+
+ "MNQ,Sell,2,17700,17600,200\n";
+var A=w.__parseStatement(propCsv,"prop.csv");
+ok(!!A.stats,"prop-style CSV parses");
+eq(A.stats.n,5,"all five trades read");
+near(A.stats.net,500,0.01,"net P&L matches the hand-computed figure");
+near(A.stats.expectancy,100,0.01,"expectancy is net divided by trade count");
+near(A.stats.winRate,60,0.01,"win rate computed from the log");
+near(A.stats.profitFactor,650/150,0.01,"profit factor is gross win over gross loss");
+near(A.stats.maxDrawdown,75,0.01,"max drawdown measured peak to trough");
+ok(A.stats.ciLow<A.stats.winRate&&A.stats.ciHigh>A.stats.winRate,"a Wilson interval brackets the win rate");
+ok(A.stats.ciHigh-A.stats.ciLow>30,"five trades produce a very wide interval, as they should");
+
+/* accounting negatives in brackets must read as losses, not gains */
+ok(A.stats.losses===2,"bracketed figures are read as losses");
+
+/* Dialect B: no P&L column — derive it from entry, exit, quantity and side.
+   Long 1 from 100 to 110 = +10. Short 2 from 50 to 45 = +10. Long 1 from 20
+   to 15 = -5. Net +15 over 3. */
+var derivedCsv=
+ "Instrument,Direction,Quantity,Open Price,Close Price\n"+
+ "AAA,Long,1,100,110\n"+
+ "BBB,Short,2,50,45\n"+
+ "CCC,Long,1,20,15\n";
+var B=w.__parseStatement(derivedCsv,"derived.csv");
+eq(B.stats.n,3,"rows without a P&L column still parse");
+near(B.stats.net,15,0.01,"P&L derived correctly, including the short");
+ok(B.stats.wins===2&&B.stats.losses===1,"direction is respected when deriving P&L");
+
+/* Dialect C: commissions must be subtracted, not ignored */
+var feeCsv=
+ "Symbol,Side,Qty,Entry,Exit,PnL,Commission\n"+
+ "MNQ,Buy,1,100,110,10,2\n"+
+ "MNQ,Buy,1,100,110,10,2\n";
+var C=w.__parseStatement(feeCsv,"fees.csv");
+near(C.stats.net,16,0.01,"commissions are deducted from gross P&L");
+ok(C.map.fees!==undefined,"a commission column is detected when present");
+
+/* quoted fields containing commas must not split the row */
+var quotedCsv='Symbol,Note,PnL\n"MNQ","bought, then sold",50\n';
+var Q=w.__parseStatement(quotedCsv,"quoted.csv");
+eq(Q.stats.n,1,"quoted commas do not break the row");
+near(Q.stats.net,50,0.01,"value after a quoted comma is read correctly");
+
+/* junk input must fail honestly rather than inventing numbers */
+var junk=w.__parseStatement("hello there\nno columns here\n","junk.csv");
+ok(!junk.stats||junk.stats.n===0,"a file with no usable columns yields no stats rather than guesses");
+var empty=w.__parseStatement("","empty.csv");
+ok(!empty.stats,"an empty file yields no stats");
+
+/* the UI must never claim an edge from a small sample */
+d.getElementById("tab-strats").dispatchEvent(new w.Event("click"));
+await wait(60);
+ok(!!d.getElementById("impbox"),"import panel is mounted on the strategies tab");
+ok(!!d.getElementById("impdrop"),"a drop target exists");
+ok(d.getElementById("impdrop").getAttribute("tabindex")==="0","the drop target is keyboard reachable");
+ok(/not uploaded|stays on your machine/i.test(d.getElementById("impbox").textContent),
+   "the panel states plainly that nothing is uploaded");
+
+/* no credential capture anywhere in the file — non-negotiable 8 */
+var htmlNow=fs.readFileSync(FILE,"utf8");
+ok(!/type="password"/i.test(htmlNow),"no password field exists anywhere");
+ok(!/\b(api[_-]?key|apikey|secret|accessToken|access_token|bearer)\b\s*[:=]\s*["'][^"']+["']/i.test(htmlNow),
+   "no credential is stored or hard-coded");
+ok(!/id="[^"]*(apikey|api-key|token|secret|password)[^"]*"/i.test(htmlNow),
+   "no input is named to collect a key, token, secret or password");
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
