@@ -497,6 +497,70 @@ eq(extNow.length,0,"walkthroughs added no external requests — no video embeds,
 ok(!/youtube|youtu\.be|vimeo|iframe src="https/i.test(htmlNow.replace(/s\.tradingview\.com[^"]*/g,"")),
    "no third-party video embeds were introduced");
 
+console.log("18. Starter strategy library");
+
+var SEED=w.TAPE_SEED||[];
+ok(SEED.length>=10,"starter library carries a useful number of strategies");
+/* Benchmarks are exempt from rule-length checks: buy-and-hold's entry really is
+   "1. Buy. 2. Do nothing." and its invalidation really is "None". Demanding
+   prose there would penalise it for being simple. */
+function isBench(s){return (s.tags||[]).some(function(t){return /benchmark|control/.test(t);});}
+ok(SEED.every(function(s){return s.entry&&s.entry.length>0;}),"every strategy states an entry rule, however short");
+
+/* every seeded strategy names where its rules come from */
+ok(SEED.every(function(s){return s.source&&s.source.length>8;}),
+   "every seeded strategy cites a source");
+ok(SEED.filter(function(s){return !isBench(s);}).every(function(s){return s.entry&&s.entry.length>30;}),
+   "every non-benchmark strategy has actual entry rules, not a placeholder");
+ok(SEED.filter(function(s){return !isBench(s);}).every(function(s){return s.invalidation&&s.invalidation.length>5;}),
+   "every non-benchmark strategy states its invalidation");
+
+/* NON-NEGOTIABLE: nothing invented and attributed to a named person */
+var named=/TJR|ICT|Michael Huddleston|Inner Circle/i;
+ok(!SEED.some(function(s){return named.test(s.source||"")||named.test(s.name||"");}),
+   "no strategy is attributed to a person whose rules were not supplied");
+
+/* NON-NEGOTIABLE 4: the seed must not bypass the evidence model */
+ok(SEED.every(function(s){return s.evidence==="untested";}),
+   "every seeded strategy ships untested");
+ok(SEED.every(function(s){return s.sampleSize===0;}),
+   "every seeded strategy ships at sample size 0");
+ok(!SEED.some(function(s){return s.evidence!=="untested"&&(!s.trades||!s.trades.length);}),
+   "nothing claims a tested badge without trades behind it");
+
+/* no invented statistics */
+ok(!SEED.some(function(s){
+  var pitch=[s.notes,s.entry,s.riskNote,s.bias].join(" ");
+  /* a NUMBER attached to a win rate is a claim; the phrase alone may be criticism */
+  return /\d\s*%?\s*win rate|win rate of\s*\d/i.test(pitch||"");
+}),"no seeded strategy uses a win rate to describe what it will do");
+
+/* recorded outcomes, where present, describe a real test rather than a promise */
+var withResults=SEED.filter(function(s){return s.results;});
+ok(withResults.length>=6,"the strategies this project has tested carry their recorded outcome");
+ok(withResults.every(function(s){return !/will (?:make|produce|return)|guaranteed|profitable strategy/i.test(s.results);}),
+   "no results field promises future performance");
+
+/* the loader is idempotent and never overwrites existing work */
+ok(typeof w.__loadSeed==="function","seed loader is available");
+var first=w.__loadSeed();
+ok(first>0,"first load adds the starter strategies");
+var second=w.__loadSeed();
+eq(second,0,"loading twice adds nothing — it is idempotent");
+
+/* what landed in storage still satisfies the evidence model */
+var stored=JSON.parse(w.localStorage.getItem("tape.strats.v1")||"[]");
+ok(stored.length>=SEED.length,"seeded strategies reached storage");
+ok(stored.every(function(s){return s.evidence!=="backtested"||(s.trades&&s.trades.length);}),
+   "nothing in storage carries a backtested badge without a trade log");
+ok(stored.filter(function(s){return SEED.some(function(x){return x.name===s.name;});})
+        .every(function(s){return s.sampleSize===0&&s.evidence==="untested";}),
+   "seeded entries remain untested at sample size 0 after being stored");
+
+/* the benchmark and the control are both present — they are the point */
+ok(SEED.some(function(s){return /buy and hold/i.test(s.name);}),"buy-and-hold benchmark is in the library");
+ok(SEED.some(function(s){return /random entry/i.test(s.name);}),"random-entry control is in the library");
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
