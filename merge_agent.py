@@ -30,7 +30,8 @@ BAN = [re.compile(r'(this|the)\s+(pattern|setup|signal)[^.]{0,40}\b\d{1,3}\s?%',
        re.compile(r'win rate of\s+\d', re.I),
        re.compile(r'\d{1,3}\s?% (?:accurate|reliable|of trades win)', re.I),
        re.compile(r'\bwill\s+(?:go|reverse|continue)\b', re.I),
-       re.compile(r'\bguaranteed\b', re.I)]
+       re.compile(r'guaranteed\s+(returns?|profits?|income|wins?|winners?|success)', re.I),
+       re.compile(r'\b(undefined|NaN)\b')]
 
 bad, ok = [], {}
 for k, v in entries.items():
