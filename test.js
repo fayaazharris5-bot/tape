@@ -7,7 +7,11 @@ const FILE=path.join(__dirname,"index.html");
 /* 1006 -> 1001 on 2026-08-13: five duplicate entries deleted (Killzone,
    Power of three, OTE, Order book / depth, and the ICT copy of Liquidity)
    — an intended content change, not a rendering regression. */
-const EXPECT_TERMS=1001, EXPECT_CHARTS=73, EXPECT_SECTIONS=48;
+/* 1001 -> 995: six more merge-era duplicates deleted (Support, Resistance,
+   Trendline / channel, Swing high / low, In-sample / out-of-sample,
+   Multiple comparisons) — all had zero inbound references; names remain
+   searchable via alt text on their keepers. Intended content change. */
+const EXPECT_TERMS=995, EXPECT_CHARTS=73, EXPECT_SECTIONS=48;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
