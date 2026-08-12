@@ -617,9 +617,16 @@ body.tpopen{overflow:hidden}
    Layered last so it wins the cascade without touching the markup or
    any behaviour. Nothing here changes a class name the tests rely on.
    ==================================================================== */
-/* ---- palette: deeper ground, real elevation, warmer accent ---- */
+/* ---- palette: deeper ground, real elevation, warmer accent ----
+   --ink3 is the quiet-text role: figcaptions, the export label, section notes,
+   metadata. It was set for contrast against --paper (4.51:1 light / 4.62:1
+   dark) but most of the things wearing it sit on --tint or --card, where it
+   measured 3.94:1 and 4.19:1 — under the 4.5:1 AA floor this project already
+   set itself. Lifted 10/255 per channel in dark and 5/255 in light, which is
+   the smallest change that clears 4.5:1 on tint, card AND paper in both
+   schemes. Verified: no element's geometry moves. */
 :root{
-  --paper:#FAF9F7; --card:#FFFFFF; --ink:#101317; --ink2:#4A5158; --ink3:#6B727B;
+  --paper:#FAF9F7; --card:#FFFFFF; --ink:#101317; --ink2:#4A5158; --ink3:#666D76;
   --rule:#E6E2DC; --rule2:#CFCAC2; --tint:#F1EEE9;
   --up:#0F7A5A; --down:#B23A2E; --accent:#1B4F8F; --signal:#B87613;
   --elev1:0 1px 2px rgba(16,19,23,.05), 0 1px 3px rgba(16,19,23,.04);
@@ -628,7 +635,7 @@ body.tpopen{overflow:hidden}
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --paper:#0C0E12; --card:#14171D; --ink:#EFECE6; --ink2:#A7AEB8; --ink3:#737B85;
+    --paper:#0C0E12; --card:#14171D; --ink:#EFECE6; --ink2:#A7AEB8; --ink3:#7D858F;
     --rule:#222731; --rule2:#333A45; --tint:#191D24;
     --up:#3EC08F; --down:#E4695B; --accent:#7FB3F0; --signal:#E0A83E;
     --elev1:0 1px 2px rgba(0,0,0,.4);
@@ -636,14 +643,14 @@ body.tpopen{overflow:hidden}
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0C0E12; --card:#14171D; --ink:#EFECE6; --ink2:#A7AEB8; --ink3:#737B85;
+  --paper:#0C0E12; --card:#14171D; --ink:#EFECE6; --ink2:#A7AEB8; --ink3:#7D858F;
   --rule:#222731; --rule2:#333A45; --tint:#191D24;
   --up:#3EC08F; --down:#E4695B; --accent:#7FB3F0; --signal:#E0A83E;
   --elev1:0 1px 2px rgba(0,0,0,.4);
   --elev2:0 2px 8px rgba(0,0,0,.45), 0 12px 32px rgba(0,0,0,.35);
 }
 :root[data-theme="light"]{
-  --paper:#FAF9F7; --card:#FFFFFF; --ink:#101317; --ink2:#4A5158; --ink3:#6B727B;
+  --paper:#FAF9F7; --card:#FFFFFF; --ink:#101317; --ink2:#4A5158; --ink3:#666D76;
   --rule:#E6E2DC; --rule2:#CFCAC2; --tint:#F1EEE9;
   --up:#0F7A5A; --down:#B23A2E; --accent:#1B4F8F; --signal:#B87613;
   --elev1:0 1px 2px rgba(16,19,23,.05), 0 1px 3px rgba(16,19,23,.04);
