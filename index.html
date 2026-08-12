@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tape — reading the tape</title>
@@ -654,7 +656,13 @@ header.top{border-bottom:0;padding:56px 0 24px;position:relative}
 header.top::after{
   content:"";position:absolute;left:24px;right:24px;bottom:0;height:1px;
   background:linear-gradient(90deg,var(--signal),var(--rule) 42%,transparent)}
-.eyebrow{font-size:10.5px;letter-spacing:.2em;color:var(--ink3);margin:0 0 16px}
+/* Block-level, not inline-flex. The file now carries a doctype, so it renders
+   in standards mode instead of quirks mode — and in standards mode an
+   inline-level box reserves a full line box, which added 11px of leading under
+   the eyebrow that quirks mode had been suppressing. Laying it out as a
+   fit-content block gives the identical box with no inline strut, so fixing
+   the rendering mode did not move the masthead. */
+.eyebrow{display:flex;width:fit-content;font-size:10.5px;letter-spacing:.2em;color:var(--ink3);margin:0 0 16px}
 .eyebrow::before{content:"";display:inline-block;width:16px;height:1px;background:var(--signal);
   vertical-align:middle;margin-right:9px}
 h1{font-size:clamp(34px,6.4vw,60px);line-height:1.03;letter-spacing:-.033em;font-weight:700;margin:0 0 16px}
@@ -2252,11 +2260,14 @@ var TAPE_SEED=[];
 
 <script>
 var W=320,H=150;
-function svgFor(v){
+/* `label` becomes the svg's aria-label. Callers that are asking the reader to
+   identify the pattern — the quiz and the spot-the-pattern card — deliberately
+   pass nothing, because naming the term there would give away the answer. */
+function svgFor(v,label){
   if(!v) return "";
   if(v.k==="raw") return v.svg;
-  if(v.k==="e") return equitySvg(v);
-  return candleSvg(v);
+  if(v.k==="e") return equitySvg(v,label);
+  return candleSvg(v,label);
 }
 function col(c){
   return {a:"var(--accent)",s:"var(--signal)",u:"var(--up)",d:"var(--down)",k:"var(--ink)",g:"var(--ink3)",r:"var(--rule2)"}[c||"g"];
@@ -2264,7 +2275,7 @@ function col(c){
 function cls(c){
   return {a:"lba",s:"lbs",u:"lbu",d:"lbd",k:"lbk"}[c||""]||"lb";
 }
-function candleSvg(v){
+function candleSvg(v,label){
   var d=v.d,n=d.length,pad=8,top=10,vh=v.vol?26:0,bot=6+vh;
   var ps=[];
   d.forEach(function(c){ps.push(c[1],c[2]);});
@@ -2323,9 +2334,9 @@ function candleSvg(v){
       s+='<text class="'+cls(o.c)+'" x="'+tx.toFixed(1)+'" y="'+(y+(o.below?10:-6)).toFixed(1)+'" text-anchor="'+ax+'">'+o.t+'</text>';
     }
   });
-  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="chart">'+s+'</svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(label||"chart")+'">'+s+'</svg>';
 }
-function equitySvg(v){
+function equitySvg(v,label){
   var pad=10,top=12,bot=10,ps=[];
   v.s.forEach(function(o){o.v.forEach(function(p){ps.push(p);});});
   var lo=Math.min.apply(null,ps),hi=Math.max.apply(null,ps),rg=(hi-lo)||1;
@@ -2347,7 +2358,7 @@ function equitySvg(v){
     s+='<circle cx="'+X(o.i).toFixed(1)+'" cy="'+Y(o.p).toFixed(1)+'" r="2.4" fill="'+col(o.c)+'"/>';
     if(o.t) s+='<text class="'+cls(o.c)+'" x="'+X(o.i).toFixed(1)+'" y="'+(Y(o.p)+(o.below?10:-6)).toFixed(1)+'" text-anchor="middle">'+o.t+'</text>';
   });
-  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="equity curve">'+s+'</svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(label||"equity curve")+'">'+s+'</svg>';
 }
 </script>
 
@@ -2498,6 +2509,28 @@ return {el:el,esc:esc,escText:escText,slug:slug,store:store,K:K};
     });
   }
 
+  /* Two terms deliberately share a name — Liquidity (basics vs ICT) and Chop
+     (price action vs slang) — because they are genuinely different senses.
+     The slug used to be derived from the name alone, so both cards got the
+     same element id: the second was unreachable by deep link, starring one
+     starred both, and the detail panel showed the wrong sense for the first.
+
+     Settle it once here, where the id contract is established, and let every
+     other module read x.slug rather than re-deriving it. The first occurrence
+     keeps the bare slug, so existing links and see-also references still land
+     on the primary sense; later ones take their section as a suffix. */
+  var usedSlug={};
+  D.forEach(function(x){
+    var s=slug(x.t);
+    if(usedSlug[s]){
+      var alt=s+"-"+slug(x.c), i=2;
+      while(usedSlug[alt]) alt=s+"-"+slug(x.c)+"-"+(i++);
+      s=alt;
+    }
+    usedSlug[s]=1;
+    x.slug=s;
+  });
+
   CAT.forEach(function(c){
     var s=document.createElement("section");
     s.id="sec-"+c[0];
@@ -2506,10 +2539,10 @@ return {el:el,esc:esc,escText:escText,slug:slug,store:store,K:K};
     D.filter(function(x){return x.c===c[0];}).forEach(function(x){
       var e=document.createElement("article");
       e.className="entry"+(x.v?" haschart":"");
-      var tslug=slug(x.t);
+      var tslug=x.slug;
       var txt='<div><h3 class="term"><button class="star" data-star="'+tslug+'" title="Save this term" aria-label="Save '+esc(x.t)+'">\u2605</button>'+esc(x.t)+'<button class="lnk" data-slug="'+tslug+'" title="Copy a link to this term" aria-label="Copy link to '+esc(x.t)+'">link</button></h3><p class="def">'+esc(x.d)+'</p>'+
               '<p class="ex'+(x.warn?" warn":"")+'"><b>'+(x.warn?"Careful":"Example")+'</b> · '+esc(x.e)+'</p></div>';
-      var fig=x.v?'<figure>'+svgFor(x.v)+(x.cap?'<figcaption>'+esc(x.cap)+'</figcaption>':'')+'</figure>':'';
+      var fig=x.v?'<figure>'+svgFor(x.v,esc(x.t)+" chart")+(x.cap?'<figcaption>'+esc(x.cap)+'</figcaption>':'')+'</figure>':'';
       e.innerHTML=txt+fig;
       e.dataset.hay=(x.t+" "+x.d+" "+x.e).toLowerCase();
       e.dataset.slug=tslug;
@@ -3019,7 +3052,7 @@ function quizRender(){
           (it.e?'<p class="ex"><b>Example</b> \u00b7 '+esc(it.e)+'</p>':'')+
           (qcur.mode!=="chart"&&it.v?'<figure class="qfig">'+svgFor(it.v)+'</figure>':'')+
           '<div class="acts"><button class="btn pri" id="q-next">Next question</button>'+
-          '<button class="btn" data-term="term-'+slug(it.t)+'">See the full entry</button></div></div>';
+          '<button class="btn" data-term="term-'+it.slug+'">See the full entry</button></div></div>';
   }
   body.innerHTML='<div class="qcard">'+prompt+'<div class="qopts">'+opts+'</div>'+after+'</div>';
   Array.prototype.forEach.call(body.querySelectorAll("[data-o]"),function(b){
@@ -3143,7 +3176,7 @@ function liveRender(){
     '<button class="btn" id="l-another">Another</button></div>'+
     '<div class="spotgrid"><figure class="qfig">'+svgFor(pick.v)+'</figure>'+
     '<div><h3 class="term">'+esc(pick.t)+'</h3><p class="def">'+esc(pick.d)+'</p>'+
-    '<div class="acts"><button class="btn" data-term="term-'+slug(pick.t)+'">Full entry</button></div></div></div></div>';
+    '<div class="acts"><button class="btn" data-term="term-'+pick.slug+'">Full entry</button></div></div></div></div>';
   $("l-another").onclick=liveRender;
   if(!$("lread")){
     var lrhost=document.createElement("div");
@@ -3331,7 +3364,7 @@ function buildTools(){
     '<button class="btn" id="b-share">Copy share link</button>'+
     '<button class="btn" id="b-exp">Export .json</button>'+
     '<button class="btn" id="b-imp">Import .json</button>'+
-    '<input type="file" id="b-file" accept="application/json,.json" class="sr-only">';
+    '<input type="file" id="b-file" accept="application/json,.json" class="sr-only" aria-label="Choose a strategies .json file to import">';
   $("b-add").onclick=function(){openForm(null);};
   $("b-tools").onclick=function(){tools=!tools;render();};
   $("b-share").onclick=function(){doShare(this);};
@@ -3896,7 +3929,7 @@ if(MOTION){
    ==================================================================== */
 (function(){
 "use strict";
-var el=TAPE_NS.el, esc=TAPE_NS.esc, slug=TAPE_NS.slug;
+var el=TAPE_NS.el, esc=TAPE_NS.esc;
 
 /* =====================================================================
    1. SIMPLE / DETAILED
@@ -3961,7 +3994,7 @@ if(chips&&chips.parentNode) chips.parentNode.appendChild(bar);
   var D=window.D||[];
   var bySlug={};
   D.forEach(function(x){
-    bySlug[slug(x.t)]=x;
+    bySlug[x.slug]=x;
   });
   document.querySelectorAll("#grid .entry").forEach(function(e){
     var x=bySlug[e.dataset.slug];
@@ -4046,7 +4079,7 @@ var COND={
 (function(){
   var D=window.D||[];
   var bySlug={};
-  D.forEach(function(x){bySlug[slug(x.t)]=x;});
+  D.forEach(function(x){bySlug[x.slug]=x;});
   document.querySelectorAll("#grid .entry").forEach(function(e){
     var x=bySlug[e.dataset.slug];
     if(!x||!COND[x.t])return;
@@ -4407,7 +4440,7 @@ function markExported(slug){
   var a=loadExported();
   if(a.indexOf(slug)<0){a.push(slug);saveExported(a);}
 }
-var esc=TAPE_NS.esc, slugify=TAPE_NS.slug;
+var esc=TAPE_NS.esc;
 
 function captionFor(x){
   var lines=[];
@@ -4427,7 +4460,7 @@ function svgElFor(slug){
 }
 
 function exportTerm(x, preset){
-  var slug=slugify(x.t);
+  var slug=x.slug;
   var svg=svgElFor(slug);
   if(!svg) return Promise.reject(new Error("no chart for "+x.t));
   var e=document.getElementById("term-"+slug);
@@ -4439,14 +4472,14 @@ function exportTerm(x, preset){
 /* ---- carousel: a whole section as numbered slides ---- */
 function carousel(sectionId, preset, onProgress){
   var D=window.D||[];
-  var items=D.filter(function(x){return x.c===sectionId && svgElFor(slugify(x.t));});
+  var items=D.filter(function(x){return x.c===sectionId && svgElFor(x.slug);});
   var out=[], i=0;
   function step(){
     if(i>=items.length) return Promise.resolve(out);
     var x=items[i];
     return exportTerm(x,preset).then(function(b){
       var n=String(i+1).padStart(2,"0");
-      out.push({name:n+"-"+slugify(x.t)+".png",blob:b,term:x.t});
+      out.push({name:n+"-"+x.slug+".png",blob:b,term:x.t});
       i++;
       if(onProgress)onProgress(i,items.length,x.t);
       return step();
@@ -4468,9 +4501,9 @@ function mount(){
   box.id="postbuilder";
   box.className="wrap";
   var opts=CAT.filter(function(c){
-    return D.some(function(x){return x.c===c[0]&&svgElFor(slugify(x.t));});
+    return D.some(function(x){return x.c===c[0]&&svgElFor(x.slug);});
   }).map(function(c){
-    var n=D.filter(function(x){return x.c===c[0]&&svgElFor(slugify(x.t));}).length;
+    var n=D.filter(function(x){return x.c===c[0]&&svgElFor(x.slug);}).length;
     return '<option value="'+esc(c[0])+'">'+esc(c[1])+' ('+n+')</option>';
   }).join("");
 
@@ -4497,13 +4530,13 @@ function mount(){
 
   document.getElementById("pb-surprise").onclick=function(){
     var done=loadExported();
-    var pool=D.filter(function(x){return svgElFor(slugify(x.t))&&done.indexOf(slugify(x.t))<0;});
+    var pool=D.filter(function(x){return svgElFor(x.slug)&&done.indexOf(x.slug)<0;});
     if(!pool.length){ out.textContent="Every term with a chart has been exported. Clear tape.exported to start again."; return; }
     var x=pool[Math.floor(Math.random()*pool.length)];
     var preset=document.getElementById("pb-preset").value;
     out.textContent="Exporting "+x.t+"…";
     exportTerm(x,preset).then(function(b){
-      window.tapeDownload(b,(TAPE.wordmark||"tape").toLowerCase()+"-"+slugify(x.t)+".png");
+      window.tapeDownload(b,(TAPE.wordmark||"tape").toLowerCase()+"-"+x.slug+".png");
       var cap=captionFor(x);
       var copied=false;
       try{ if(navigator.clipboard){ navigator.clipboard.writeText(cap); copied=true; } }catch(e){}
@@ -4579,7 +4612,7 @@ var MOTION=!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: redu
 
 var D=window.D||[], CAT=window.CAT||[];
 var BY={}, ORDER={};
-D.forEach(function(x){ BY[slugify(x.t)]=x; });
+D.forEach(function(x){ BY[x.slug]=x; });
 CAT.forEach(function(c){ ORDER[c[0]]=D.filter(function(x){return x.c===c[0];}); });
 function catName(c){for(var i=0;i<CAT.length;i++) if(CAT[i][0]===c) return CAT[i][1]; return c;}
 
@@ -4636,7 +4669,7 @@ function paras(t){
 
 function render(x){
   current=x;
-  var slug=slugify(x.t);
+  var slug=x.slug;
   var srcEntry=el("term-"+slug);
   var figHtml="";
   if(srcEntry){
@@ -4739,6 +4772,7 @@ function render(x){
       var sq=el("sq"); if(sq){ sq.value=b.dataset.strat; sq.dispatchEvent(new Event("input")); }
     };
   });
+  panel.dataset.term=x.slug;
   panel.scrollTop=0;
 }
 
@@ -4993,13 +5027,13 @@ function attach(){
   var panel=document.getElementById("tpanel");
   if(!panel||panel.hidden) return;
   if(panel.querySelector(".wkbox")) return;
-  var title=document.getElementById("tp-title");
-  if(!title) return;
-  var term=title.textContent.trim();
-  var D=window.D||[];
+  /* Match on the slug the panel records, not on its heading text: two terms
+     share a name, so the text lookup found the wrong one for those two. */
+  var D=window.D||[], want=panel.dataset.term||"";
   var x=null;
-  for(var k=0;k<D.length;k++) if(D[k].t===term){x=D[k];break;}
+  for(var k=0;k<D.length;k++) if(D[k].slug===want){x=D[k];break;}
   if(!x||!x.v||(x.v.k!=="c"&&x.v.k!=="e")) return;
+  var term=x.t;
   if(!window.svgFor) return;
   var fig=panel.querySelector(".tpfig");
   var host=document.createElement("section");
@@ -5278,7 +5312,7 @@ function mount(){
       '<div id="impdrop" class="impdrop" tabindex="0" role="button" aria-label="Choose or drop a CSV statement">'+
         'Drop a CSV here, or click to choose'+
       '</div>'+
-      '<input type="file" id="impfile" accept=".csv,text/csv" class="sr-only">'+
+      '<input type="file" id="impfile" accept=".csv,text/csv" class="sr-only" aria-label="Choose a CSV statement to import">'+
       '<div id="impout"></div>'+
     '</div></details>';
   host.insertBefore(box,host.firstChild);
