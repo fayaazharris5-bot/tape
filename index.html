@@ -5045,152 +5045,12 @@ window.__walkCaptioned=Object.keys(STEPS).length;
    number lives in the Lab, not here. The Strategy Lab bridge is what
    should upgrade these, not a guess made in the browser.
    ==================================================================== */
-var TAPE_SEED=[
-{name:"Turtle breakout (System 1)",
- source:"Dennis & Eckhardt, the Original Turtle Rules (published 2003)",
- market:"Futures, diversified",timeframe:"Daily",session:"",
- bias:"None. Direction comes from the breakout itself, taken long or short.",
- entry:"1. Enter long on a break above the highest high of the last 20 days.\n2. Enter short on a break below the lowest low of the last 20 days.\n3. Skip the signal if the previous breakout would have been a winner.",
- invalidation:"A 2N move against the position, where N is the 20-day average true range.",
- target:"No fixed target. Exit long on a break of the 10-day low, short on a break of the 10-day high.",
- riskNote:"1% of account per position, sized so that 1N of movement equals 1% — the original 'unit' rule. Add up to 4 units at 0.5N intervals.",
- tags:["breakout","trend-following","donchian","published"],
- evidence:"untested",sampleSize:0,
- results:"Tested by this project's Strategy Lab. Lost out-of-sample. Recorded alongside Donchian and Bollinger reversion in the same family, all of which failed OOS.",
- notes:"The most thoroughly documented public trend system there is. Its return profile is a low proportion of winners with large ones — uncomfortable to hold, which is the usual reason people abandon it."},
-
-{name:"Donchian channel breakout",
- source:"Richard Donchian, the original 4-week rule",
- market:"Futures, FX",timeframe:"Daily",session:"",
- bias:"None — always in, long or short.",
- entry:"1. Buy when price exceeds the highest high of the last 20 periods.\n2. Sell and reverse when price falls below the lowest low of the last 20 periods.",
- invalidation:"The opposite channel boundary. The system is always in the market.",
- target:"None. The reverse signal is the exit.",
- riskNote:"Position sized so a move to the opposite band is a defined fraction of the account.",
- tags:["breakout","trend-following","published"],
- evidence:"untested",sampleSize:0,
- results:"Tested by this project's Strategy Lab and lost out-of-sample.",
- notes:"The most honest indicator in the file: it is literally the N-period range, no smoothing, one parameter."},
-
-{name:"Turtle soup",
- source:"Connors & Raschke, Street Smarts (1995)",
- market:"Futures, equities",timeframe:"Daily",session:"",
- bias:"Counter-trend. Fades a failed breakout.",
- entry:"1. Price makes a new 20-day low that is at least 4 trading days after the previous 20-day low.\n2. Place a buy stop a small distance above that prior low.\n3. Enter only if price trades back above the prior low on the same or next day.",
- invalidation:"A close back below the new low. The premise was that the breakout fails; it did not.",
- target:"Prior swing high, or trail once in profit.",
- riskNote:"Fixed fractional. Counter-trend entries need the stop respected without exception.",
- tags:["reversal","false-breakout","published"],
- evidence:"untested",sampleSize:0,
- results:"The sweep-and-reclaim family this belongs to was tested by this project across 6 variants and then 784-variant sweeps. It lost out-of-sample, roughly -24% to -48%.",
- notes:"Worth knowing that this is the documented ancestor of what modern material calls a liquidity sweep. Connors and Raschke published it in 1995."},
-
-{name:"Connors RSI-2 mean reversion",
- source:"Connors & Alvarez, Short Term Trading Strategies That Work (2008)",
- market:"Equity index",timeframe:"Daily",session:"",
- bias:"Long only, and only above the long-term average.",
- entry:"1. Price is above its 200-day moving average.\n2. The 2-period RSI closes below 5.\n3. Enter at the close.",
- invalidation:"A close below the 200-day moving average voids the premise.",
- target:"Exit when price closes above its 5-day moving average.",
- riskNote:"Fixed fractional. No stop in the original rules, which is itself the main risk.",
- tags:["mean-reversion","rsi","published"],
- evidence:"untested",sampleSize:0,
- results:"Tested by this project on MNQ: 7 of 7 winners returning 9-17% while buy-and-hold returned 32.2% over the same period. A 100% win rate on 7 trades is a sample-size artefact, not an edge, and it still lost to doing nothing.",
- notes:"The cleanest illustration in the library of why win rate quoted alone is meaningless."},
-
-{name:"Larry Williams volatility breakout",
- source:"Larry Williams, published volatility breakout rules",
- market:"Futures",timeframe:"Daily",session:"",
- bias:"None.",
- entry:"1. Compute the prior day's range.\n2. Place a buy stop at today's open plus a fraction of that range, and a sell stop at the open minus the same fraction.\n3. Whichever triggers first is the position.",
- invalidation:"The opposite side of the range, or the day's close.",
- target:"Close of the session in the original formulation.",
- riskNote:"Fixed fractional, sized off the range multiple used.",
- tags:["breakout","volatility","published"],
- evidence:"untested",sampleSize:0,
- results:"Tested by this project's Strategy Lab and lost out-of-sample, roughly -22% to -47%.",
- notes:"The range fraction is a free parameter, which is where the fitting happens."},
-
-{name:"Chandelier ATR trailing exit",
- source:"Chuck LeBeau, the chandelier exit",
- market:"Any",timeframe:"Daily",session:"",
- bias:"An exit rule, not an entry. Pair it with a separate entry.",
- entry:"Entry is defined by whatever system you attach this to. This rule governs the exit only.",
- invalidation:"The trailing stop itself.",
- target:"None. Hold until the trail is hit.",
- riskNote:"Trail set at the highest high since entry minus a multiple of ATR, commonly 3x. The stop only ever moves in the favourable direction.",
- tags:["exit","atr","trailing","published"],
- evidence:"untested",sampleSize:0,
- results:"Tested by this project's Strategy Lab and lost out-of-sample, roughly -30% to -34%.",
- notes:"Useful as a component to test against a fixed target rather than as a system on its own."},
-
-{name:"Opening range breakout",
- source:"Generic public method — no single originator",
- market:"Index futures",timeframe:"5m for the trigger, 15m or 30m for the range",
- session:"First 15 or 30 minutes of the session",
- bias:"None taken from the range itself.",
- entry:"1. Mark the high and low of the first N minutes of the session.\n2. Enter on a close beyond either boundary.\n3. One attempt per side per day.",
- invalidation:"A close back inside the opening range.",
- target:"A multiple of the opening range height, or the prior session's extreme.",
- riskNote:"Stop at the opposite side of the range or a fraction of it. Range height varies daily, so contract count must vary with it.",
- tags:["breakout","session","opening-range"],
- evidence:"untested",sampleSize:0,
- results:"",
- notes:"Both the break and the failed break of this box are traded as strategies. Which one you take needs deciding in advance, not after seeing the day."},
-
-{name:"Golden cross trend filter",
- source:"Long-standing public technical convention",
- market:"Equity index",timeframe:"Daily",session:"",
- bias:"Long while the fast average is above the slow one.",
- entry:"1. The 50-period simple moving average closes above the 200-period.\n2. Hold long while that remains true.",
- invalidation:"The 50 closing back below the 200 — the death cross.",
- target:"None. It is a regime filter, not a trade.",
- riskNote:"Whole-position exposure. Signals are rare and late by construction.",
- tags:["trend-following","moving-average","filter"],
- evidence:"untested",sampleSize:0,
- results:"",
- notes:"Enormous media attention, mediocre tested performance, and it triggers well after a move has started. More defensible as a filter on other setups than as a system."},
-
-{name:"Cross-sectional momentum 12-1",
- source:"Jegadeesh & Titman (1993) and the momentum literature that followed",
- market:"Multi-asset universe",timeframe:"Monthly rebalance",session:"",
- bias:"Long the strongest, by rank rather than by forecast.",
- entry:"1. Rank the universe by trailing 12-month return, excluding the most recent month.\n2. Hold the top decile.\n3. Rebalance monthly.",
- invalidation:"An asset dropping out of the top decile at rebalance.",
- target:"None. Position turnover is driven by the ranking.",
- riskNote:"Equal weight across the held decile, or volatility-weighted. Low turnover keeps costs survivable.",
- tags:["momentum","cross-sectional","academic","published"],
- evidence:"untested",sampleSize:0,
- results:"Pre-registered as PR-001 in this project's Strategy Lab and failed 4 of 4.",
- notes:"The strongest surviving academic support of any technical idea, and it still failed on this project's 65-asset universe. Worth knowing both facts."},
-
-{name:"Buy and hold (benchmark)",
- source:"The benchmark, not a strategy",
- market:"Equity index",timeframe:"Any",session:"",
- bias:"Long, permanently.",
- entry:"1. Buy.\n2. Do nothing.",
- invalidation:"None.",
- target:"None.",
- riskNote:"Full exposure to the drawdown of the underlying. Position size is the only decision.",
- tags:["benchmark","passive"],
- evidence:"untested",sampleSize:0,
- results:"Across roughly 58,700 backtests in this project, buy-and-hold beats the active strategies on average. 0 of 134 strategy groups beat it under White's Reality Check.",
- notes:"Kept in the library on purpose. Every other entry has to beat this after costs to have been worth the effort."},
-
-{name:"Random entry (control)",
- source:"A control, not a strategy",
- market:"Any",timeframe:"Any",session:"",
- bias:"None. Entries are random by construction.",
- entry:"1. Enter at random with the same trade count, holding period and costs as the strategy being tested.",
- invalidation:"Same stop rule as the strategy under test.",
- target:"Same target rule as the strategy under test.",
- riskNote:"Identical sizing to the strategy being compared, or the comparison is meaningless.",
- tags:["benchmark","control"],
- evidence:"untested",sampleSize:0,
- results:"In this project's database the random trader ranks 3rd by deflated Sharpe out of everything ever tested.",
- notes:"The floor any real strategy has to clear. If a system cannot beat this, the system is the noise."}
-];
-
+var TAPE_SEED=[];
+/* Emptied deliberately. Eleven strategies were removed here: their rules were
+   written from recall and given citations, which made recalled text look
+   sourced. Rules only enter this library if they are dictated directly or read
+   from a named file. A blank library is correct; invented rules that look
+   researched are not. */
 if(typeof window!=="undefined") window.TAPE_SEED=TAPE_SEED;
 </script>
 
@@ -5235,17 +5095,7 @@ window.__loadSeed=loadSeed;
 function mount(){
   var t=el("stools");
   if(!t||el("b-seed")) return;
-  var b=document.createElement("button");
-  b.id="b-seed"; b.type="button"; b.className="btn";
-  b.textContent="Load starter library";
-  b.title="Adds documented public strategies, all marked untested";
-  b.onclick=function(){
-    var n=loadSeed();
-    if(window.__toast) window.__toast(n?("Added "+n+" documented strategies, all untested"):"Starter library already loaded");
-    if(typeof render==="function"){ try{ render(); }catch(e){ location.reload(); } }
-    else location.reload();
-  };
-  t.appendChild(b);
+  /* starter-library button removed with the seed data it loaded */
 }
 var ts=el("tab-strats");
 if(ts) ts.addEventListener("click",function(){ setTimeout(mount,0); });
