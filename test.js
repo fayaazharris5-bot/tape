@@ -11,7 +11,10 @@ const FILE=path.join(__dirname,"index.html");
    Trendline / channel, Swing high / low, In-sample / out-of-sample,
    Multiple comparisons) — all had zero inbound references; names remain
    searchable via alt text on their keepers. Intended content change. */
-const EXPECT_TERMS=995, EXPECT_CHARTS=73, EXPECT_SECTIONS=48;
+/* CHARTS 73 -> 72: Support and Resistance each carried a chart; merged
+   into Support / resistance, one chart renders in the grid and the other
+   in the detail panel via viz2 — so the grid shows one fewer. */
+const EXPECT_TERMS=995, EXPECT_CHARTS=72, EXPECT_SECTIONS=48;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
