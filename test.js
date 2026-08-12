@@ -436,7 +436,12 @@ d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:tru
 ok(d.getElementById("tpanel").hidden,"close button dismisses the panel");
 
 /* a term with no long body degrades rather than showing a hole */
-d.getElementById("term-pip").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+/* fixture chosen dynamically: any hard-coded term eventually gets written,
+   which broke this test once (Pip). Pick a term that still lacks a body. */
+var stubTerm=(w.D||[]).find(function(x){return !x.long;});
+ok(!!stubTerm,"at least one term still lacks a body (retire this block when all are written)");
+d.getElementById("term-"+stubTerm.t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""))
+ .dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
 ok(!!d.querySelector("#tpanel .tpstub"),"terms without an expanded body show an honest placeholder");
 ok(!/undefined/.test(d.getElementById("tpanel").textContent),"placeholder path leaks no undefined");
 d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));

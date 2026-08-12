@@ -1,0 +1,398 @@
+{
+ "Market structure": {
+  "long": "Market structure is the practice of describing a chart as a sequence of swing highs and swing lows, and naming the trend from their order. Higher highs with higher lows is read as an uptrend, lower highs with lower lows as a downtrend, and anything else as a range. It is a labelling scheme laid over price, not a force acting on it.\n\nThe mechanism offered is about reference points and stops. Prior swing extremes are the levels most participants can see, so protective orders cluster just beyond them. When a prior swing low trades through, everyone who bought above it is underwater at once and the stops resting there become market sell orders. That is why a structural break is treated as information rather than just another tick.\n\nIn practice structure gives an invalidation price rather than an entry. If the reason for being long is a sequence of higher lows, the trade is wrong at the price where that sequence ends, and that price is known before entry.\n\nWhere people get fooled: what counts as a swing depends entirely on the lookback you use to define one, so two people can label the same chart differently and both be consistent. Structure also looks obvious in hindsight and is genuinely ambiguous live, because the break that ends a trend looks identical to the many that happen inside one.",
+  "usage": "Most of the value sits in the invalidation level rather than the label, since the structural point is a price you can specify before entering. Fixing the swing definition in advance, including the lookback, stops the labelling drifting to suit the position.",
+  "see": [
+   "Break of structure",
+   "Swing high / low",
+   "Change of character",
+   "Higher timeframe bias",
+   "Pattern subjectivity"
+  ]
+ },
+ "Higher timeframe bias": {
+  "long": "Higher timeframe bias is a directional lean taken from a slower chart and then applied to decisions made on a faster one. A trader might read the daily as constructive and only consider long entries on the five-minute chart for the rest of the day.\n\nThe argument for it is statistical rather than mystical. A daily bar aggregates a whole session of participants and capital, so the direction it implies is estimated from far more observations than a five-minute bar offers. Noise partly averages out with aggregation, and the levels drawn from slower charts are seen by more people, including institutions whose decision cycles are measured in weeks rather than minutes. A daily level therefore has more resting interest around it than an intraday one.\n\nIn practice bias is used as a filter. It removes half the signals a system would otherwise take, which reduces trade count and concentrates exposure in one direction.\n\nWhere people get fooled: the higher timeframe bar you are reading has not finished forming. Saying the daily is bullish at 11am is a statement about an incomplete bar that can close as anything, and a backtest that reads the completed daily bar is using information nobody had. The filter also supplies a ready-made reason to hold a losing position, because the slower chart can stay supportive for the entire duration of the loss.",
+  "usage": "The useful discipline is deciding which timeframe carries the bias and which carries the trigger before the session, so the bias is not quietly rewritten mid-move. Anyone testing this needs to confirm the higher timeframe bar was closed at the moment of the signal, not afterwards.",
+  "see": [
+   "Top-down analysis",
+   "Chart timeframe alignment",
+   "Daily bias",
+   "Timeframe",
+   "Confirmation bias"
+  ]
+ },
+ "Fractal nature of price": {
+  "long": "Price charts look broadly similar at different scales. Strip the axis labels off a one-minute chart and a monthly one and most people cannot reliably say which is which. This self-similarity is what people mean by the fractal nature of price, a description Benoit Mandelbrot developed formally when studying cotton prices and later financial series generally.\n\nThe mechanism is unglamorous. The same order-placement behaviour happens at every horizon, and aggregating many small increments produces shapes with similar statistical character to the increments themselves. Volatility clusters at every scale, and the distribution of returns has fat tails at every scale. Nothing about this requires participants to be doing anything intentional or coordinated.\n\nUsed practically, self-similarity is why the same vocabulary of ranges, breaks and retracements is applied to weekly and one-minute bars, and why a pattern library transfers between instruments and horizons without modification.\n\nWhere people get fooled: appearance scales but economics does not. A range on a daily chart takes weeks to resolve and costs one spread; the same shape on a one-minute chart costs a spread every few minutes and the fee drag is orders of magnitude larger for the same percentage move. Worse, plausible-looking fractal price paths can be generated from processes containing no information at all, which is a warning about how much structure the eye invents.",
+  "usage": "The practical consequence is that any pattern claim should be stated with its timeframe and its cost assumptions attached, because the same shape has completely different economics at one minute and one week. Visual resemblance across scales is not evidence that a rule transfers across them.",
+  "see": [
+   "Timeframe",
+   "Chart timeframe alignment",
+   "Random-walk control",
+   "Noise floor",
+   "Volatility clustering"
+  ]
+ },
+ "Volume at price": {
+  "long": "Volume at price is a histogram of how much traded at each price level, rather than in each time bar. Conventional volume bars answer when trading happened; a volume-at-price profile answers where. The output is a sideways distribution with fat sections at heavily traded prices and thin sections where price passed through quickly.\n\nThe mechanism is simply arithmetic on the tape. Contracts change hands where buyers and sellers agree, so heavy volume at a price means many positions were established and closed there, at that price, by people who now hold a reference point. Thin nodes mean price moved through a region without much two-sided business, usually because the move was fast and one-sided.\n\nIn use, the fattest level is the point of control, the middle band containing most of the volume is the value area, and thin regions are watched as places price can travel through quickly in either direction.\n\nWhere people get fooled: the profile is purely descriptive. It tells you where trade occurred, not who is trapped, not who is still holding, and not what anyone intends to do next. The step from a fat node to a story about trapped longs is an inference with no data behind it. The shape also depends entirely on the lookback window chosen, and moving that window from one session to twenty changes which levels look important.",
+  "usage": "The lookback window is the entire analysis, so it is worth fixing it in advance and noting it beside any level drawn from a profile. Session, weekly and composite profiles disagree with each other constantly, which is a property of the tool rather than a signal.",
+  "see": [
+   "Volume profile",
+   "Point of Control",
+   "Value area",
+   "Market profile",
+   "Auction market theory"
+  ]
+ },
+ "Imbalance": {
+  "long": "Imbalance is used in two related senses. On order flow it means aggressive buying and aggressive selling at a price were badly unequal, which you can read directly on a footprint chart. On a candle chart it means a three-bar formation where the first bar's high sits below the third bar's low, leaving a band of prices the middle bar raced through without overlap. This second sense overlaps almost exactly with what the ICT framework calls a fair value gap, and it is worth saying plainly that the framework's broader claims are not validated by any published evidence.\n\nThe mechanism is straightforward and does not need anyone to be manipulating anything. A fast one-sided move means limit orders on the passive side were not filled at those prices before price left them. Little genuine two-sided business happened in that band.\n\nIn practice these bands get marked as zones and watched for a later revisit, on the reasoning that unfilled interest is still there.\n\nWhere people get fooled: three-bar non-overlap is extremely common. Any brisk move creates one, which means a chart quickly fills with them and the ones that got revisited are the ones people remember. The revisit claim also carries no time limit, so it is close to unfalsifiable unless you fix a horizon before counting.",
+  "usage": "Counting how many of these bands a single session produces is a quick way to see how selective the concept actually is. Any claim about revisits needs a stated time horizon, otherwise there is nothing to count against.",
+  "see": [
+   "Fair value gap",
+   "Liquidity void",
+   "Displacement",
+   "Wick fill",
+   "Falsifiability"
+  ]
+ },
+ "Wick fill": {
+  "long": "A wick fill is the idea that price returns to trade back through the body of a long shadow left by an earlier rejection, either to the midpoint of the wick or to its extreme.\n\nThe mechanism proposed is thin trade. A long wick means price visited those levels briefly and few contracts changed hands there before it snapped back. Anyone whose resting limit orders sat in that band was not filled, and if their interest is genuine those orders are still there, or will be replaced. On that reading the wick marks unfinished business rather than a completed auction, which is a close cousin of the imbalance and single-print arguments from market profile.\n\nIn practice traders mark the fifty per cent point of the wick or its tip, and treat a return there as the level being resolved rather than as an event in itself.\n\nWhere people get fooled: inside a range, essentially everything gets revisited eventually, so a wick fill is often ordinary mean reversion wearing a specific name. Because no horizon is attached to the word eventually, the claim is very hard to disprove and very easy to confirm by scrolling back. The wicks that never filled tend not to be screenshotted, and they are precisely the sample that would tell you whether the idea has any content.",
+  "usage": "Attaching a bar count or a session limit to the word eventually turns the idea into something countable. Without that, wick fill and range noise are indistinguishable in any honest sample.",
+  "see": [
+   "Imbalance",
+   "Gap fill",
+   "Rejection",
+   "Liquidity void",
+   "Falsifiability"
+  ]
+ },
+ "Round numbers": {
+  "long": "Round numbers are price levels that end in zeros: 4000 on an index, 1.1000 on EUR/USD, one hundred dollars on a share. In FX the whole figure is called the big figure and is often left out of a spoken quote entirely.\n\nThe mechanism here is genuinely about human and machine behaviour rather than anything mystical. People place limit and stop orders at prices they can say out loud, so resting orders cluster at round figures. Option strikes are listed at round intervals, which concentrates hedging activity near them. Execution algorithms and broker default settings reference round levels too. The result is that the book really is thicker at these prices, and stop orders really do accumulate just beyond them.\n\nIn practice they are used as reference points for limit placement and as the obvious candidates for where a sweep might reach.\n\nWhere people get fooled: the same visibility that concentrates orders at a round number is why it gets run through. A level everyone can see is a level everyone has orders at, which makes it an attractive place to trade against rather than a wall. Retrospective charts also make this look reliable, because a round number sits within a handful of ticks of almost any reaction on a long enough chart.",
+  "usage": "The tolerance you allow around a round level does most of the work, and a wide tolerance will match nearly any turn on the chart. Stating it in ticks or pips before looking keeps the observation honest.",
+  "see": [
+   "Equal highs / equal lows",
+   "Liquidity sweep",
+   "Stop hunt",
+   "Pip",
+   "Support / resistance"
+  ]
+ },
+ "Session open reaction": {
+  "long": "Session open reaction covers the burst of volume, range and spread that arrives when a market opens: 10:00 AEST on the ASX, 08:00 London for European hours, 09:30 New York for US cash equities.\n\nThe mechanism is order accumulation and release. While a market is shut or thin, orders and news pile up with nowhere to go. At the open, everyone who could not act suddenly can, and an opening auction or the first minutes of continuous trade clear that backlog at one or a handful of prices. Overnight information gets priced in a single concentrated event rather than gradually. That is why the first thirty minutes routinely carry a disproportionate share of the day's volume and the widest bars.\n\nIn practice the open is measured rather than predicted: an opening range is recorded, an initial balance is defined over the first hour, and later behaviour is described relative to those boundaries.\n\nWhere people get fooled: high volatility is read as high information. The open is also the moment of the widest spreads, the worst queue positions and the largest slippage of the session, so a backtest that assumes mid-price fills flatters open-driven strategies more than any other kind. The big bar you see on the chart was not available at the price the chart implies.",
+  "usage": "Any measurement of the open needs an explicit fill assumption, because mid-price fills and realistic fills diverge most sharply in exactly this window. Recording the actual spread at the open for a few weeks is more informative than any pattern drawn on it.",
+  "see": [
+   "Opening range",
+   "Initial balance",
+   "Auction (open / close)",
+   "Session",
+   "Slippage"
+  ]
+ },
+ "Overnight range": {
+  "long": "The overnight range is the high and low made outside a market's primary session. For US index futures this means the Globex hours between the afternoon close and the following morning's regular trade; for equities it is the extended-hours session.\n\nThe mechanism worth understanding is depth. Overnight books are thin, so a given order size moves price much further than it would at midday. The range is set by fewer participants transacting less size, often reacting to European or Asian hours news. When the primary session opens, far more capital arrives at once and can happily disagree with everything priced overnight.\n\nIn practice the overnight high and low are marked as reference levels, and the day is described by whether the regular session accepts or rejects them.\n\nWhere people get fooled: these extremes were made in the thinnest conditions of the twenty-four hours, so treating them as prices the market agreed on overstates their information content considerably. There is also a measurement trap. The levels depend entirely on the session boundaries and timezone you defined, and daylight saving shifts alone move them by an hour twice a year in each hemisphere, which quietly changes the levels a backtest computed.",
+  "usage": "Session boundaries and the timezone rule need to be written down explicitly, because daylight saving changes silently redefine the level otherwise. Depth at the time the extreme was made matters more than the extreme itself.",
+  "see": [
+   "Globex hours",
+   "Previous day high / low",
+   "Overnight risk",
+   "Initial balance",
+   "Timezone alignment"
+  ]
+ },
+ "Failed auction": {
+  "long": "Failed auction is a term from auction market theory, the market profile tradition associated with Peter Steidlmayer. It describes price probing above a range high or below a range low, failing to attract activity at the new level, and returning inside the previous area of value.\n\nThe mechanism follows from what the framework says an auction is for. Price moves higher to advertise itself and find sellers, and lower to find buyers. If a higher price brings in no additional volume, the advertisement failed and there is no reason for price to remain there. On a profile this shows as single prints or a poor high, meaning the extreme was made by very few contracts rather than by a genuine two-sided exchange.\n\nIn practice it is read after the return, with reference to the value area, and the range extreme becomes the invalidation.\n\nWhere people get fooled: the opening footprint of a failed auction and of a genuine breakout are identical. The distinguishing feature is whether volume arrived at the new prices, and that information develops with a lag, sometimes a long one. The word failed can only be applied once price is already back inside, which makes historical examples look far cleaner than the live experience of watching one form.",
+  "usage": "Whether volume expanded at the new prices is the observable that does the work here, not the shape of the excursion. That measurement arrives late, which is a property of the concept rather than a flaw in the reader.",
+  "see": [
+   "Auction market theory",
+   "Market profile",
+   "Value area",
+   "Upthrust",
+   "False breakout"
+  ]
+ },
+ "Trend day vs balance day": {
+  "long": "A trend day opens near one extreme and closes near the other, with most bars pushing the same way and shallow pullbacks. A balance day rotates around a middle, revisits both edges of its range and closes somewhere near the centre. The two describe completely different intraday conditions.\n\nThe mechanism is who has size and who does not. A trend day usually means one side is working a large order or repricing after news, and the opposite side lacks the capital or the willingness to absorb it, so each rotation gets shallower. A balance day means both sides are present at the edges, and intermediaries earn the spread by buying low and selling high inside a stable range. Volatility clustering means these conditions persist for hours rather than alternating minute by minute.\n\nEarly tells used in practice include an open drive away from the opening price, the size of the initial balance, and whether the first extension holds.\n\nWhere people get fooled: the classification is decided at the close, not at the open. Most days are neither pure type, and a strategy described as trading only trend days has usually been filtered with the benefit of knowing how the day ended. Applying a mean-reversion rule to the first half of a trend day feels exactly the same as applying it correctly on a balance day.",
+  "usage": "The label is only fully assignable at the close, so any rule that depends on it needs a stated early proxy that was computable in real time. The initial balance width and open drive behaviour are the usual candidates.",
+  "see": [
+   "Open drive",
+   "Initial balance",
+   "Range",
+   "Expansion",
+   "Chop"
+  ]
+ },
+ "Markup / markdown": {
+  "long": "Markup and markdown are Richard Wyckoff's names for two of the four phases in his price cycle. Accumulation comes first, then markup as price rises steadily, then distribution, then markdown as it falls. The vocabulary is a century old and predates almost everything else in retail chart analysis.\n\nWyckoff's proposed mechanism is a composite operator, a stand-in for the largest and best-informed participants. On his account this operator absorbs supply quietly inside a range while the public is disinterested, and once the floating supply is gone very little buying is needed to lift price, producing markup. Distribution reverses it: stock is fed out into strength, and once demand is exhausted markdown follows on light support.\n\nIn practice the labels are used to place the current chart in a cycle and to set expectations about whether ranges resolve upwards or downwards.\n\nWhere people get fooled: the four labels can be fitted to any chart after the fact, because any price series can be partitioned into rising sections, falling sections and the flat bits between. That flexibility is what makes the framework so persuasive in teaching material. Wyckoff was also describing early twentieth-century equity markets with far more concentrated ownership and vastly less transparency than a modern electronic order book.",
+  "usage": "The phase label is nearly always clear in retrospect and contested at the right-hand edge, which is where any use of it actually happens. Noting what would have to occur for the current phase call to be wrong is what makes the labelling checkable.",
+  "see": [
+   "Wyckoff method",
+   "Accumulation",
+   "Distribution",
+   "Composite operator",
+   "Phases A to E"
+  ]
+ },
+ "Upthrust": {
+  "long": "Upthrust is Wyckoff's term for price pushing above the high of a trading range and then falling back inside it. When it happens late in a distribution range he called it an upthrust after distribution, abbreviated UTAD, and treated it as the last event before markdown.\n\nThe mechanism in Wyckoff's reading is a test of whether demand exists above the range. The push above supplies two things to anyone wanting to sell size: breakout buyers entering on the new high, and short sellers inside the range being stopped out, which is also buying. Both are willing counterparties at exactly the moment large supply wants to be distributed. If genuine demand above the range is absent, price cannot hold there and falls back through the high it just made.\n\nIn practice the range high is the reference and the invalidation sits above the upthrust extreme, which makes the risk definable even though the read is subjective.\n\nWhere people get fooled: an upthrust and a successful breakout are visually identical until the close back inside the range, and that close comes after the best prices have gone. The name is awarded in retrospect, which is why every worked example in a course looks decisive and the live version rarely does.",
+  "usage": "The event is the close back inside the range, not the poke above it, and the two are separated by a period in which the outcome is genuinely unknown. Using the range high as the invalidation keeps the read falsifiable when the label itself is subjective.",
+  "see": [
+   "Wyckoff method",
+   "Distribution",
+   "Spring",
+   "False breakout",
+   "Liquidity sweep"
+  ]
+ },
+ "Expansion": {
+  "long": "Expansion describes a shift from small bars to large ones, where the range covered per unit of time increases sharply, usually after a period of contraction.\n\nThe underlying mechanism is one of the few well-documented statistical facts about markets. Volatility is autocorrelated: large moves tend to be followed by large moves and quiet periods by quiet periods, a property formalised in the ARCH family of models and observable in essentially every liquid instrument. The reasons offered are that information arrives in clusters, and that position adjustment feeds on itself, since a large move triggers margin changes, hedging and stop orders which themselves move price.\n\nIn practice expansion matters mostly for sizing and for the shape of a payoff. Volatility-based position sizing shrinks the number of contracts as ranges widen, and breakout systems depend on expansion arriving after entry rather than before.\n\nWhere people get fooled: expansion is trivially visible after it happens and the entry that captured it is not. The bigger trap is arithmetic. The same widened range that makes the move large also widens the sensible stop, so the reward measured in risk units does not grow nearly as fast as the chart suggests. Expansion also cuts both ways, and the losses during it are the same size as the wins.",
+  "usage": "Sizing usually needs to be a function of current range rather than a fixed contract count, or the risk per trade drifts with the volatility regime. Measuring a move in risk units rather than points keeps expansion from looking larger than it is.",
+  "see": [
+   "Volatility clustering",
+   "ATR",
+   "Displacement",
+   "Volatility regime",
+   "Bollinger squeeze"
+  ]
+ },
+ "Equal highs / equal lows": {
+  "long": "Equal highs are two or more swing highs made at effectively the same price; equal lows are the mirror image. Classical chart analysis has called the two-touch version a double top or double bottom for a very long time.\n\nThe mechanism proposed is order accumulation. A price that has turned the market back once is visible to everyone, so the second approach draws limit orders at the level and protective stops just beyond it. Stops are, mechanically, market orders waiting to fire. That makes a flat pair of highs a plausible pool of resting liquidity, which is the same observation the ICT vocabulary labels buy-side liquidity, and it is why such levels are described as a draw rather than a barrier.\n\nIn practice they are marked as candidate targets, and the interest is in whether price trades through and holds or trades through and snaps back.\n\nWhere people get fooled: two touches at nearly the same price is the single most common thing on any chart, and how equal counts as equal is a tolerance you choose. Widen it by a few ticks and the number of examples multiplies. The pair that holds as resistance and the pair that gets swept look identical beforehand, and only the swept ones make it into teaching material.",
+  "usage": "The equality tolerance should be written in ticks or pips before the level is drawn, since it determines how many examples exist at all. Treating the level as a place activity concentrates is different from treating it as a barrier.",
+  "see": [
+   "Double top",
+   "Buy-side / sell-side liquidity",
+   "Liquidity sweep",
+   "Stop hunt",
+   "Round numbers"
+  ]
+ },
+ "Retracement vs reversal": {
+  "long": "A retracement is a temporary move against the prevailing direction that resolves back in line with it. A reversal is the end of that direction. The distinction matters enormously for whether a position is held, and there is no observable that separates them at the moment they begin.\n\nThe reason is mechanical rather than psychological. Both start as the same thing: price moving the other way. The information that would distinguish them, namely whether the counter-move exhausts or extends, only exists later. Structural definitions are attempts to make the distinction operational rather than to solve it, for example calling a counter-move a retracement while it holds above the prior swing low and something else once that low trades through.\n\nIn practice this is handled by giving up on knowing. A level is chosen in advance at which the original read is treated as wrong, and the position is managed against that price rather than against an opinion about which of the two is unfolding.\n\nWhere people get fooled: the distinction is only ever knowable in hindsight, yet almost all education presents it as a live skill. The desire to be told which one is happening is exactly what keeps traders holding losers, because every loss looks like a retracement right up until it is not.",
+  "usage": "Because no live observable separates the two, the working substitute is a price defined in advance at which the original read is abandoned. Reviewing which counter-moves were resolved by that price and which were not is more informative than trying to classify them at the time.",
+  "see": [
+   "Pullback",
+   "Reversal",
+   "Change of character",
+   "Invalidation",
+   "Fibonacci retracement"
+  ]
+ },
+ "Gap fill": {
+  "long": "A gap is a discontinuity between one session's close and the next session's open, where a band of prices simply did not trade. A gap fill is price later trading back through that band to the prior close.\n\nThe mechanism for the gap itself is closure. While the market is shut, information arrives and cannot be expressed in transactions, so the reopening auction clears at whatever new price balances the accumulated orders. The mechanism proposed for the fill is that the reopening sometimes overshoots, and that limit interest left at the old prices is still there when the initial reaction fades. Twenty-four hour markets rarely gap except over weekends; US futures gap over the daily maintenance break and the Sunday reopen.\n\nIn practice the prior close becomes a marked reference and the day is described by whether the gap closed, partially closed or held.\n\nWhere people get fooled: the claim that gaps always fill has no time horizon attached, and over a long enough horizon most prices are revisited anyway, which makes the statement nearly content-free. The gaps that do not fill are the ones that ran away, meaning they are also the expensive ones, and they are systematically missing from the anecdotes that support the rule.",
+  "usage": "Any statement about gaps closing needs a horizon attached, otherwise it cannot be counted or disproved. The gaps that did not close within that horizon are the sample that carries the information.",
+  "see": [
+   "Gap",
+   "Gap risk",
+   "Overnight range",
+   "Globex hours",
+   "Wick fill"
+  ]
+ },
+ "Top-down analysis": {
+  "long": "Top-down analysis works from the slowest chart to the fastest, or from macro conditions through sector to individual instrument, on the reasoning that broad context constrains the detail beneath it.\n\nThe mechanism offered has two parts. Slower charts aggregate more participants, so their estimates of direction are less jittery per observation. And some constraints really do propagate downwards, since an instrument in an index moves partly because the index moves, and the index moves partly because rates and growth expectations move. A share with a strong individual story still trades down on a day the whole market repricing is negative.\n\nIn practice the sequence is fixed in advance, for example weekly for context, daily for levels and hourly for the trigger, so that each level answers one question and hands the next question down.\n\nWhere people get fooled: every additional layer is another set of choices, and the process almost always ends up agreeing with the view held at the start. At any given moment some timeframes are rising and some are falling, so a supporting layer can be found for either direction without any dishonesty being involved. It is also serial filtering, and almost nobody counts how many opportunities each layer removed or checks whether removing them helped.",
+  "usage": "Fixing the sequence and the question each layer answers before looking prevents the layers being reordered until they agree. Counting how many candidates each filter rejects, and how those rejected ones resolved, is what tells you whether the layer earns its place.",
+  "see": [
+   "Higher timeframe bias",
+   "Chart timeframe alignment",
+   "Confluence",
+   "Multiple testing",
+   "Confirmation bias"
+  ]
+ },
+ "Leverage": {
+  "long": "Leverage is holding exposure larger than the cash you have committed. It is usually quoted as a ratio, or derived by dividing notional exposure by account equity.\n\nMechanically it comes from one of two sources. Either you borrow, as with margin lending on shares or the daily financing charged on a CFD, or you use a product where a performance bond rather than the full value is required, which is how futures work. A single MNQ contract with the index at 20,000 and a multiplier of two dollars per point carries $40,000 of notional exposure; if the broker's day margin is around $2,000, the position is roughly twenty times the capital posted, without anything being borrowed.\n\nIn practice leverage is a permission, not a plan. If position size is derived from stop distance and a fixed money risk, available leverage does not change the risk on any given trade; it only changes the maximum size the platform allows.\n\nWhere people get fooled: two opposite errors. One is treating leverage itself as the danger when the actual variable is position size. The other, far more damaging, is that high available leverage makes account-ending size a few clicks away with no friction and no warning. A one per cent adverse move against twenty times exposure is twenty per cent of equity, and on some products losses are not capped at the deposit.",
+  "usage": "Whether leverage matters depends on whether size is derived from a stop distance and a money risk or from what the margin allows. The exposure figure that matters is notional divided by equity, not the ratio quoted in the platform's marketing.",
+  "see": [
+   "Margin",
+   "Leverage vs margin",
+   "Notional value",
+   "Position sizing",
+   "Risk of ruin"
+  ]
+ },
+ "Margin": {
+  "long": "Margin is one word covering two genuinely different mechanisms, and confusing them causes real errors.\n\nIn securities, margin means borrowed money. A margin loan against shares is credit extended by the broker, interest accrues on the balance, and the shares are collateral. In futures, margin is a performance bond: a good-faith deposit held by the clearing house to cover a plausible one-day adverse move. Nothing is borrowed, no interest is charged on it, and the deposit is returned when the position is closed. Exchanges set initial and maintenance levels from volatility models, and brokers may require more but not less.\n\nIn practice the numbers move. Initial margin is what you post to open, maintenance is the lower level you must stay above, and intraday day-trading margin offered by a broker is a concession from that broker rather than an exchange requirement, which means it can be withdrawn at short notice.\n\nWhere people get fooled: the shared word convinces people futures margin is a financing cost, which it is not. The second trap is timing. Margin requirements are raised when volatility rises, so the demand for more capital arrives precisely when the account is already under pressure and positions are hardest to exit well.",
+  "usage": "It is worth knowing whether a given product charges interest on a loan or holds a returnable bond, because the cost structures are not comparable. Exchange minimums and broker intraday concessions are different numbers and only one of them is stable.",
+  "see": [
+   "Initial vs maintenance margin",
+   "Leverage vs margin",
+   "Margin call",
+   "Margin lending",
+   "Day trading margin"
+  ]
+ },
+ "Margin call": {
+  "long": "A margin call is a demand from a broker or clearing house to restore account equity above the maintenance requirement, either by depositing funds or by reducing the position.\n\nThe mechanism behind it is daily mark-to-market. Futures positions are settled every day through variation margin, so unrealised losses become actual cash movements out of the account rather than a paper figure. Once equity falls below the maintenance level, the account is deficient and the clearing chain wants that fixed. In many retail products, particularly CFDs and crypto derivatives, there is no call at all: the platform closes positions automatically once a margin percentage is breached.\n\nIn practice the details vary enormously. Some brokers give until the next morning, some liquidate intraday within minutes, and nearly all client agreements reserve the right to close positions without notice at any time.\n\nWhere people get fooled: plans that assume a call will arrive first. Many products give none, and where one exists the broker's right to liquidate immediately usually sits alongside it rather than after it. A margin call is also not a risk-management tool. Being closed out by someone else at their chosen moment and their available price is the opposite of choosing an exit.",
+  "usage": "The client agreement, not the platform's help page, defines when positions can be closed without notice, and that clause varies a lot between brokers. Assuming a warning arrives before forced closure is the assumption most worth checking in advance.",
+  "see": [
+   "Margin",
+   "Liquidation",
+   "Initial vs maintenance margin",
+   "Drawdown",
+   "Broker"
+  ]
+ },
+ "Liquidation": {
+  "long": "Liquidation is the forced closure of a position by a broker or exchange once account equity falls below the maintenance requirement. The decision is not the holder's.\n\nMechanically, the platform calculates a liquidation price from entry, position size, posted margin and the margin mode, then sends market orders when that price is reached. On crypto venues a dedicated liquidation engine takes over the position, an insurance fund absorbs shortfalls where the close is worse than the bankruptcy price, and auto-deleveraging reaches into profitable opposing positions when that fund is not enough. Cascades occur because forced selling pushes price into the next cluster of liquidation levels, which triggers more forced selling.\n\nIn practice the liquidation price moves with margin mode. Isolated margin caps the loss at the margin allocated to that position; cross margin puts the whole balance behind it, which pushes the level further away and makes a single bad position capable of taking the account.\n\nWhere people get fooled: treating the liquidation price as a stop loss. It is a trigger, not a fill. The order executes into whatever depth exists, typically thin depth during exactly the conditions causing the liquidation, plus a liquidation fee, so the realised loss regularly exceeds the calculated one. Planning around it is planning around your worst available fill.",
+  "usage": "Isolated and cross margin produce different liquidation levels and different worst cases for the account as a whole, so the mode is part of the position's risk. The realised outcome depends on depth at the moment of the forced order, which is unknowable in advance.",
+  "see": [
+   "Liquidation cascade",
+   "Auto-deleveraging",
+   "Insurance fund",
+   "Isolated vs cross margin",
+   "Margin call"
+  ]
+ },
+ "Futures": {
+  "long": "A futures contract is a standardised, exchange-traded agreement to exchange a defined quantity of something at a defined date and price, with a clearing house standing between the two sides.\n\nThe mechanics live in the contract specification. Each contract has a multiplier and a minimum tick: the E-mini S&P is fifty dollars per index point with a 0.25 tick worth $12.50, the E-mini Nasdaq is twenty dollars per point, and the micro versions are a tenth of each. Margin is a performance bond rather than a loan or a cost, and positions are marked to market daily so profit and loss moves cash every session. Central clearing means the counterparty risk sits with the clearing house rather than with whoever took the other side.\n\nIn practice contracts expire on a fixed cycle, exposure is carried forward by rolling, and charting requires stitching expiries into a continuous series with some back-adjustment convention.\n\nWhere people get fooled: the leverage is an incidental consequence of small margin, not something chosen or requested, and the multiplier makes a move that looks tiny on a chart a large amount of money. Twenty points on one E-mini S&P contract is $1,000. For physically settled contracts the delivery obligation is also real and does not go away because the position was opened for a chart pattern.",
+  "usage": "The multiplier and tick value convert chart distance into money, and these differ enough between contracts that the same stop in points is a different risk in each. Expiry and roll dates belong on the calendar before a position is opened, not after.",
+  "see": [
+   "Contract specification",
+   "Multiplier",
+   "Tick value",
+   "Micro / mini",
+   "Rollover"
+  ]
+ },
+ "Micro / mini": {
+  "long": "Micro and mini describe smaller-notional versions of the same futures contract. CME micros are exactly one tenth of the corresponding E-mini: MNQ is two dollars per Nasdaq point against NQ's twenty, MES is five dollars per S&P point against ES's fifty, and MGC covers ten troy ounces of gold against GC's hundred.\n\nExchanges list them to lower the minimum unit of risk, which widens participation and brings in traders whose accounts cannot support a full mini. The underlying, the settlement method and the price series are the same; only the multiplier and the order book differ.\n\nIn practice this makes position sizing far more granular. An account that could only hold zero or one mini can hold anything from one to twenty micros, so size can actually be scaled to a stop distance rather than rounded to whatever fits.\n\nWhere people get fooled: commission is charged per contract, so ten micros carry roughly ten times the commission of the one mini they replicate for identical exposure. That drag is invisible on a chart and material to a high-frequency approach. The smaller tick value also makes the product feel less consequential, which encourages larger notional exposure and more trades than the same person would take in the full-size contract.",
+  "usage": "Ten micros and one mini are the same exposure at very different commission costs, which matters most for approaches that trade often. The smaller tick value changes the dollar granularity, not the percentage volatility of the underlying.",
+  "see": [
+   "Futures",
+   "Contract specification",
+   "Tick value",
+   "Commission",
+   "Position size"
+  ]
+ },
+ "Rollover": {
+  "long": "Rollover carries two meanings that share a word. In futures it means moving exposure from an expiring contract into the next one. In retail FX and CFDs it means the daily financing applied when a position is held past the rollover time, usually 5pm New York.\n\nThe futures mechanism is forced by expiry. To keep exposure you close the front month and open the next, typically as a calendar spread so both legs fill together. Volume migrates on a known schedule, with equity index contracts rolling around the Thursday before the third Friday of the expiry month. The two contracts trade at different prices because of carry, so the raw price series jumps at the roll even though no one experienced that move.\n\nIn practice charting software hides this with a continuous contract, either by splicing raw prices or by back-adjusting older bars by the roll difference.\n\nWhere people get fooled: the roll gap is not a tradable move. An unadjusted continuous chart shows a price change nobody could have captured, and a back-adjusted one contains historical prices that never traded, which can push old data negative on some commodities. Both break naive backtests, and neither is wrong so much as unlabelled.",
+  "usage": "Which continuous-contract convention was used changes historical prices, so it belongs in the notes alongside any result computed from them. The roll schedule is published in advance and volume migration can be watched directly in the two contracts' order books.",
+  "see": [
+   "Front month",
+   "Continuous contract",
+   "Back-adjustment",
+   "Swap / rollover fee",
+   "Expiry"
+  ]
+ },
+ "Contango / backwardation": {
+  "long": "Contango is when futures trade above the spot price, giving an upward-sloping forward curve. Backwardation is the opposite, with futures below spot and the curve sloping down. Both describe the shape of the term structure at a moment, not a forecast.\n\nThe mechanism is a cost identity rather than an opinion. For a storable commodity, holding the physical goods until a future date costs financing and storage and insurance, so the fair forward price is spot plus those carrying costs, less any convenience yield earned by having the physical material on hand. Plentiful supply and cheap storage give contango. Immediate scarcity, where holding the actual barrel or bushel is worth a premium, gives backwardation. Whatever the shape, the futures price converges to spot as expiry approaches.\n\nIn practice this shows up as roll yield. A long position in contango rolls out of a cheaper expiring contract into a more expensive next one, which is a drag on returns all else equal; backwardation does the reverse.\n\nWhere people get fooled: reading contango as a market prediction of higher prices. It is mostly financing and storage arithmetic. Products that hold futures and roll them mechanically, including many commodity and volatility exchange-traded products, can bleed value while spot goes nowhere, and that is structural rather than misfortune.",
+  "usage": "Curve shape is a cost statement about carrying the asset, not a directional view held by the market. For any product that holds and rolls futures, the roll cost belongs in the return expectation from the outset.",
+  "see": [
+   "Basis",
+   "Roll yield",
+   "Term structure",
+   "Storage cost",
+   "Convenience yield"
+  ]
+ },
+ "CFD": {
+  "long": "A contract for difference is an over-the-counter agreement with a provider to exchange the change in an instrument's price between opening and closing. You never own the underlying share, barrel or index.\n\nThe mechanism matters more here than with exchange-traded products. Your position exists only against the provider, who quotes a price derived from the real market. They may hedge it externally or take the other side internally, and the retail costs are a marked-up spread, sometimes a commission on shares, and daily financing on any leveraged position held overnight. Because there is no exchange, there is no central order book, no consolidated volume and no clearing house standing behind the trade.\n\nIn practice CFDs offer fractional sizing, easy short exposure and a very wide instrument list from one account, which is genuinely why people use them.\n\nWhere people get fooled: counterparty risk is not a footnote, it is the product. If the provider fails, an open position is a claim on a company rather than an asset you hold. Regulators have acted on documented retail outcomes rather than on principle: ASIC's product intervention order caps retail leverage in Australia, at thirty to one on major currency pairs, twenty to one on major indices and two to one on crypto-asset CFDs, after reviewing the losses retail clients were sustaining.",
+  "usage": "The provider's hedging model, financing rate and the jurisdiction it is licensed in change the product materially even when the ticker looks identical. Leverage caps differ by regulator, so the same instrument is a different exposure depending on which entity holds the account.",
+  "see": [
+   "Retail leverage cap",
+   "ASIC",
+   "Counterparty risk",
+   "Dealing desk / B-book",
+   "Financing / carry cost"
+  ]
+ },
+ "Perpetual (perp)": {
+  "long": "A perpetual is a crypto derivative that behaves like a futures contract but has no expiry date, so a position can in principle be held indefinitely.\n\nRemoving expiry removes the mechanism that normally ties a future to spot, because there is no settlement date forcing convergence. The funding rate replaces it: periodic payments, commonly every eight hours, exchanged directly between longs and shorts to push the contract price back towards an index of spot venues. A separate mark price, also built from that index rather than from the venue's last trade, is used for liquidation calculations so a single thin wick on one exchange cannot trigger liquidations across the book.\n\nIn practice perps dominate crypto volume. They offer high leverage, isolated or cross margin, and sit behind an insurance fund and an auto-deleveraging mechanism that can reach into profitable opposing positions when losses exceed what the fund covers.\n\nWhere people get fooled: a perp is not spot, and the exchange offering it is frequently also the custodian, the clearer, the price oracle and the liquidation engine. That concentration of roles has no equivalent in regulated futures markets. Holding one for weeks also carries a running funding cost that simply holding the asset does not.",
+  "usage": "The mark price, not the last traded price, determines liquidation, and the two can diverge sharply during fast moves. Funding accrues on notional, so a long-held perp position and a spot holding have different cost profiles even when the price exposure looks the same.",
+  "see": [
+   "Funding rate",
+   "Spot vs perpetual",
+   "Liquidation",
+   "Isolated vs cross margin",
+   "Open interest (crypto)"
+  ]
+ },
+ "Funding rate": {
+  "long": "The funding rate is a periodic payment exchanged directly between long and short holders of a perpetual contract, usually every eight hours, whose purpose is to keep the perpetual trading close to spot.\n\nThe mechanism is a feedback loop. When the perpetual trades above the spot index, funding is positive and longs pay shorts, which makes holding a long more expensive and shorting more attractive, pulling the contract back down. When it trades below, shorts pay longs and the pressure reverses. The payment is peer to peer rather than revenue for the exchange, though venues charge separate trading fees, and the rate is typically composed of a premium component plus a fixed interest component, clamped at a maximum.\n\nThe arithmetic compounds faster than the small numbers suggest. A rate of 0.01% per eight-hour period is 0.03% a day, or roughly eleven per cent a year, and elevated rates during excited conditions run well above that.\n\nWhere people get fooled: persistently positive funding gets read as a crowd-positioning signal. It is at least as much the ordinary price of carry in a market where borrowing spot is expensive, and basis desks collect it deliberately by holding spot against a short perp. Funding is also charged on notional, so at high leverage it consumes a proportionally large share of the margin actually posted.",
+  "usage": "Funding accrues on notional rather than on margin, so its weight relative to posted capital scales with leverage. Interpreting the rate as positioning and interpreting it as carry cost are different claims, and the second one is measurable against spot borrow rates.",
+  "see": [
+   "Perpetual (perp)",
+   "Perp funding arbitrage",
+   "Basis",
+   "Carry",
+   "Spot vs perpetual"
+  ]
+ },
+ "Options": {
+  "long": "An option gives the buyer the right, but not the obligation, to buy (a call) or sell (a put) a defined quantity of an underlying at a set strike price by a set expiry. The seller has the corresponding obligation and receives the premium for taking it on. A standard US equity option covers 100 shares.\n\nThe pricing mechanism splits into intrinsic and extrinsic value. Intrinsic is how far in the money the strike already is; extrinsic reflects time remaining, implied volatility, rates and distance to the strike, and it decays to zero at expiry. The asymmetry is real: a buyer's maximum loss is the premium, while an uncovered seller's loss is bounded only by how far the underlying can travel.\n\nIn practice options are used for defined-risk directional exposure, for hedging existing positions, and for structures that harvest premium, with the Greeks describing sensitivity to each input.\n\nWhere people get fooled: risk is limited to the premium is true and quietly misleading, because a capped loss that happens repeatedly is still a drained account, and buying an option requires being right on direction, magnitude and timing at once. The seller's version is the mirror image. Many small credits punctuated by rare large debits looks like a working edge for a long time before it does not.",
+  "usage": "Buying and selling options are not symmetric activities: one requires three things to go right, the other accumulates a liability that is invisible until it is not. The multiplier means quoted premiums are per share and the cash outlay is a hundred times larger on standard US contracts.",
+  "see": [
+   "Option",
+   "Call",
+   "Put",
+   "Strike / premium",
+   "Theta / IV"
+  ]
+ },
+ "Strike / premium": {
+  "long": "The strike is the price at which an option can be exercised. The premium is what the buyer pays the seller for the contract, quoted per share and multiplied by the contract size, so a premium of 1.20 on a standard US equity option is $120 of actual cash.\n\nPremium decomposes into intrinsic and extrinsic value. Intrinsic is the amount by which the strike is already favourable against the current price and is zero for anything out of the money. Extrinsic is everything else: time to expiry, implied volatility and how plausible reaching the strike appears. At-the-money options carry the most extrinsic value, deep in-the-money options behave increasingly like the underlying itself, and out-of-the-money options are pure extrinsic value that goes to zero if the strike is never reached.\n\nIn practice strike selection is the main lever. It sets the delta, the cost, and how much has to happen for the position to be worth anything at expiry. Strikes are listed at round intervals, which is one reason activity concentrates around those prices near expiry.\n\nWhere people get fooled: cheap out-of-the-money premiums read as small risk because the dollar figure is small. The entire outlay is at risk rather than a fraction of it, and the low price is the market's assessment of how far away that strike is, not a discount.",
+  "usage": "A low premium is a statement about distance to the strike, not a bargain, and the whole of it is at risk rather than a portion. Comparing strikes on delta and extrinsic value makes the trade-off visible in a way comparing dollar cost does not.",
+  "see": [
+   "Strike",
+   "Premium",
+   "Moneyness",
+   "Extrinsic value",
+   "Intrinsic value"
+  ]
+ },
+ "Theta / IV": {
+  "long": "Theta is the rate at which an option loses extrinsic value with the passage of time, expressed per day. It is paid by the buyer and collected by the seller. Implied volatility is the volatility figure that makes a pricing model output the option's actual market price, which makes it a price quoted in volatility units rather than a forecast of anything.\n\nThe two interact constantly. Decay is not linear: an at-the-money option loses extrinsic value slowly at first and increasingly quickly into the final weeks, while contracts far from the money decay more evenly. Implied volatility scales the whole extrinsic component, so an option can decay by theta and still gain value if implied volatility rises. The reverse is more famous: after a scheduled event, implied volatility collapses and a directionally correct option can lose money anyway.\n\nIn practice sellers describe theta as income and buyers describe it as rent, and both descriptions are about the same cash flow.\n\nWhere people get fooled: theta feels like a yield because it arrives steadily and predictably. It is compensation for a real liability, since collecting it means being short gamma, and the position that pays a small amount every quiet day is precisely the position that loses a great deal on the day that is not quiet.",
+  "usage": "Theta and implied volatility move extrinsic value in opposite directions, so an option position can be right on time decay and wrong on vol at the same time. Around scheduled events, the level of implied volatility going in matters as much as the direction of the underlying coming out.",
+  "see": [
+   "Theta",
+   "Implied volatility",
+   "IV crush",
+   "Extrinsic value",
+   "Theta decay curve"
+  ]
+ },
+ "Forex pair": {
+  "long": "A currency pair quotes one currency in terms of another. EUR/USD at 1.0850 means one euro buys 1.0850 US dollars; the first currency is the base and the second is the quote.\n\nThe defining mechanism is that there is no absolute price. Every FX position is simultaneously long one currency and short another, so a rising pair could be strength in the base, weakness in the quote, or a mixture. Trading happens over the counter across an interbank network of banks, brokers and electronic venues rather than on a single exchange, which means there is no consolidated tape, no official volume figure and no single closing price; your broker's chart is their feed. Majors, minors and exotics differ mainly in depth and spread.\n\nIn practice quoting conventions matter: pips, the sessions where liquidity concentrates, and the interest differential credited or debited on positions held past rollover.\n\nWhere people get fooled: treating a pair as one asset with one direction. AUD/USD falling can be an Australian dollar story, a US dollar story, or both at once, and the same US dollar strength appears across many pairs simultaneously. Holding several major pairs in the same direction is very often holding one large US dollar position several times over, which feels like diversification and is the opposite.",
+  "usage": "Position exposure is best read at the currency level rather than the pair level, since several pairs can encode the same underlying bet. Because there is no consolidated tape, volume-based tools in retail FX describe a single broker's flow rather than the market.",
+  "see": [
+   "Base / quote currency",
+   "Majors / minors / exotics",
+   "Pip",
+   "Interbank market",
+   "FX session overlap"
+  ]
+ },
+ "Pip": {
+  "long": "A pip is the conventional smallest price increment in foreign exchange quoting. For most pairs it is the fourth decimal place, so 0.0001 on EUR/USD. For pairs quoted against the Japanese yen it is the second decimal, 0.01, because the yen's price scale is different. Brokers commonly quote one more digit than that, the fractional pip or pipette, giving five decimals on most pairs and three on yen pairs.\n\nThe value of a pip in money depends on position size and on the quote currency. On a standard lot of 100,000 units of EUR/USD, one pip is ten US dollars; a mini lot of 10,000 makes it one dollar; a micro lot of 1,000 makes it ten cents. Where the quote currency is not your account currency, the pip value has to be converted at the prevailing rate and therefore moves around.\n\nIn practice stops, targets and spreads are all expressed in pips, which makes them easy to compare across quotes.\n\nWhere people get fooled: a pip measures price, not risk. A twenty-pip stop is a wildly different amount of money depending on lot size and pair, and counting pips gained across different instruments, or across days with different volatility, adds up quantities that are not the same unit of anything.",
+  "usage": "Converting pips into account currency before comparing anything is what makes two trades comparable at all. Volatility differs enough between pairs that a fixed pip distance means a different amount of room on each.",
+  "see": [
+   "Pipette",
+   "Lot",
+   "Forex pair",
+   "Spread",
+   "Tick value"
+  ]
+ },
+ "Lot": {
+  "long": "A lot is the standard unit of position size in retail foreign exchange. A standard lot is 100,000 units of the base currency, a mini lot is 10,000, a micro lot is 1,000, and some brokers offer nano lots of 100. In equities the same word means something else entirely, namely a round lot of 100 shares.\n\nThe mechanism connecting lots to risk runs through pip value. Lot size fixes the money value of each pip, and pip value multiplied by the stop distance gives the amount at risk. Two mini lots of EUR/USD is 20,000 units, which is two dollars per pip, so a twenty-five pip stop puts fifty dollars at risk. The chain is arithmetic, and every term in it is known before the order is sent.\n\nIn practice this means lot size is the output of a risk calculation rather than an input chosen first.\n\nWhere people get fooled: platforms present lots as the natural quantity and margin as the limiting factor, so people pick a size that fits the available margin. Margin tells you the largest position permitted, which is a statement about the broker's requirements and says nothing about how much of the account a single adverse move removes.",
+  "usage": "Working backwards from money at risk and stop distance to lot size keeps the two independent of whatever margin happens to be available. The equities meaning of the word is unrelated, which trips people moving between markets.",
+  "see": [
+   "Position size",
+   "Pip",
+   "Position sizing",
+   "Risk per trade",
+   "Micro / mini"
+  ]
+ },
+ "Swap": {
+  "long": "In retail FX and CFD trading, the swap is the financing credit or debit applied to a position held past the daily rollover point, conventionally 5pm New York time. The same word also names a whole class of over-the-counter derivatives, such as interest rate swaps and total return swaps, which are a different thing entirely.\n\nThe retail mechanism comes from settlement dates. Spot FX settles two business days forward, so keeping a position open means rolling the value date one day at a time, and the cost of doing that reflects the interest rate differential between the two currencies. Holding a pair is holding one interest rate long and another short. Brokers apply their own mark-up on top of the tom-next rate, which is why on many pairs both the long and the short swap are negative. Wednesday rollover is typically charged at triple rate because the value date jumps over the weekend.\n\nIn practice swap only matters for positions held for days or longer, where it can quietly dominate the arithmetic.\n\nWhere people get fooled: carry looks free when the interest differential is favourable, but the retail mark-up often absorbs most of it, so the credit received is well short of what the rate differential implies. Swap costs also go missing from backtests that model only spread and commission.",
+  "usage": "The two directions of swap on a pair are quoted separately and are rarely symmetric, so the cost of holding depends on which way the position sits. Any multi-day test that omits swap understates the cost of exactly the positions it is testing.",
+  "see": [
+   "Swap / rollover fee",
+   "Carry",
+   "Carry trade",
+   "Rollover",
+   "Financing / carry cost"
+  ]
+ }
+}
