@@ -189,22 +189,6 @@
   "Execution algorithm",
   "Crossing the spread"
  ],
- "port": [
-  "Volatility targeting",
-  "Risk parity",
-  "Rebalancing",
-  "Rebalancing premium",
-  "Correlation matrix",
-  "Diversification",
-  "Correlation breakdown",
-  "Beta",
-  "Alpha",
-  "Buy and hold",
-  "Dollar cost averaging",
-  "Concentration risk",
-  "Capital efficiency",
-  "Ensemble"
- ],
  "cost": [
   "Round turn",
   "Cost drag",
@@ -424,24 +408,6 @@
   "Smart beta",
   "Cash drag"
  ],
- "factor": [
-  "Factor investing",
-  "CAPM",
-  "Efficient frontier",
-  "Markowitz optimisation",
-  "Fama-French",
-  "Value",
-  "Momentum factor",
-  "Cross-sectional momentum",
-  "Time-series momentum",
-  "Momentum crash",
-  "Size factor",
-  "Quality factor",
-  "Low volatility anomaly",
-  "Factor decay",
-  "Factor zoo",
-  "Diversification across strategies"
- ],
  "perf": [
   "CAGR",
   "Total return",
@@ -463,20 +429,6 @@
   "Benchmark-relative",
   "Cherry-picked period",
   "Survivor track record"
- ],
- "part": [
-  "Retail trader",
-  "Institutional investor",
-  "Hedge fund",
-  "Managed futures / CTA",
-  "Proprietary trading firm",
-  "Dealer",
-  "Clearing house",
-  "Custodian",
-  "Forced seller",
-  "Liquidity provider",
-  "Capacity",
-  "Order flow information"
  ],
  "reg": [
   "ASIC",
