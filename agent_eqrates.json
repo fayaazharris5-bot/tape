@@ -1,0 +1,636 @@
+{
+ "Share": {
+  "long": "A share is a unit of ownership in a company, sold to raise capital without creating debt. Buying one makes the buyer a part owner with a proportional claim on the company's assets and future earnings — there is no promise to repay and no fixed return, which is the basic difference between equity and a bond.\n\nMost shares carry a vote at the annual general meeting, roughly one vote per share, and a claim on any dividend the board decides to declare. Declaring a dividend is optional; a company can keep every share economically identical while paying nothing out for years.\n\nIn a wind-up, shareholders rank behind every creditor, bondholder and preference shareholder. They receive whatever is left over, which in practice is often nothing — equity is the residual claim, and residual can be zero.\n\nWhere people get fooled: treating a share price on its own as meaningful. Price only means something multiplied by the number of shares outstanding, and a low price says nothing about size, quality or how many shares exist — a company can split its stock ten-for-one overnight and the price falls by the same factor with nothing about the business changed.",
+  "usage": "I bought 200 shares, so I own a small, proportional slice of the company and get a vote at the AGM if I use it.",
+  "see": [
+   "Market capitalisation",
+   "Dividend",
+   "Stock split",
+   "Valuation"
+  ]
+ },
+ "Market capitalisation": {
+  "long": "Market capitalisation is share price multiplied by shares outstanding — the market's running estimate of what the entire company is worth at the last traded price. It is not cash sitting anywhere; it is one price extrapolated across every share, most of which never traded at that exact level.\n\nThe number is used mainly for classification. Index membership, fund mandates and typical liquidity all sort by market cap: large caps trade in tight, deep markets, small caps trade in wide, thin ones. The cap bracket says more about how a stock behaves day to day than about the underlying business.\n\nFree float refines the headline figure by excluding locked-up insider and government holdings, which is why index weightings can differ noticeably from the raw market cap a screener shows.\n\nWhere people get fooled: treating market cap as money that could be extracted by selling. A company \"worth\" ten billion cannot be sold for ten billion — heavy selling moves the very price the calculation depends on, and a falling price shrinks the cap without a dollar leaving anyone's account. Value was marked down, not moved.",
+  "usage": "It's a large market cap, so the free float and average daily volume matter more for how it trades than the headline number alone.",
+  "see": [
+   "Share",
+   "Free float",
+   "Enterprise value",
+   "Valuation",
+   "Index inclusion"
+  ]
+ },
+ "Free float": {
+  "long": "Free float is the portion of a company's shares actually available to trade on the open market — total shares outstanding minus stakes locked up by founders, governments, strategic holders or other companies who aren't sellers at any normal price. It is the float that sets how liquid a stock really is, not the headline share count.\n\nIndex providers weight most major indices by free float rather than total market cap, because a stock that's mostly held by an insider who never trades can't absorb index-fund buying the way its raw market cap suggests. A large company with a small float can trade like a much smaller one.\n\nFloat can change: a lock-up expiring after an IPO, a founder selling down, or a government privatising a stake all increase free float and, mechanically, the supply available to the market.\n\nWhere people get fooled: assuming a big market cap means deep, easy liquidity. Two companies with identical market caps can have wildly different free floats, and the one with the smaller float will show wider spreads and larger price moves on the same size order — the market cap figure alone doesn't reveal that.",
+  "usage": "Half the float is locked up with the founder, which is worth checking before reading much into low daily volume.",
+  "see": [
+   "Market capitalisation",
+   "Share",
+   "Float rotation",
+   "Liquidity",
+   "Index inclusion"
+  ]
+ },
+ "Enterprise value": {
+  "long": "Enterprise value is what it would cost, in principle, to buy an entire company outright: market capitalisation plus total debt, minus cash and cash equivalents on the balance sheet. It answers a different question to market cap — not \"what is the equity worth\" but \"what is the whole operating business worth, regardless of how it's financed.\"\n\nDebt is added because an acquirer would have to take it on or pay it off; cash is subtracted because an acquirer effectively gets that cash back immediately and can put it toward the purchase. Two companies with identical market caps can have very different enterprise values if one carries heavy debt and the other sits on a large cash pile.\n\nThe measure is used mainly to compare companies with different capital structures on a like-for-like basis, often against operating earnings such as EBITDA rather than net income, which debt levels distort.\n\nWhere people get fooled: reading market cap alone as \"the price of the company.\" A firm can look cheap on market cap while carrying enough debt that its enterprise value — the actual cost of taking it over, debt included — is far higher.",
+  "usage": "Its market cap looks small, but once the debt load is added the enterprise value tells a different story.",
+  "see": [
+   "Market capitalisation",
+   "Valuation",
+   "Share",
+   "P/E ratio"
+  ]
+ },
+ "Dividend": {
+  "long": "A dividend is a cash payment a company makes to shareholders out of profit or reserves, decided at the board's discretion — there is no legal obligation to pay one, and a company can cut, suspend or never start paying a dividend without breaching any contract. It is a distribution of already-earned value, not new value created by the payment itself.\n\nDividends are usually declared per share and paid on a set schedule, commonly quarterly, semi-annually or annually depending on the market and company. The amount, if any, reflects a board's view of the business's cash needs versus its cash generation — retaining earnings to reinvest is just as legitimate a choice as paying them out.\n\nBecause a dividend pays out cash the company already holds, the share price mechanically adjusts down on the ex-dividend date by roughly the dividend amount — the company is worth that much less cash than it was the day before.\n\nWhere people get fooled: treating a dividend as \"free\" income separate from the share price. It is a transfer from the company's cash balance to the shareholder's account, and the share price reflects that transfer whether or not the investor notices.",
+  "usage": "The stock pays a dividend each quarter, and the price typically drops by about that amount on the ex-dividend date.",
+  "see": [
+   "Ex-dividend date",
+   "Dividend yield",
+   "Buyback",
+   "Share"
+  ]
+ },
+ "Ex-dividend date": {
+  "long": "The ex-dividend date is the cut-off day that determines who receives a declared dividend: buy the share on or after this date and the seller keeps the dividend, buy before it and the dividend goes to the new owner. It exists to give exchanges and registrars a clean line for settlement, not as a signal about the company.\n\nOn the ex-dividend date itself, the share price is adjusted downward by roughly the dividend amount at the market open. This isn't sentiment or selling pressure — it's arithmetic. The company is about to pay out cash it currently holds, so the shares representing ownership of that company are worth correspondingly less the moment the cash is earmarked to leave.\n\nFor index and fund-tracking purposes, this adjustment is also why historical price charts often show \"adjusted\" prices that smooth out the dividend-driven drops, so the series reflects total return rather than a string of artificial-looking declines.\n\nWhere people get fooled: seeing a price gap down on the ex-dividend date and reading it as bad news. It is the same value, split between a lower share price and a cash payment now scheduled to arrive — not a loss, and not new information about the business.",
+  "usage": "The stock gapped down two percent this morning — check the calendar, that could just be the ex-dividend adjustment, not news.",
+  "see": [
+   "Dividend",
+   "Dividend yield",
+   "Adjusted price",
+   "Corporate action"
+  ]
+ },
+ "Dividend yield": {
+  "long": "Dividend yield is the annual dividend per share divided by the current share price, expressed as a percentage. It measures the cash income a share currently offers relative to what it costs to buy today — nothing about future payments is guaranteed by the figure.\n\nBecause yield has price in the denominator, it moves for two entirely different reasons: the company can raise or cut the dividend, or the share price can move on its own with the dividend unchanged. A yield that looks unusually high is often a falling share price doing the work, not a generous payout — the market may already be pricing in a dividend cut that hasn't happened yet.\n\nYield is comparable across companies and against other income sources like bond yields or the cash rate, which is why it gets quoted so often, but comparing yield alone ignores dividend growth, payout sustainability and the underlying business quality.\n\nWhere people get fooled: chasing the highest yield in a screener without checking why it's high. A stock yielding far more than its sector average is frequently signalling distress — the payout may be about to be cut, which erases both the yield and the capital at once.",
+  "usage": "It's yielding well above the sector average, which is worth checking before assuming the payout is safe.",
+  "see": [
+   "Dividend",
+   "Ex-dividend date",
+   "Valuation",
+   "Risk-free rate"
+  ]
+ },
+ "Buyback": {
+  "long": "A share buyback is a company repurchasing its own shares on the open market or via tender offer, reducing the number of shares outstanding. The cash used comes from the company's own reserves — the same pool of money that could otherwise fund a dividend, debt repayment or reinvestment.\n\nWith fewer shares outstanding after a buyback, each remaining share represents a slightly larger slice of the company, which mechanically lifts metrics like earnings per share even if total profit hasn't grown at all. That's arithmetic, not evidence of a stronger business.\n\nCompanies choose buybacks over dividends partly for tax reasons in some jurisdictions and partly for flexibility — a buyback can be paused without the public signal a dividend cut sends, since there's no expectation to disappoint.\n\nWhere people get fooled: reading a buyback announcement as a bullish signal about the business by itself. It's a capital allocation decision, and it can reflect a lack of better investment opportunities as easily as management confidence — a company that buys back stock at an inflated price is simply spending cash on overpriced shares, no different to overpaying for any other asset.",
+  "usage": "They announced a buyback, which is worth checking against how many new shares are issued to staff before assuming the share count actually falls.",
+  "see": [
+   "Share",
+   "Dividend",
+   "Earnings per share",
+   "Valuation"
+  ]
+ },
+ "Stock split": {
+  "long": "A stock split increases the number of shares outstanding by a fixed ratio — a two-for-one split turns each existing share into two — while proportionally cutting the share price so total market capitalisation is unchanged. Nothing about the company's assets, earnings or ownership structure moves; existing holders simply own more, smaller-denomination units of exactly the same stake.\n\nCompanies split shares mainly to bring a high nominal price back into a range seen as more accessible to smaller retail buyers, or to meet an exchange's listing conventions. A reverse split does the opposite — reducing share count and raising the per-share price — often used to escape a minimum listing price rule.\n\nBecause per-share numbers like earnings per share and dividend per share also get divided by the split ratio, comparing pre- and post-split figures without adjusting for the split produces jumps or drops that have nothing to do with the business.\n\nWhere people get fooled: treating a split announcement as a growth signal because splits often coincide with strong-performing stocks. The split itself changes nothing about value — it is a re-slicing of the same pie, not a bigger pie.",
+  "usage": "The stock did a four-for-one split, so the pre-split chart needs adjusting before comparing price levels.",
+  "see": [
+   "Share",
+   "Market capitalisation",
+   "Earnings per share",
+   "Corporate action"
+  ]
+ },
+ "Short selling": {
+  "long": "Short selling is selling a borrowed share now with the obligation to buy it back later and return it, betting the price falls in between. The mechanics: a broker locates shares to borrow, often from another client's holdings or an institution, the short seller sells them on the open market, and at some point must buy identical shares back — covering — to close the position and return what was borrowed.\n\nProfit is the difference between the sale price and the lower repurchase price, minus a borrow fee charged for the duration of the loan and any dividend the short seller must pay to the lender if one is declared while the position is open. Losses are, in principle, unlimited, since a share price has no upper bound the way it has a floor of zero.\n\nShort selling requires margin and can be forced closed — a buy-in — if the lender recalls the shares and none are available to re-borrow, regardless of the short seller's own view on timing.\n\nWhere people get fooled: assuming a short position just mirrors a long one in reverse. The asymmetric risk of a capped gain against an uncapped loss, plus the dependency on borrow availability, make it a structurally different trade, not simply negative shares.",
+  "usage": "He shorted the stock, paying a borrow fee daily until he buys it back to close the position.",
+  "see": [
+   "Borrow fee",
+   "Hard to borrow",
+   "Buy-in",
+   "Short interest",
+   "Short squeeze"
+  ]
+ },
+ "Borrow fee": {
+  "long": "The borrow fee is the interest rate a short seller pays, annualised, to borrow the shares needed to sell short — the cost of renting the stock for the duration of the position. It's charged separately from any margin interest on the account and applies for as long as the short remains open.\n\nBorrow fees are set by supply and demand for lendable shares, not by the exchange or the company. A widely held, heavily traded large-cap typically has an ample supply of shares available to lend and a borrow fee close to zero; a stock with a small float and heavy short demand can carry a borrow fee running into double-digit annualised rates.\n\nBecause the fee accrues daily, it works against the short seller purely with time, independent of whether the price moves at all — a flat share price still costs money to be short if the borrow fee is high.\n\nWhere people get fooled: ignoring the borrow fee when sizing up a short thesis. A stock that looks attractively overvalued can still produce a losing trade if the annualised borrow cost eats the expected move before the price ever falls.",
+  "usage": "The borrow fee on that name is running high, which changes the arithmetic on how long the short can be held profitably.",
+  "see": [
+   "Short selling",
+   "Hard to borrow",
+   "Days to cover",
+   "Short interest"
+  ]
+ },
+ "Hard to borrow": {
+  "long": "Hard to borrow describes a stock where the supply of shares available to lend for short selling is scarce relative to demand. Brokers maintain lists of these names, and locating shares to open a new short position becomes difficult, expensive, or both.\n\nScarcity shows up as an elevated borrow fee — sometimes a small, steady percentage, sometimes a rate running into dozens of percent a year when demand to short is intense and float is thin. In extreme cases a broker simply has no shares to lend at any price, and new short positions can't be opened at all regardless of what a trader is willing to pay.\n\nA stock typically becomes hard to borrow when short interest is already high relative to float, when the float itself is small, or after a company restricts share lending — none of which is directly visible on a price chart.\n\nWhere people get fooled: assuming any stock can be shorted at will for a negligible cost. Hard-to-borrow names combine an already-crowded short trade with a rising cost of staying in it, which is part of why short squeezes concentrate in exactly these stocks.",
+  "usage": "It's hard to borrow right now, so the fee alone could erase a modest short position's edge.",
+  "see": [
+   "Borrow fee",
+   "Short selling",
+   "Short interest",
+   "Short squeeze",
+   "Buy-in"
+  ]
+ },
+ "Buy-in": {
+  "long": "A buy-in is a forced closure of a short position, initiated by the broker or lender rather than the trader, when the shares that were borrowed are recalled and no replacement shares can be located. The broker buys the shares on the open market at the prevailing price and uses them to return what was owed to the lender, regardless of whether the short seller wanted to close the position at that moment.\n\nRecalls happen for reasons unrelated to the short seller's thesis: the original lender may want the shares back to vote them, sell them, or for their own portfolio reasons. If the pool of lendable shares is thin — a hard-to-borrow name — a recall can trigger buy-ins across many short positions at once.\n\nBecause the buy-in executes at market price with no control over timing, it can lock in a loss, or shrink a gain, at exactly the wrong moment, and a wave of simultaneous buy-ins is one mechanical driver behind a short squeeze.\n\nWhere people get fooled: assuming a short position can always be held on the trader's own schedule. The loan can be called at any time, and the buy-in that follows is not optional.",
+  "usage": "The lender recalled the shares and forced a buy-in before he was ready to cover.",
+  "see": [
+   "Short selling",
+   "Hard to borrow",
+   "Borrow fee",
+   "Short squeeze"
+  ]
+ },
+ "Short interest": {
+  "long": "Short interest is the total number of shares of a stock currently sold short and not yet covered, usually reported as an absolute count or as a percentage of shares outstanding or of float. It's a snapshot of how many borrowed shares are outstanding at a given reporting date, not a live, continuously updated figure.\n\nA high short interest means a large number of traders are positioned for the price to fall, and every one of those positions must eventually be closed by buying the stock back, which is itself a source of future buying demand, independent of anyone changing their mind about the company.\n\nShort interest is usually published with a lag — in the US, roughly twice monthly — so the figure available at any moment describes positioning from days or weeks earlier, not the present.\n\nWhere people get fooled: reading high short interest as proof the stock is doomed, or as an automatic setup for a squeeze. It's neither — it just describes how many shares are currently borrowed. What happens next depends on days to cover, borrow cost, and whether anything forces those shorts to buy, none of which the raw number tells you on its own.",
+  "usage": "Short interest is a large share of float, but that alone doesn't tell you whether or when those shorts will be forced to cover.",
+  "see": [
+   "Short selling",
+   "Days to cover",
+   "Short squeeze",
+   "Float rotation"
+  ]
+ },
+ "Days to cover": {
+  "long": "Days to cover is short interest divided by average daily trading volume — a rough estimate of how many days of normal trading it would take for every short seller to buy back their position, if they all tried to do so at once using only the stock's typical volume.\n\nIt is a liquidity measure, not a forecast. A high days-to-cover figure means the exit for short sellers is narrow relative to the size of the position they collectively hold: if buying pressure forces even a fraction of them to cover simultaneously, that demand is large relative to the stock's normal turnover and can move the price sharply.\n\nThe metric assumes covering happens at average volume, which understates how a rush to cover behaves in practice — volume itself typically spikes well above average exactly when a squeeze is underway, so real time-to-cover in a stressed scenario is usually shorter than the static number suggests, even as the price impact is larger.\n\nWhere people get fooled: treating days to cover as a countdown to a guaranteed squeeze. It describes a structural vulnerability in the position, not a trigger — nothing forces shorts to cover on any particular schedule.",
+  "usage": "Days to cover is elevated, so a rally on decent volume could get uncomfortable for the shorts quickly.",
+  "see": [
+   "Short interest",
+   "Short selling",
+   "Short squeeze",
+   "Liquidity"
+  ]
+ },
+ "Penny stock": {
+  "long": "A penny stock is a low-priced share — commonly a few dollars or less, sometimes defined by exchange rules rather than a fixed threshold — typically issued by a small company with a thin float, low trading volume and limited public information. The label describes the price and liquidity profile, not a formal legal category in most markets.\n\nLow price and low liquidity combine to make these stocks unusually easy to move: a modest dollar amount of buying or selling can shift the price by a large percentage, and wide bid-ask spreads mean even a round-trip trade with no net price movement can cost several percent in friction.\n\nBecause reporting requirements and analyst coverage are often minimal for very small companies, information about the business can be sparse, stale or entirely dependent on the company's own promotional material, with little independent check on what's being claimed.\n\nWhere people get fooled: confusing a low share price with cheapness or upside potential. A stock trading at a few cents is not inherently closer to a bargain than one trading at a hundred dollars — the price says nothing about valuation, and thin liquidity in these names is a well-documented setting for pump-and-dump schemes.",
+  "usage": "It's a penny stock — the spread alone can eat a meaningful chunk of a small position.",
+  "see": [
+   "Share",
+   "Liquidity",
+   "Float rotation",
+   "Pump and dump"
+  ]
+ },
+ "Index inclusion": {
+  "long": "Index inclusion is the addition of a stock to a market index, such as the ASX 200 or S&P 500, decided by the index provider against published criteria — typically market cap, liquidity and free float thresholds, reviewed on a set schedule.\n\nInclusion has a direct mechanical effect: funds that track the index, whether passively via ETFs or via mandates requiring index-benchmarked holdings, must buy the newly added stock to replicate the index, and must sell whatever was removed to make room. The scale of this forced buying and selling depends on how much money tracks the index.\n\nBecause the change is announced ahead of the effective date, the anticipated buying and selling is often at least partly reflected in the price before the change actually happens, as traders position for the flow rather than waiting for it.\n\nWhere people get fooled: treating index inclusion as a verdict on the company's quality or prospects. It's an administrative event driven by size and liquidity rules, and the price reaction around it is largely a liquidity and flow effect from index-tracking funds, not new information about the business itself.",
+  "usage": "The stock is being added to the index next month, which explains the volume even though nothing about the business has changed.",
+  "see": [
+   "Index fund",
+   "Market capitalisation",
+   "Free float",
+   "ASX 200",
+   "Liquidity"
+  ]
+ },
+ "ADR": {
+  "long": "An ADR, American Depositary Receipt, is a certificate issued by a US bank representing shares of a foreign company held in custody, usually in the company's home market. It lets US investors buy and trade the foreign stock on a US exchange, in US dollars, through a normal brokerage account, without dealing directly with a foreign exchange or currency conversion themselves.\n\nEach ADR represents a fixed ratio of underlying shares — one ADR might equal one share, a fraction, or several shares, depending on how it was structured — and the depositary bank handles converting dividends into US dollars and passing them through, minus a custody fee.\n\nBecause the ADR price tracks the underlying foreign shares converted at the prevailing exchange rate, its US-dollar price moves with both the home-market share price and the currency — a stock flat in its home currency can still move for a US ADR holder purely on exchange-rate swings.\n\nWhere people get fooled: treating an ADR as identical in risk to a US-listed stock. It carries the underlying company's business risk plus currency risk plus, in some structures, additional custody or liquidity considerations that a domestic listing doesn't have.",
+  "usage": "The ADR moved more than the local shares overnight — worth checking whether that was the currency or the stock itself.",
+  "see": [
+   "Share",
+   "Currency exposure",
+   "Market capitalisation"
+  ]
+ },
+ "Float rotation": {
+  "long": "Float rotation is a rough measure of how many times a stock's entire free float has changed hands over a given period, calculated by dividing cumulative trading volume by the float. A float rotation of one means, on average, every available share has traded once in that window.\n\nHigh float rotation signals unusually intense turnover — a stock with a small float and a large volume spike can rotate several times in a single day, which typically accompanies sharp price moves in both directions as the available supply gets repeatedly bid up and sold down.\n\nThe metric is used mostly as a shorthand for how crowded trading in a name has become relative to its normal state, rather than as a precise count of unique buyers and sellers — the same shares can pass through many hands, or a small group can trade the same block back and forth repeatedly.\n\nWhere people get fooled: reading a single day's large volume number in isolation. Comparing that volume to the float, rather than to an arbitrary round number, is what tells you whether the turnover is actually extreme for that specific stock or just large in absolute terms for a big-float name.",
+  "usage": "Float rotation was several times over today, which is the kind of turnover that usually comes with a violent range.",
+  "see": [
+   "Free float",
+   "Volume",
+   "Short interest",
+   "Penny stock"
+  ]
+ },
+ "Earnings per share": {
+  "long": "Earnings per share, EPS, is a company's net profit divided by the number of shares outstanding — profit allocated on a per-share basis so it can be compared to the share price and across companies of different sizes. Basic EPS uses the current share count; diluted EPS adds in shares that could be created from options, convertible bonds and similar instruments, giving a more conservative figure.\n\nEPS can rise for reasons that have nothing to do with a stronger business: a buyback that shrinks the share count lifts EPS even with flat total profit, since the same earnings are now divided among fewer shares. The reverse is also true — issuing new shares dilutes EPS even if profit is growing.\n\nEPS is the denominator in the P/E ratio and the basis for most earnings-growth headlines, which is why the reported number, and any one-off items excluded from an adjusted version of it, gets scrutinised closely by analysts.\n\nWhere people get fooled: comparing EPS growth across companies without checking whether it came from actual profit growth or from a shrinking share count. The two produce an identical-looking EPS increase but mean very different things about the underlying business.",
+  "usage": "EPS grew this quarter, but part of that came from the buyback shrinking the share count, not from higher profit.",
+  "see": [
+   "P/E ratio",
+   "Buyback",
+   "Earnings",
+   "Valuation"
+  ]
+ },
+ "P/E ratio": {
+  "long": "The price-to-earnings ratio is the share price divided by earnings per share — a shorthand for how many years of current profit, at today's rate, it would take to pay back the price paid for one share, all else held constant. A P/E of twenty means the price is twenty times trailing, or sometimes forecast, annual earnings per share.\n\nA high P/E can mean the market expects earnings to grow quickly, or that the stock is simply expensive relative to its current profit; a low P/E can mean the market expects earnings to shrink, or that the stock is genuinely undervalued. The ratio alone doesn't distinguish between these — it needs context: growth rate, sector norms, and the reliability of the earnings figure itself.\n\nEarnings can be volatile or affected by one-off items, so P/E is often quoted alongside forward, forecast-based versions or adjusted-earnings versions, each answering a slightly different question and capable of giving a materially different number for the same company.\n\nWhere people get fooled: treating P/E as a standalone verdict — cheap or expensive — without asking why the market has priced it there. A low P/E is frequently the market pricing in a problem the ratio itself doesn't reveal.",
+  "usage": "It trades well below the sector's average P/E, which is worth investigating before assuming that automatically means cheap.",
+  "see": [
+   "Earnings per share",
+   "Valuation",
+   "Earnings",
+   "Guidance"
+  ]
+ },
+ "Valuation": {
+  "long": "Valuation is the process of estimating what a company, or a share of it, is actually worth — as distinct from what it currently trades for. Methods range from comparing multiples like P/E or EV/EBITDA against peers, to discounting projected future cash flows back to a present value, to summing the value of individual assets.\n\nEvery method depends on assumptions the analyst has to supply: growth rates, discount rates, margin trajectories, terminal values. Change those inputs modestly and the resulting valuation can swing by a large margin, which is why two analysts using the same method on the same company routinely arrive at different numbers.\n\nMarket price and valuation are not the same thing by definition — price is what the market currently agrees to trade at; valuation is one analyst's estimate of what it should be worth. The gap between the two is the entire basis for any investment thesis built on mispricing.\n\nWhere people get fooled: treating a valuation output as a precise, objective number rather than an assumption-dependent estimate. A discounted-cash-flow model that produces a single price target hides how sensitive that number is to inputs that were, ultimately, someone's guess.",
+  "usage": "Different valuation models gave a wide range of estimates, which mostly reflects how sensitive the output is to the growth assumption used.",
+  "see": [
+   "P/E ratio",
+   "Enterprise value",
+   "Earnings per share",
+   "Market capitalisation"
+  ]
+ },
+ "Guidance": {
+  "long": "Guidance is a company's own forecast of its future financial performance, typically revenue or earnings ranges for the next quarter or year, issued by management, most often alongside quarterly results. It is a projection made by the people running the business, not an audited fact.\n\nMarkets react heavily to guidance because it's forward-looking in a way that reported results, which describe the past, are not. A company can beat its own past-quarter earnings and still see its share price fall if the guidance it issues for the next quarter disappoints relative to what analysts had already built into their models.\n\nGuidance can be raised, lowered, or withdrawn entirely, and a withdrawal — management declining to forecast at all, often citing uncertainty — is itself read as a signal, usually a cautious one, even though it states nothing directly.\n\nWhere people get fooled: treating guidance as a reliable prediction rather than a forecast the company itself has every incentive to manage carefully. Companies often set guidance conservatively enough to be beatable, which is why beating guidance is a weaker signal on its own than it sounds — the bar was set by the same people clearing it.",
+  "usage": "They beat this quarter but cut guidance for next quarter, which is why the stock fell despite the headline beat.",
+  "see": [
+   "Earnings",
+   "Consensus / expected",
+   "Valuation",
+   "Priced in"
+  ]
+ },
+ "Halt on news": {
+  "long": "A trading halt is a temporary, exchange-imposed pause in trading a specific stock, distinct from a market-wide circuit breaker. Exchanges impose halts for pending material news, extreme volatility relative to a reference price, or a regulatory request, giving the market time to absorb information before trading resumes.\n\nA news-pending halt is typically requested by the company itself ahead of a significant announcement — an earnings surprise, a merger, a regulatory decision — so the news reaches everyone roughly simultaneously rather than advantaging whoever hears first. A volatility halt, by contrast, is automatic and triggered purely by the size of a price move within a short window, with no news required.\n\nWhen trading resumes, the reopening price is often set through a special auction that aggregates buy and sell orders rather than simply restarting continuous trading, which can produce a sharp gap from the pre-halt price.\n\nWhere people get fooled: assuming a halt means something is definitely wrong, or that a resumption will reliably continue the pre-halt direction. Halts pause information asymmetry; what the news actually turns out to be, and how the reopening auction prices it, isn't something the halt itself reveals in advance.",
+  "usage": "It's been halted pending news — there's no way to know which direction it reopens until the announcement is actually out.",
+  "see": [
+   "Halt",
+   "Circuit breaker",
+   "Auction (open / close)",
+   "Guidance"
+  ]
+ },
+ "Bond": {
+  "long": "A bond is a loan in tradeable form: the issuer, a government or company, borrows a fixed sum — the face or par value — from investors and agrees to pay a set interest rate, the coupon, on a schedule, then return the face value at maturity. Buying a bond makes the buyer a lender, not an owner, with no claim on future profit beyond what was contractually promised.\n\nOnce issued, a bond trades in the secondary market at a price that can sit above or below its face value, depending on where prevailing interest rates sit relative to the bond's fixed coupon. The coupon itself never changes over the bond's life; the price does all the adjusting.\n\nBondholders rank ahead of shareholders in a bankruptcy — they have a legal claim to be paid before equity holders receive anything — which is part of why bonds are generally considered less risky than shares of the same issuer, though default risk is real and varies enormously by issuer.\n\nWhere people get fooled: assuming a bond's price is stable because the coupon is fixed. The coupon is fixed; the price is not, and it moves inversely with interest rates by construction, which is the entire mechanism behind interest rate risk.",
+  "usage": "The coupon is fixed, but the bond's market price still moves every day as prevailing rates move.",
+  "see": [
+   "Coupon",
+   "Yield",
+   "Duration",
+   "Interest rate risk",
+   "Credit rating"
+  ]
+ },
+ "Coupon": {
+  "long": "The coupon is the fixed interest payment a bond makes to its holder, usually expressed as an annual percentage of the bond's face value and paid in instalments, commonly semi-annually. A bond with a face value of $1,000 and a five percent coupon pays $50 a year, split however the payment schedule specifies, for the life of the bond, regardless of what happens to interest rates or the bond's market price afterward.\n\nBecause the coupon is set at issuance and does not change, it becomes the anchor a bond's price moves around. When prevailing rates rise above the coupon, the bond becomes less attractive at face value and its price falls until the effective yield to a new buyer catches up with the market; when rates fall below the coupon, the reverse happens and the price rises.\n\nA bond's coupon rate and its current yield are only the same number on the day it's issued at par — after that, price movement drives a wedge between the two.\n\nWhere people get fooled: conflating the coupon rate with the yield an investor actually earns buying at today's market price. A five percent coupon bought at a discount yields more than five percent to the new buyer; bought at a premium, it yields less.",
+  "usage": "The coupon is fixed at five percent, but since it's trading below face value, the yield to a buyer today is higher than five.",
+  "see": [
+   "Bond",
+   "Yield",
+   "Duration",
+   "Interest rate risk"
+  ]
+ },
+ "Yield": {
+  "long": "Yield is the return a bond delivers to its holder, expressed as a percentage, and it moves inversely to price because the coupon payment is fixed in dollar terms. If a bond's price falls, that same fixed coupon represents a larger percentage of the lower price paid, so yield rises; if price rises, yield falls. This isn't correlation — it's the direct arithmetic consequence of a fixed payment divided by a variable price.\n\nSeveral yield measures exist for different purposes: current yield, coupon divided by current price, is a simple snapshot; yield to maturity accounts for the difference between the purchase price and the face value repaid at maturity, giving the fuller return an investor would earn holding to the end.\n\nYields across bonds of different maturities, plotted together, form the yield curve — a widely watched summary of how the market is pricing borrowing costs and expectations across time horizons.\n\nWhere people get fooled: hearing that yields are rising and assuming that's automatically good for bond holders. Rising yields mean falling bond prices for anyone already holding — it's good for buyers of new bonds going forward, and bad, in mark-to-market terms, for existing holders.",
+  "usage": "Yields rose sharply this week, so the bonds he already held fell in price even though nothing about the issuer changed.",
+  "see": [
+   "Bond",
+   "Coupon",
+   "Duration",
+   "Yield curve",
+   "Real yield"
+  ]
+ },
+ "Duration": {
+  "long": "Duration measures a bond's price sensitivity to changes in interest rates, expressed roughly as the percentage price change for a one-percentage-point move in yield. A bond with a duration of seven will lose approximately seven percent of its price if yields rise by one percentage point, and gain roughly the same if yields fall by one point — a first-order approximation, not an exact prediction.\n\nDuration is driven mainly by time to maturity and coupon size: longer-dated bonds and lower-coupon bonds have higher duration, because more of their cash flow is pushed further into the future, where a change in the discount rate has more compounding effect on present value. A short-dated, high-coupon bond has low duration and moves comparatively little when rates shift.\n\nDuration is the primary tool for comparing interest rate risk across bonds of very different maturities and coupons on a single, roughly comparable scale.\n\nWhere people get fooled: treating duration as a precise, linear predictor across large rate moves. It's a good approximation for small changes in yield; for larger moves, the actual price change curves away from the straight-line duration estimate, which is exactly what convexity captures.",
+  "usage": "The fund is running a longer duration than its benchmark, so it will swing more, in either direction, on any given move in rates.",
+  "see": [
+   "Bond",
+   "Convexity",
+   "Interest rate risk",
+   "Yield"
+  ]
+ },
+ "Convexity": {
+  "long": "Convexity describes the curvature in the relationship between a bond's price and its yield — the fact that duration's straight-line estimate of price sensitivity becomes less accurate as the yield move gets larger. Because the actual price-yield relationship is curved rather than linear, a bond typically gains slightly more in price for a fall in yields than duration alone predicts, and loses slightly less for an equivalent rise.\n\nThis asymmetry is generally a benefit to the bondholder, often described as positive convexity for plain vanilla bonds, but the size of the effect varies with the bond's structure. Bonds with embedded options, like callable bonds the issuer can redeem early, can exhibit negative convexity in some yield ranges, where the option to call away the bond caps the price appreciation an investor would otherwise get.\n\nConvexity matters most for large interest rate moves and for portfolios sensitive to the shape, not just the level, of price sensitivity.\n\nWhere people get fooled: assuming duration alone fully describes a bond's risk. For small, everyday rate moves the difference is negligible; for a sharp rate shock, ignoring convexity means underestimating gains on the upside and overestimating losses on the downside.",
+  "usage": "For a small move in rates duration is close enough, but for a large shock the convexity term stops being negligible.",
+  "see": [
+   "Duration",
+   "Bond",
+   "Yield",
+   "Interest rate risk"
+  ]
+ },
+ "Interest rate risk": {
+  "long": "Interest rate risk is the exposure a bond, or any fixed-rate instrument, has to changes in prevailing interest rates, arising directly from the fact that its coupon is fixed while market rates move. When rates rise, existing fixed-rate bonds become less attractive relative to new bonds issued at the higher rate, so their price falls to compensate; when rates fall, the reverse happens.\n\nThe size of the risk is captured by duration — longer-dated, lower-coupon bonds carry more interest rate risk than short-dated, higher-coupon ones, because more of their value depends on cash flows further in the future, which are more sensitive to the discount rate applied to them.\n\nInterest rate risk applies to the bond's market price, not necessarily to the cash flows themselves: an investor who holds a bond to maturity still receives every coupon and the face value as promised, regardless of what happens to its price in between, assuming no default.\n\nWhere people get fooled: conflating price risk with loss of the promised cash flows. A bond's mark-to-market value can fall sharply on rising rates without the issuer missing a single payment — the loss only crystallises if the bond is sold before maturity at the lower price.",
+  "usage": "He's holding to maturity, so interest rate risk affects the bond's mark-to-market value along the way, not what he'll actually be paid.",
+  "see": [
+   "Duration",
+   "Bond",
+   "Yield",
+   "Central bank"
+  ]
+ },
+ "Credit spread": {
+  "long": "A credit spread is the difference in yield between a corporate, or other non-government, bond and a government bond of comparable maturity, expressed in basis points. It's the extra compensation investors demand for taking on the issuer's default risk instead of lending to a government considered close to risk-free.\n\nSpreads widen when the market perceives higher default risk — for a specific issuer whose finances have deteriorated, or across the board when economic conditions sour and investors broadly demand more compensation for credit risk. Spreads narrow when conditions improve or investors become more willing to take on risk generally.\n\nBecause a corporate bond's total yield combines the risk-free rate and its credit spread, its price is exposed to two separate forces moving independently: a rise in the risk-free rate and a widening of the spread both push the bond's price down, and either can happen without the other.\n\nWhere people get fooled: watching a corporate bond's yield rise and assuming it must mean the company's credit is deteriorating. The move could just as easily be the risk-free rate rising underneath it, with the spread, the actual credit risk signal, unchanged.",
+  "usage": "The spread widened even though government yields were flat, which points to the company's own credit risk rather than broader rates.",
+  "see": [
+   "Bond",
+   "Default risk",
+   "Credit rating",
+   "Yield",
+   "Risk-free rate"
+  ]
+ },
+ "Default risk": {
+  "long": "Default risk is the possibility that a bond issuer fails to make a promised coupon payment or repay the face value at maturity. It is the fundamental risk that separates lending to different issuers — governments borrowing in their own currency are generally treated as close to default-free, while individual companies carry default risk that varies enormously with their financial health.\n\nDefault risk is priced into a bond primarily through its yield: investors demand a higher yield, a credit spread over the risk-free rate, to compensate for taking on the chance of not being repaid in full. Credit rating agencies attempt to summarise this risk into a letter grade, though ratings are opinions, not guarantees, and can lag deteriorating fundamentals.\n\nDefault doesn't always mean total loss — bondholders often recover some portion of face value through bankruptcy proceedings, and the expected recovery rate itself factors into how spreads are priced.\n\nWhere people get fooled: treating a bond's fixed coupon as a promise with the same certainty as a government-backed one. A high coupon on a risky issuer isn't extra reward for nothing — it's the market's price for a real, sometimes underestimated, probability of not getting fully repaid.",
+  "usage": "The high coupon reflects real default risk, not a free lunch — that's exactly why the yield is so much higher than a government bond's.",
+  "see": [
+   "Credit spread",
+   "Credit rating",
+   "Bond",
+   "Risk-free rate"
+  ]
+ },
+ "Credit rating": {
+  "long": "A credit rating is an assessment, issued by an agency like Moody's, S&P or Fitch, of an issuer's ability to meet its debt obligations, expressed as a letter grade from AAA down through various tiers to default grades. It is an opinion about default risk, produced by a private company, not a legal guarantee or a regulatory judgment.\n\nRatings sit on a spectrum from investment grade to speculative or junk grade, and the distinction matters mechanically because many institutional mandates restrict funds to investment-grade holdings only — a downgrade below that line can force selling by funds no longer permitted to hold the bond, independent of anyone's actual view on the credit.\n\nAgencies review ratings periodically and can upgrade or downgrade an issuer, but ratings changes have historically often lagged the market's own repricing of credit spreads — the market frequently moves first, and the rating agency's formal change follows.\n\nWhere people get fooled: treating a credit rating as current, forward-looking information rather than a periodically updated opinion. A stable letter grade doesn't mean nothing has changed about the issuer's finances since the last review.",
+  "usage": "The rating hasn't moved, but the spread has widened sharply — the market's already pricing in more risk than the letter grade reflects.",
+  "see": [
+   "Default risk",
+   "Credit spread",
+   "Bond",
+   "Treasury / government bond"
+  ]
+ },
+ "Treasury / government bond": {
+  "long": "A Treasury or government bond is debt issued directly by a national government, in its own currency, to fund spending. Because a government that borrows in its own currency can, in the extreme, create more of that currency to meet obligations, these bonds are generally treated as carrying minimal default risk and serve as the reference point — the risk-free rate — against which other borrowing costs are measured.\n\nGovernment bond yields across different maturities form the yield curve for that country, and this curve is watched closely because it reflects the market's aggregate view of future growth, inflation and central bank policy, distilled into a single set of prices.\n\nRisk-free describes default risk specifically, not price risk — government bond prices still move with interest rates like any other bond, and a long-dated government bond can lose a meaningful amount of value if rates rise, even though the issuer is in no danger of defaulting.\n\nWhere people get fooled: equating government bond with safe from loss. It's safe from default in its own currency; it is not safe from interest rate risk, and long-duration government bonds have produced large price declines during rate-hiking periods without any credit event at all.",
+  "usage": "Government bonds are considered default-free, but the long-dated ones still lost a lot of value when rates rose sharply.",
+  "see": [
+   "Risk-free rate",
+   "Bond",
+   "Yield curve",
+   "Duration",
+   "Central bank"
+  ]
+ },
+ "Risk-free rate": {
+  "long": "The risk-free rate is the theoretical return on an investment with zero risk of default, used as a baseline against which every other investment's expected return is measured. In practice, it's approximated by the yield on short-dated government debt from a stable issuer, such as a US Treasury bill, or in an Australian context, a short-dated Commonwealth government bond or the RBA cash rate itself.\n\nEvery risk premium — the credit spread on a corporate bond, the equity risk premium built into share valuations — is conceptually the extra return demanded above this baseline for taking on additional risk. When the risk-free rate itself rises, it tends to pull required returns on riskier assets up with it, since investors can now get more from the safe alternative without taking any additional risk.\n\nNo real-world asset is perfectly risk-free — even government debt carries interest rate risk and, for some issuers, genuine default risk — so the risk-free rate is always an approximation using the closest available proxy.\n\nWhere people get fooled: treating the risk-free rate as static. It moves with central bank policy and market conditions, and a shift in it changes the required return on everything priced relative to it, equities included.",
+  "usage": "When the risk-free rate rises, riskier assets need to offer more return just to stay equally attractive by comparison.",
+  "see": [
+   "Treasury / government bond",
+   "Central bank",
+   "Cash rate",
+   "Credit spread",
+   "Real yield"
+  ]
+ },
+ "TIPS / inflation-linked": {
+  "long": "TIPS, Treasury Inflation-Protected Securities, and other inflation-linked bonds adjust their principal value in line with an inflation index, typically a consumer price index, so the coupon — a fixed percentage of that adjusted principal — and the amount repaid at maturity both rise with realised inflation rather than staying fixed like a conventional bond.\n\nThis structure directly addresses a risk a conventional bond doesn't: inflation eroding the real purchasing power of fixed coupon payments and the eventual face-value repayment. A conventional bond's coupon is fixed in nominal dollars; an inflation-linked bond's is fixed in real terms, with the nominal amount floating to match inflation.\n\nBecause the market prices both conventional and inflation-linked government bonds of the same maturity, the difference between their yields — the breakeven inflation rate — gives a market-implied estimate of the average inflation rate investors expect over that period.\n\nWhere people get fooled: assuming inflation-linked bonds are immune to price risk. They still carry duration and move with real interest rates — protection from inflation is not the same as protection from every source of price movement a bond can have.",
+  "usage": "TIPS protect the purchasing power of the payout, but they still move in price when real interest rates change.",
+  "see": [
+   "Breakeven inflation",
+   "Real yield",
+   "Bond",
+   "Treasury / government bond"
+  ]
+ },
+ "Breakeven inflation": {
+  "long": "Breakeven inflation is the difference between the yield on a conventional government bond and an inflation-linked bond of the same maturity. It represents the average annual inflation rate that would make an investor indifferent between holding the two — the inflation rate priced in by the market for that period.\n\nIf realised inflation over the bond's life turns out higher than the breakeven rate, the inflation-linked bond outperforms the conventional one in hindsight; if realised inflation comes in lower, the conventional bond does better. Breakeven inflation is a market-derived estimate, not a forecast issued by any single forecaster, and it moves daily as both bonds are repriced.\n\nBecause it's extracted from two traded prices, breakeven inflation reflects not just genuine inflation expectations but also relative liquidity and risk-premium differences between the two bond types, which makes it an imperfect, if closely watched, proxy for what the market expects inflation to be.\n\nWhere people get fooled: treating breakeven inflation as a precise, pure forecast of future inflation. It's the market's implied estimate net of several other factors baked into the two bond prices, not a clean survey of inflation expectations alone.",
+  "usage": "Breakeven inflation ticked up, which is one input the market is watching, not a certified inflation forecast.",
+  "see": [
+   "TIPS / inflation-linked",
+   "Yield",
+   "Central bank",
+   "Real yield"
+  ]
+ },
+ "Repo": {
+  "long": "A repo, repurchase agreement, is a short-term loan collateralised by securities, typically government bonds: one party sells the securities now with an agreement to buy them back at a slightly higher price shortly after, often overnight, sometimes longer, with the price difference amounting to the interest on the loan. Economically it functions as secured cash borrowing, structured legally as two linked sales.\n\nRepo markets are central plumbing for short-term funding: banks, dealers and money market funds use them constantly to manage day-to-day cash and securities positions, and central banks use repo, and reverse repo, operations as one of their primary tools for implementing monetary policy and managing short-term interest rates.\n\nBecause repo is fully collateralised, rates are normally close to the risk-free rate; when repo rates spike unexpectedly, it typically signals stress in short-term funding markets — a shortage of either cash or acceptable collateral relative to demand.\n\nWhere people get fooled: assuming repo is exotic or irrelevant to everyday markets. It's one of the largest, most routine funding markets in the financial system, and central banks lean on it directly to steer the short end of the interest rate curve.",
+  "usage": "The central bank uses repo operations to keep short-term rates near its target, adding or draining cash as needed.",
+  "see": [
+   "Central bank",
+   "Risk-free rate",
+   "Cash rate",
+   "Treasury / government bond"
+  ]
+ },
+ "Central bank": {
+  "long": "A central bank is the institution responsible for a country's monetary policy — setting short-term interest rates, managing the money supply, and acting as lender of last resort to the banking system. Examples include the RBA in Australia, the Federal Reserve in the US, and the European Central Bank.\n\nCentral banks directly control the short end of the interest rate curve: the overnight or very short-term policy rate, the cash rate in Australia, the fed funds rate in the US, is set by policy decision. Longer-term rates are not set directly — they're determined by the market, pricing in expectations for where the short rate will average out over the relevant horizon, plus term and risk premia.\n\nBeyond interest rates, central banks use tools like quantitative easing and tightening, reserve requirements, and forward guidance about future policy to influence financial conditions and, ultimately, inflation and employment, per their specific mandates.\n\nWhere people get fooled: assuming the central bank sets interest rates broadly, including long-term bond yields or mortgage rates. It directly sets the short end only — everything further out the curve is a market price that reacts to, but isn't dictated by, the policy rate.",
+  "usage": "The central bank sets the short-term rate directly; the long end of the curve is the market's own bet on where that rate is heading.",
+  "see": [
+   "Cash rate",
+   "RBA",
+   "Quantitative easing",
+   "Forward guidance",
+   "Yield curve"
+  ]
+ },
+ "RBA": {
+  "long": "The RBA, Reserve Bank of Australia, is Australia's central bank, responsible for setting the cash rate and conducting monetary policy with a mandate covering price stability, full employment and the economic welfare of Australians. Its board meets on a set schedule to review the cash rate target.\n\nThe RBA implements its target through operations in the money market — primarily via exchange settlement accounts and repo-style transactions — that keep the actual overnight cash rate trading close to the announced target, rather than simply declaring a rate and expecting the market to comply on faith.\n\nRBA decisions, statements and the accompanying commentary are scrutinised closely because they shape rate expectations across the curve, borrowing costs for households and businesses, and the exchange rate — a hawkish surprise, a decision or tone more restrictive than expected, tends to strengthen the Australian dollar and pressure asset prices, and a dovish surprise tends to do the reverse.\n\nWhere people get fooled: reacting to the headline cash rate decision alone. The market has usually priced in the expected outcome ahead of time, so the actual move in yields and the currency is driven mainly by how the decision and guidance compare to what was already expected, not the decision in isolation.",
+  "usage": "The RBA held rates as expected, but the more hawkish tone in the statement is what actually moved the market.",
+  "see": [
+   "Central bank",
+   "Cash rate",
+   "Forward guidance",
+   "Rate expectations"
+  ]
+ },
+ "Cash rate": {
+  "long": "The cash rate is the interest rate at which banks lend to each other overnight, and in Australia it's the specific policy rate target set by the RBA. It's the anchor for the very short end of the interest rate curve and the base off which most variable lending and deposit rates in the economy are ultimately set.\n\nThe RBA doesn't fix the cash rate by decree alone — it announces a target and then conducts market operations to keep the actual traded overnight rate close to that target, which is why the cash rate is described as both a policy decision and an operational outcome.\n\nChanges in the cash rate ripple through the economy with a lag: variable mortgage rates typically adjust within weeks, but the broader effects on spending, borrowing and investment take considerably longer to show up in economic data, which is part of why central banks act on forecasts rather than waiting for confirmed outcomes.\n\nWhere people get fooled: assuming a cash rate change immediately and fully repriced everything downstream. Fixed-rate borrowers, for instance, are insulated until their fixed term ends, and long-term bond yields may have already priced the move in well before the announcement.",
+  "usage": "The cash rate moved, but fixed-rate borrowers won't feel it until their current term rolls off.",
+  "see": [
+   "RBA",
+   "Central bank",
+   "Risk-free rate",
+   "Interest rate risk"
+  ]
+ },
+ "Quantitative easing": {
+  "long": "Quantitative easing, QE, is a central bank buying financial assets, typically government bonds, sometimes other securities, using newly created reserves, in order to push down longer-term interest rates and increase liquidity in the financial system when the short-term policy rate alone has limited further room to move, near zero, for instance.\n\nBy buying large quantities of government bonds, the central bank increases demand for them, pushing their prices up and yields down across the curve, not just at the short end it directly controls through the policy rate. The newly created reserves also expand the money available in the banking system, intended to encourage further lending and investment.\n\nQE is unconventional in scale and mechanism compared with normal rate-setting, and central banks have used it during periods of severe stress or when conventional policy space has been exhausted, notably after the 2008 financial crisis and during the 2020 pandemic response.\n\nWhere people get fooled: assuming QE directly prints money that flows straight into consumer prices. The mechanism runs through asset prices and financial conditions first, and the relationship between QE and consumer-level inflation has been debated and inconsistent across different episodes.",
+  "usage": "The central bank ran large-scale bond purchases to push longer-term yields down when the policy rate was already near zero.",
+  "see": [
+   "Central bank",
+   "Quantitative tightening",
+   "Yield curve",
+   "Repo"
+  ]
+ },
+ "Quantitative tightening": {
+  "long": "Quantitative tightening, QT, is the reverse of quantitative easing: a central bank reduces the size of its balance sheet by letting purchased bonds mature without reinvesting the proceeds, or by actively selling them, which withdraws reserves from the financial system and puts upward pressure on longer-term yields relative to where they'd otherwise sit.\n\nQT is typically undertaken gradually and telegraphed well in advance, since an abrupt, unexpected reduction in central bank bond holdings could disrupt bond markets that have adjusted to the central bank's presence as a large, price-insensitive buyer over the QE period.\n\nThe practical effect works through reduced demand for government bonds relative to a QE period — with the central bank no longer buying, or actively selling, private investors must absorb a larger share of new and existing bond supply, which tends to require somewhat higher yields to clear the market.\n\nWhere people get fooled: expecting QT's effects to show up as cleanly or immediately as a change in the policy rate. The transmission through bond markets and financial conditions is slower and less precisely calibrated than a direct rate move, and estimating its exact yield impact remains genuinely uncertain even to central bankers.",
+  "usage": "The central bank is letting bonds run off its balance sheet rather than reinvesting, which is the quantitative tightening phase.",
+  "see": [
+   "Quantitative easing",
+   "Central bank",
+   "Yield curve",
+   "Bond"
+  ]
+ },
+ "Forward guidance": {
+  "long": "Forward guidance is a central bank's public communication about the likely future path of monetary policy, used as a tool in its own right alongside actual rate changes. By signalling intentions — that rates will remain low for an extended period, for instance — a central bank can influence longer-term rates and financial conditions today, before it has actually moved the policy rate at all.\n\nThis works because longer-term interest rates are priced off expectations for the average future path of short-term rates. Credible guidance about future policy shifts those expectations immediately, which is why markets can react sharply to a change in a central bank's language even when the current policy rate decision itself is unchanged.\n\nGuidance can be conditional, tied to a specific inflation threshold for example, or more open-ended, and its effectiveness depends heavily on the central bank's credibility — guidance the market doesn't believe has limited power to move rates on its own.\n\nWhere people get fooled: treating forward guidance as a firm promise. It's a statement of current intent based on current information, and central banks routinely revise guidance as conditions change — guidance, not commitment, is doing real work in that distinction.",
+  "usage": "The rate decision was as expected, but a shift in the forward guidance is what actually moved the curve.",
+  "see": [
+   "Central bank",
+   "Rate expectations",
+   "Central bank speak",
+   "Yield curve"
+  ]
+ },
+ "Rate expectations": {
+  "long": "Rate expectations are the market's collective, continuously updated forecast of where a central bank's policy rate is heading, extracted from prices in instruments like interest rate futures, overnight index swaps and the government bond yield curve itself. They are not a single published number but an implied estimate embedded in traded prices.\n\nBecause bond yields and other rate-sensitive prices already reflect these expectations, an actual central bank decision only moves markets meaningfully to the extent it differs from what was already priced in. A rate hike that was fully expected can leave prices largely unchanged; a hold that surprises the market by not hiking can move prices sharply, because it revises expectations, not because of the decision's raw content.\n\nRate expectations shift constantly as new economic data, central bank commentary, and global conditions arrive, which is why the yield curve and short-term interest rate futures are watched as a live, evolving forecast rather than a static one.\n\nWhere people get fooled: reacting to a central bank decision as though its content alone determines the market move. What matters is the decision and guidance relative to prior expectations — priced in versus surprise is the entire mechanism.",
+  "usage": "The hike itself was fully expected, so the market barely moved — it's the shift in future rate expectations that matters from here.",
+  "see": [
+   "Central bank",
+   "Forward guidance",
+   "Yield curve",
+   "Priced in",
+   "Cash rate"
+  ]
+ },
+ "Inversion": {
+  "long": "A yield curve inversion is when shorter-term government bond yields rise above longer-term yields — the opposite of the normal upward-sloping curve, where longer maturities typically yield more to compensate for greater time and uncertainty. It's most commonly discussed as the 2-year yield exceeding the 10-year yield, though other maturity pairs are also tracked.\n\nInversion usually reflects the market pricing in expectations that the central bank will need to cut short-term rates in the future, often because slower growth or a recession is anticipated, pulling longer-term yields down relative to a short end still anchored by current, tighter policy.\n\nInversion has historically preceded recessions in several economies, including the US, which is why it gets significant attention. But the lag between an inversion occurring and any subsequent recession has varied considerably across historical episodes, and not every inversion has been followed by one within a similar timeframe.\n\nWhere people get fooled: treating inversion as a precise, short-term timing signal. It reflects a market view about the medium-term path of policy and growth, with a long and variable historical lag to any actual downturn — it's context for a view, not a countdown clock.",
+  "usage": "The curve inverted again, which the market reads as a signal that rate cuts are eventually expected, not a fixed timeline for anything.",
+  "see": [
+   "Yield curve",
+   "Central bank",
+   "Recession",
+   "Rate expectations"
+  ]
+ },
+ "Real yield": {
+  "long": "Real yield is a bond's yield adjusted for expected or realised inflation — the return an investor actually keeps in terms of purchasing power, rather than in nominal dollars. It can be measured directly from an inflation-linked bond's quoted yield, or estimated by subtracting expected inflation, such as breakeven inflation, from a conventional bond's nominal yield.\n\nReal yield matters because a nominal yield alone doesn't say whether an investment is preserving or eroding purchasing power. A bond yielding five percent nominally in an environment with six percent inflation has a negative real yield — the investor is losing purchasing power despite a positive-looking nominal return.\n\nReal yields are also a key input into other asset pricing: equity valuations, gold, and other assets are frequently discussed relative to moves in real yields, since a rising real yield raises the discount rate applied to future cash flows across many asset classes, not just bonds.\n\nWhere people get fooled: looking at a nominal yield and assuming it tells the whole story. Two bonds with identical nominal yields can have very different real yields if inflation expectations for their respective periods differ.",
+  "usage": "The nominal yield looks attractive, but once expected inflation is subtracted the real yield is barely positive.",
+  "see": [
+   "TIPS / inflation-linked",
+   "Breakeven inflation",
+   "Yield",
+   "Risk-free rate"
+  ]
+ },
+ "Carry": {
+  "long": "Carry is the return earned from simply holding a position over time, independent of any price change in the underlying asset — for a bond, it's roughly the coupon, or yield, collected while holding it; for a currency position, it's the interest rate differential between the two currencies involved.\n\nA positive-carry position earns money each day it's held, all else equal, which makes carry a distinct source of return from capital appreciation. A carry trade specifically refers to borrowing in a low-interest-rate currency to fund a position in a higher-yielding one, collecting the rate differential as long as exchange rates don't move against the position enough to erase it.\n\nCarry is not free money — it compensates for a risk. A high-carry position is usually high-carry precisely because the market perceives more risk in it, credit risk for a bond, currency or liquidity risk for a carry trade, and that risk can materialise as a sudden, sharp loss that erases years of accumulated carry in a short period.\n\nWhere people get fooled: treating positive carry as evidence a position is safe or has positive expected value after risk. It's compensation being collected for a risk that simply hasn't shown up yet.",
+  "usage": "The trade earns steady carry every day it's open, but that's compensation for a risk that can reverse it all at once.",
+  "see": [
+   "Yield",
+   "Bond",
+   "Risk-free rate",
+   "Credit spread"
+  ]
+ },
+ "ETF": {
+  "long": "An ETF, exchange-traded fund, is a fund that holds a basket of assets, typically tracking an index, and trades on an exchange throughout the day like an ordinary share, rather than being priced and transacted only once daily like a traditional managed fund. Buying one unit gives proportional exposure to everything the fund holds.\n\nMost ETFs are passively managed, aiming to replicate an index's return as closely as possible after fees, though actively managed ETFs also exist. The structure combines index-fund-style diversification with stock-like intraday tradability, which is the main practical distinction from a traditional unlisted managed fund.\n\nAn ETF's exchange price is kept close to the value of its underlying holdings, its net asset value, through a creation and redemption mechanism involving authorised participants, who can create or redeem ETF units in exchange for the underlying basket whenever a meaningful price gap opens up, arbitraging it away.\n\nWhere people get fooled: assuming all ETFs are simple, low-cost index trackers. The wrapper covers everything from plain broad-market index funds to leveraged, inverse and thinly traded niche products with very different risk and cost profiles — being an ETF says nothing on its own about what's actually inside.",
+  "usage": "It's an ETF, but check what it actually holds — the wrapper alone doesn't tell you the risk profile.",
+  "see": [
+   "NAV",
+   "Creation / redemption",
+   "Index fund",
+   "Tracking error",
+   "Expense ratio"
+  ]
+ },
+ "NAV": {
+  "long": "NAV, net asset value, is the total value of a fund's underlying holdings divided by the number of units outstanding, representing what one unit is intrinsically worth based on the fund's actual assets. For most funds it's calculated once at the end of the trading day, using closing prices of everything held.\n\nFor an ETF, NAV is calculated the same way, but the fund also trades continuously on an exchange at its own market price throughout the day, set by ordinary buying and selling rather than a single end-of-day calculation. These two numbers, NAV and market price, are related but not identical at every moment.\n\nThe creation and redemption mechanism is what keeps an ETF's market price closely tethered to its NAV: authorised participants can profit from meaningful gaps between the two by creating or redeeming units, which pushes the market price back toward NAV through ordinary arbitrage.\n\nWhere people get fooled: assuming an ETF's traded price always exactly equals its NAV in real time. It's usually very close, but during periods of market stress, or for funds holding illiquid or foreign-market assets, a visible premium or discount to NAV can persist for stretches of time.",
+  "usage": "The ETF's market price and its NAV are usually near-identical, but they're not literally the same number at every instant.",
+  "see": [
+   "ETF",
+   "Premium / discount to NAV",
+   "Creation / redemption",
+   "Tracking error"
+  ]
+ },
+ "Premium / discount to NAV": {
+  "long": "A premium or discount to NAV is the gap between an ETF's traded market price and the calculated value of its underlying holdings — a premium means the market price sits above NAV, a discount means it sits below. Small, fleeting gaps are normal in any continuously traded market; persistent, sizeable ones are the exception that signals something worth investigating.\n\nGaps open up when supply and demand for the ETF's units in the market temporarily outpaces the speed at which authorised participants can create or redeem units to arbitrage the difference away — this happens more readily for funds holding illiquid, foreign-market, or after-hours-priced assets, where the underlying NAV itself may be stale or hard to trade against in real time.\n\nClosed-end funds, by contrast, lack this creation and redemption arbitrage mechanism entirely, which is why they can trade at meaningful, persistent premiums or discounts to NAV for extended periods without anything forcing convergence.\n\nWhere people get fooled: assuming any premium or discount will close quickly just because it exists. For a standard, liquid ETF that's usually true; for illiquid or closed-end structures, a discount can persist indefinitely with no mechanism guaranteeing it narrows.",
+  "usage": "It's trading at a discount to NAV, which is worth checking against how liquid the underlying holdings actually are.",
+  "see": [
+   "NAV",
+   "ETF",
+   "Creation / redemption",
+   "Closed-end fund",
+   "Tracking error"
+  ]
+ },
+ "Creation / redemption": {
+  "long": "Creation and redemption is the mechanism that lets ETF shares be created or destroyed on demand, keeping the fund's market price closely aligned with its NAV. Authorised participants, typically large institutional market makers, can deliver a basket of the underlying securities to the ETF issuer in exchange for new ETF units, creation, or hand back ETF units in exchange for the underlying basket, redemption.\n\nThis process is what allows ETF supply to expand and contract with demand, unlike a fixed-share closed-end fund. When an ETF trades at a premium to NAV, an authorised participant can profit by creating new units cheaply using the underlying basket and selling them at the higher market price — that selling pressure pushes the price back down toward NAV. The reverse arbitrage narrows a discount.\n\nBecause this arbitrage is largely mechanical and continuously available to authorised participants, it's the specific reason ETF tracking generally holds up well through active daily trading, unlike a fund with no such mechanism.\n\nWhere people get fooled: thinking of ETF share count as fixed like an ordinary company's stock. It flexes constantly, and that flexibility is precisely the arbitrage engine that keeps the price honest.",
+  "usage": "Creation and redemption is what keeps the ETF's price close to NAV — it's the arbitrage doing the work, not a promise from the issuer.",
+  "see": [
+   "ETF",
+   "NAV",
+   "Premium / discount to NAV",
+   "Tracking error"
+  ]
+ },
+ "Tracking error": {
+  "long": "Tracking error is the divergence between an ETF's, or index fund's, actual return and the return of the index it's designed to replicate, usually measured as the standard deviation of the difference over time. A well-run index ETF should have a small tracking error; a large or growing one signals the fund isn't replicating its benchmark cleanly.\n\nSources of tracking error include the expense ratio, a direct, constant drag versus the index, which is calculated with no fees deducted, imperfect replication, holding a sample of index constituents rather than every single one, common for very broad or illiquid indices, cash drag from holding some assets in cash rather than fully invested, and timing differences in dividend reinvestment or rebalancing.\n\nTracking error is distinct from the premium or discount to NAV — an ETF can track its NAV very tightly on any given day while still accumulating meaningful tracking error against the underlying index over months or years through fees and replication drag.\n\nWhere people get fooled: assuming that being an index fund means the return will exactly match the index, fee-free. Even a well-constructed ETF returns the index minus its costs and replication imperfections, compounded over time.",
+  "usage": "Check the fund's tracking error against its stated benchmark, not just the headline expense ratio, before assuming it matches the index closely.",
+  "see": [
+   "ETF",
+   "Expense ratio",
+   "Index fund",
+   "Cash drag",
+   "NAV"
+  ]
+ },
+ "Expense ratio": {
+  "long": "The expense ratio is the annual fee an ETF or managed fund charges, expressed as a percentage of assets under management, covering management, administration and other operating costs. It's deducted continuously from the fund's assets rather than billed separately, so it shows up as a steady drag on returns relative to the fund's underlying holdings or index rather than a visible line-item charge.\n\nEven a seemingly small expense ratio compounds meaningfully over long holding periods: a fund charging one percent a year versus one charging a tenth of a percent creates a widening gap in total return over years and decades, purely from the fee difference, with everything else held equal.\n\nExpense ratios vary widely by fund type — broad, passive index ETFs tend to sit at the low end, while actively managed funds, niche sector funds, and leveraged or inverse products typically charge considerably more, reflecting the added complexity or active decision-making involved.\n\nWhere people get fooled: treating the expense ratio as the only cost that matters, or dismissing a difference of a few tenths of a percent as trivial. Compounded over a long holding period, that difference is often one of the largest controllable factors in the fund's eventual net return.",
+  "usage": "The expense ratio looks small on paper, but compounded over twenty years the gap between two funds adds up.",
+  "see": [
+   "ETF",
+   "Tracking error",
+   "Index fund",
+   "Cost drag"
+  ]
+ },
+ "Index fund": {
+  "long": "An index fund is a fund constructed to replicate the performance of a specified market index, such as the ASX 200 or S&P 500, by holding the same constituents in the same, or closely approximated, weights, rather than having a manager actively select which securities to hold and in what proportion.\n\nThe strategy is fully rules-based: what's held, and in what weight, is determined by the index methodology, not by ongoing human judgment about which stocks will outperform. This generally keeps costs low, since there's no research team picking stocks, and it produces returns that closely track the chosen index, minus fees and any tracking error.\n\nIndex funds can be structured as ETFs, tradeable on an exchange throughout the day, or as traditional unlisted managed funds, priced and transacted once daily — the underlying replication strategy is the same regardless of the wrapper.\n\nWhere people get fooled: assuming that being an index fund always means broad, diversified market exposure. Indices themselves range from broad market-cap-weighted benchmarks to narrow, concentrated, or unusually constructed ones — the fund is only as diversified as the index it's built to track.",
+  "usage": "It's an index fund, but check which index — some are far more concentrated than a broad market benchmark.",
+  "see": [
+   "ETF",
+   "Market capitalisation",
+   "Tracking error",
+   "Smart beta"
+  ]
+ },
+ "Leveraged ETF": {
+  "long": "A leveraged ETF aims to deliver a multiple, commonly 2x or 3x, of an index's daily return, using derivatives and borrowing to achieve that amplification. The key word is daily: the fund resets its exposure each trading day to maintain the target multiple, and that daily compounding is what makes its longer-term return diverge, sometimes sharply, from simply multiplying the index's longer-term return by the stated factor.\n\nThe arithmetic of daily compounding under volatility works against the holder. Consider an index that rises 10% one day and falls 10% the next: it ends down 1% overall, since 1.10 times 0.90 equals 0.99. A 2x leveraged version targeting double the daily move rises 20% then falls 20%: it ends down 4%, since 1.20 times 0.80 equals 0.96 — four times the underlying's loss, not two, purely from the mechanics of compounding a larger daily swing.\n\nThis effect, sometimes called volatility decay, means a leveraged ETF can lose money over a period even if the underlying index is roughly flat over that same period, provided it moved around enough along the way.\n\nWhere people get fooled: assuming a 2x ETF simply doubles the index's return over any holding period. It doubles the daily return — over longer periods in a choppy market, the compounding gap can be substantial.",
+  "usage": "It's a 2x leveraged ETF — the daily reset means its return over a volatile month can look nothing like double the index.",
+  "see": [
+   "Volatility decay",
+   "Inverse ETF",
+   "ETF",
+   "Index fund"
+  ]
+ },
+ "Volatility decay": {
+  "long": "Volatility decay is the tendency of leveraged and inverse ETFs to lose value over time relative to a simple multiple of the underlying index's return, purely as a result of daily compounding in a volatile, choppy market, even when the underlying index ends up roughly unchanged over the same period.\n\nThe mechanism is arithmetic, not a flaw in the fund's construction: because the leveraged exposure resets daily, each day's gain or loss compounds on top of the previous day's already-adjusted base. A sequence of an index rising 10% then falling 10% nets a 1% loss for the unleveraged index, since 1.10 times 0.90 equals 0.99; a 2x fund tracking daily moves loses 4% over the same two days, since 1.20 times 0.80 equals 0.96 — the decay grows with both the leverage multiple and how much the underlying whips back and forth.\n\nDecay is worst in sideways, choppy, high-volatility conditions and effectively absent in a smooth, one-directional trend, since compounding a string of same-sign daily returns doesn't produce the same erosion.\n\nWhere people get fooled: holding a leveraged or inverse ETF for weeks or months expecting it to simply track a multiple of the index's total move over that period. The daily reset mechanism means path, not just start and end price, determines the result.",
+  "usage": "It's been a choppy sideways month, which is exactly the environment where volatility decay eats into a leveraged ETF the most.",
+  "see": [
+   "Leveraged ETF",
+   "Inverse ETF",
+   "ETF",
+   "Volatility"
+  ]
+ },
+ "Inverse ETF": {
+  "long": "An inverse ETF aims to deliver the opposite of an index's daily return, typically -1x, though leveraged inverse versions like -2x or -3x also exist, using short positions and derivatives rather than requiring the investor to short the index directly. It's a way to position for a decline without a margin account or borrowing shares.\n\nLike leveraged ETFs, inverse ETFs reset their exposure daily to maintain the target multiple, which means the same daily-compounding arithmetic applies: over a choppy, sideways period, an inverse ETF can lose money even if the underlying index ends up close to where it started, because the fund is compounding a new daily bet each day rather than holding one static short position for the full period.\n\nThe structure avoids some short-selling mechanics — no borrow fee, no risk of a forced buy-in — but replaces them with volatility decay and the derivative or counterparty exposure inherent in how the fund achieves its inverse return.\n\nWhere people get fooled: treating an inverse ETF as a clean, buy-and-hold substitute for shorting an index over any extended period. It's engineered for daily inverse exposure specifically, and the longer it's held through a choppy market, the more the actual return diverges from a simple negative of the index's total move.",
+  "usage": "An inverse ETF held for a few volatile months can drift well away from just being the negative of the index's return over that period.",
+  "see": [
+   "Leveraged ETF",
+   "Volatility decay",
+   "Short selling",
+   "ETF"
+  ]
+ },
+ "Closed-end fund": {
+  "long": "A closed-end fund raises a fixed amount of capital through an initial public offering and issues a fixed number of shares, which then trade on an exchange among investors — the fund itself doesn't create or redeem shares in response to ongoing demand the way an open-end fund or ETF does.\n\nBecause the share count is fixed rather than flexible, there's no continuous creation and redemption arbitrage forcing the market price toward NAV. Supply and demand for the fund's shares in the secondary market can push the price meaningfully above, a premium, or below, a discount, the value of its actual underlying holdings, sometimes for extended periods, with nothing structurally forcing convergence.\n\nClosed-end funds can also use leverage more readily than typical open-end funds or ETFs, since their fixed capital base makes managing leveraged positions more straightforward operationally, which adds another layer of risk and return variability beyond the underlying holdings themselves.\n\nWhere people get fooled: assuming a closed-end fund's price closely tracks its NAV the way a typical ETF's does. Persistent, sometimes large discounts to NAV are common in this structure precisely because the arbitrage mechanism that keeps ETFs tight to NAV doesn't exist here.",
+  "usage": "It's a closed-end fund trading at a wide discount to NAV, and there's no creation or redemption mechanism forcing that gap to close.",
+  "see": [
+   "Premium / discount to NAV",
+   "NAV",
+   "ETF",
+   "Creation / redemption"
+  ]
+ },
+ "Managed fund": {
+  "long": "A managed fund pools money from multiple investors into a single portfolio run by a professional manager, with units bought and redeemed directly through the fund at a price set once daily based on NAV — unlike an ETF, it doesn't trade continuously on an exchange throughout the day.\n\nManaged funds can be actively managed, where the manager selects holdings aiming to outperform a benchmark, or passively managed to track an index, similar in objective to an index ETF but without intraday tradability. Buying or selling happens by placing an order with the fund itself, often through a platform, settled at that day's NAV, rather than trading against another investor in the market in real time.\n\nBecause there's no exchange-traded price separate from NAV, managed funds don't experience the premium or discount dynamics that ETFs or closed-end funds can — every transaction happens at the calculated NAV, for better or worse depending on timing.\n\nWhere people get fooled: assuming a managed fund can be bought or sold instantly at a known price during the trading day, the way a share or ETF can. Orders are typically processed at the next calculated NAV, which may not be known until after the order is placed.",
+  "usage": "It's a managed fund, not an ETF, so the order won't fill at a live intraday price — it settles at that day's NAV.",
+  "see": [
+   "ETF",
+   "NAV",
+   "Index fund",
+   "Expense ratio"
+  ]
+ },
+ "Smart beta": {
+  "long": "Smart beta describes index strategies that weight or select constituents by factors other than plain market capitalisation, such as value, quality, low volatility, or dividend yield, while still being rules-based and passively implemented like a traditional index fund, rather than relying on a manager's discretionary stock-picking.\n\nThe term sits between fully passive market-cap-weighted indexing and fully active management: the methodology is fixed and transparent in advance, passive in that sense, but it deliberately tilts away from the market-cap-weighted default in pursuit of a specific factor exposure believed to offer a structural edge or different risk profile.\n\nBecause the underlying factors — value, momentum, low volatility and others — have their own performance cycles, a smart beta fund can meaningfully underperform a plain market-cap index for extended stretches, even though it's still a fully rules-based, low-discretion strategy under the hood.\n\nWhere people get fooled: treating smart beta as inherently smarter or lower-risk than plain indexing. It's a specific factor bet expressed through a rules-based wrapper — the label describes the methodology, not a guarantee that the factor tilt will outperform going forward.",
+  "usage": "It's a smart beta fund tilted toward value, so its performance cycle will diverge from a plain market-cap index at times.",
+  "see": [
+   "Index fund",
+   "ETF",
+   "Factor investing",
+   "Valuation"
+  ]
+ },
+ "Cash drag": {
+  "long": "Cash drag is the performance cost a fund incurs from holding a portion of its assets in cash rather than being fully invested in its target securities, particularly relevant when markets are rising — cash earns a lower return than the fund's benchmark over that period, pulling total fund performance below the benchmark by the size of the cash allocation times the return gap.\n\nFunds hold cash for practical reasons: to meet expected redemptions without having to sell holdings at inopportune moments, to manage inflows before they're deployed, or because an index fund's replication process leaves a small residual balance that isn't perfectly invested at every instant.\n\nCash drag contributes directly to tracking error for an index fund or ETF — it's one of the specific, identifiable sources of the gap between the fund's return and the index's return, alongside fees and imperfect replication.\n\nWhere people get fooled: assuming a fund holding a small cash buffer is a negligible detail. In a strongly rising market even a modest, single-digit cash allocation held for operational reasons can add up to a measurable chunk of underperformance versus a fully invested benchmark over a year.",
+  "usage": "Some of the underperformance versus the index came from cash drag — the fund wasn't fully invested the whole period.",
+  "see": [
+   "Tracking error",
+   "ETF",
+   "Index fund",
+   "Expense ratio"
+  ]
+ }
+}

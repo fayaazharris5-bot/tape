@@ -116,6 +116,18 @@ Sonnet writers work fine for this and cost less.
   inside the term objects — that is why list_unwritten.py diffs names
   against `"Name":{long:` matches rather than parsing term chunks.
 - `python` is not on PATH; use `py -3`.
+- **`unwritten.json` is a live queue, not a static spec.** Regenerating it
+  while writer agents are running makes it shrink under them; two agents
+  noticed and stopped to investigate, and one nearly abandoned correct work
+  because its section had vanished from the file. Either regenerate only
+  between waves, or tell each agent in its brief that the file drains
+  concurrently and its FIRST read is authoritative.
+- Writers may rewrite their output file late, after you have already merged
+  an earlier version of it. That is safe: merge_agent.py's ALREADY WRITTEN
+  guard skips any term that already has a body, and re-running a stale
+  fragment leaves index.html byte-identical. Verified, not assumed.
+- Agents will report "another process is modifying index.html" — that is the
+  merge-and-commit pipeline, i.e. you. No writer ever touches index.html.
 
 ## whitelist regeneration (after any content/dedupe change)
 
