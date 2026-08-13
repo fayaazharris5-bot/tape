@@ -74,6 +74,33 @@ and 0 terms missing an example, so the older hand-written entries turned
 out to already carry both fields. The only content item left is
 second/third charts (viz2) for the priority structural terms.
 
+## Getting a bot's results in — the honest integration
+
+There is **no trading bot on this machine**. Searched on 2026-08-14:
+`strategy-lab` is a research backtester, `tradingview-mcp` is a market-data
+MCP server, `New Folder/backtest-engine-spec.txt` and `B-master-trading.md`
+are specs. The only broker-API code anywhere is `ccxt` sitting inside
+`strategy-lab/.venv` as a library dependency — not bot code the user wrote.
+
+So "integrate the bot" means **ingesting whatever a bot produces**, which
+Tape already does two ways, both record-keeping only:
+
+1. **Statement import** (Strategies tab) — the general path. It now handles
+   three shapes: one row per completed trade with a P&L column; one row per
+   trade with entry/exit to derive P&L from; and **fill logs**, where each
+   row is one leg. ccxt, most exchange exports and most bots emit the third
+   kind, and it used to import as zero trades. Fills are paired FIFO per
+   symbol, fees charged pro-rata to the matched quantity, still-open
+   positions reported as skipped rather than closed at an invented price,
+   and over-closing treated as a reversal. The report says plainly that
+   trades were reconstructed and on what basis. Test group 23.
+2. **Strategy Lab bridge** — `sync_strategies.py`, then the Import button.
+
+What must NOT be built, per non-negotiables 8 and 9: order placement,
+credentials of any kind, mirroring, copy-trading, or signal generation.
+A bot that *executes* is out of scope; a bot's *record* is exactly what
+this app is for.
+
 ## Writer pipeline — how content gets made
 
 One agent per section group, each writing ONE json file, never touching
