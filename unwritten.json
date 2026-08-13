@@ -1,12 +1,4 @@
 {
- "basics": [
-  "Order book / DOM",
-  "Last traded price",
-  "Mid price",
-  "Quote vs trade",
-  "Long-only vs long-short",
-  "Instrument selection"
- ],
  "risk": [
   "Portfolio heat",
   "Defined risk",
@@ -373,25 +365,6 @@
   "Currency exposure",
   "Hedged ETF"
  ],
- "ops": [
-  "Session routine",
-  "Trade log fields",
-  "Review cadence",
-  "Strategy retirement",
-  "Position reconciliation",
-  "Backup and redundancy",
-  "Capital allocation",
-  "Withdrawal policy",
-  "Drawdown protocol",
-  "Journaling the near-misses",
-  "Version control for strategies",
-  "Trading as a business",
-  "Opportunity cost of time",
-  "Skill vs luck attribution",
-  "Definition of done",
-  "Research backlog",
-  "Negative result archive"
- ],
  "riskt": [
   "Market risk",
   "Liquidity risk",
@@ -446,10 +419,6 @@
   "Risk per setup type",
   "Capital preservation mode"
  ],
- "pa": [
-  "Swing high / swing low",
-  "Chop"
- ],
  "wyc": [
   "Wyckoff method",
   "Composite operator",
@@ -502,5 +471,8 @@
   "Post-exit review",
   "Slippage on exit",
   "One trade at a time"
+ ],
+ "pa": [
+  "Chop"
  ]
 }
