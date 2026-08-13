@@ -1,0 +1,521 @@
+{
+  "Market cap": {
+    "long": "Market capitalisation is the share price multiplied by the number of shares outstanding — the market's running estimate of what the whole company is worth. It is not money anyone paid; it is the last traded price extrapolated across every share, including the vast majority that did not trade at that price and could not all be sold at it.\n\nThe figure matters mostly for classification. Index membership, fund mandates, and liquidity all sort by it: large caps trade tight and deep, small caps trade wide and thin. A stock's cap bracket says more about how it trades — spreads, volatility, gap behaviour — than about whether it is a good business.\n\nFree float refines the raw number by excluding locked-up insider holdings, which is why index weightings often differ from headline cap.\n\nWhere people get fooled: treating cap as cash value. A company worth ten billion on paper cannot be sold for ten billion; heavy selling moves the price the calculation depends on. And a falling price shrinks the cap without a single dollar leaving anyone's account — value was marked, not moved.",
+    "usage": "\"It's a small cap, so expect wide spreads and violent gaps around any news.\"",
+    "see": [
+      "Market capitalisation",
+      "Free float",
+      "Valuation",
+      "Sector",
+      "EPS / P/E"
+    ]
+  },
+  "EPS / P/E": {
+    "long": "Earnings per share is profit divided by shares outstanding — how much of the year's profit each share notionally earned. The price-to-earnings ratio divides the share price by EPS, giving the multiple the market pays for a dollar of current profit. Together they are the most quoted valuation shorthand in equities.\n\nThe mechanism worth understanding is that P/E is really a price on expectations. A high multiple says the market expects earnings to grow into the price; a low multiple says it expects stagnation, decline, or hidden risk. Neither is a verdict — both are forecasts embedded in price, and forecasts embedded in price are frequently wrong in both directions.\n\nEPS is also manipulable: buybacks shrink the share count and lift EPS without any operational improvement, and one-off items can distort a single year badly.\n\nWhere people get fooled: reading a low P/E as automatically cheap. Cheapness relative to earnings that are about to collapse is not cheapness at all — the market often knows something the ratio doesn't. Compare within a sector, check what earnings figure is actually being used, and remember the E is backward-looking while the P is not.",
+    "usage": "\"It trades on a P/E of eight, which either means it's cheap or the market thinks those earnings won't last.\"",
+    "see": [
+      "Earnings per share",
+      "P/E ratio",
+      "Valuation",
+      "Earnings",
+      "Buyback"
+    ]
+  },
+  "Earnings": {
+    "long": "Earnings season is the quarterly window when listed companies report results. For traders the event is less about the profit number than about the gap between the report and what was already expected. Price responds to the surprise versus consensus, not to whether the number was objectively good — a record profit that misses expectations sells off, and a loss smaller than feared can rally hard.\n\nGuidance often matters more than the reported quarter. The quarter is history; the forward statement changes the forecasts that current prices are built on, which is the mechanism behind stocks moving violently on an in-line report.\n\nOptions markets price the event in advance: implied volatility inflates going in and collapses after the release, so being right on direction can still lose money on a long option.\n\nWhere people get fooled: trading the headline number. The stock's reaction depends on the whisper number, positioning, and guidance — layers of expectation invisible in the press release. Holding through earnings is a coin-flip on a gap you cannot manage, and for a Perth-based trader most US reports land outside your session entirely.",
+    "usage": "\"She's flat into earnings — the gap risk on a single report isn't worth carrying overnight.\"",
+    "see": [
+      "EPS / P/E",
+      "Guidance",
+      "Whisper number",
+      "IV crush",
+      "Event risk"
+    ]
+  },
+  "FOMC": {
+    "long": "The Federal Open Market Committee is the body inside the US Federal Reserve that sets the federal funds rate — the anchor price of money for the world's reserve currency. It meets eight times a year, publishes a statement, and holds a press conference. Because so much global borrowing, valuation, and currency pricing keys off US rates, FOMC days move nearly everything at once.\n\nThe mechanism to hold onto: markets price the expected path of rates continuously through futures, so the announced decision itself is usually priced before it happens. What moves markets is deviation — a surprise in the statement wording, the dot plot, or the chair's press conference tone relative to what was already embedded in prices.\n\nFor a Perth trader the release lands at 2am or 3am AWST depending on daylight saving, with the press conference half an hour later — deep into the night.\n\nWhere people get fooled: reading the decision as the event. A hike can be bullish and a cut bearish, entirely depending on what was expected. The reaction also frequently reverses during the press conference, so the first move is a poor guide to the day.",
+    "usage": "\"Nothing much moves this week until FOMC — everything's parked waiting on the statement.\"",
+    "see": [
+      "Dot plot",
+      "Hawkish / dovish",
+      "Pre-FOMC drift",
+      "Rate expectations",
+      "Central bank speak"
+    ]
+  },
+  "CPI": {
+    "long": "The Consumer Price Index measures the change in prices of a basket of goods and services — the standard inflation gauge. Because inflation drives central bank rate decisions, and rates drive nearly all asset pricing, the monthly CPI release has in some regimes been the single biggest scheduled market event, outweighing the rate decision itself.\n\nThe number that moves markets is the surprise against consensus, not the level. Inflation at 4 percent when 4 percent was forecast is a non-event; 3.8 against a 4.0 forecast can move indices violently, because it shifts the expected path of rates. Core CPI — which strips out volatile food and energy — usually matters more to central banks than the headline figure, since it better reflects persistent inflation.\n\nUS CPI lands at 8:30am Eastern, which is late evening AWST — around 8:30pm or 9:30pm for a Perth trader.\n\nWhere people get fooled: trading the headline when the market is keyed on core, or on some sub-component like services inflation. The first spike frequently reverses once the detail is digested, and spreads around the release are wide enough to wreck a market order.",
+    "usage": "\"Core came in a tenth below consensus and bonds ripped — the headline number was irrelevant.\"",
+    "see": [
+      "Core vs headline",
+      "PPI / PCE",
+      "Breakeven inflation",
+      "Consensus / expected",
+      "Data-day volatility"
+    ]
+  },
+  "NFP": {
+    "long": "Non-farm payrolls is the headline number in the monthly US employment report: the estimated change in jobs outside farming. Released the first Friday of the month, it is a long-standing ritual of scheduled volatility, because employment feeds directly into the Federal Reserve's mandate and therefore into rate expectations.\n\nAs with all data, price responds to the gap against consensus rather than the raw figure. The report is also a bundle: payrolls, the unemployment rate, and wage growth arrive together and can point in different directions, which is why the initial move often whips both ways before settling. Adding to the noise, prior months are routinely revised by large amounts — the first print is an estimate built on incomplete survey returns.\n\nFor Perth, the release lands late Friday evening AWST — roughly 8:30pm or 9:30pm depending on US daylight saving.\n\nWhere people get fooled: treating a single print as signal. The revision to last month sometimes matters more than the new number, and the survey's margin of error is wide relative to the moves traded off it. Spreads blow out at the release; the first tick is close to untradeable at retail.",
+    "usage": "\"Payrolls beat but the prior two months were revised down hard, so the rally faded within the hour.\"",
+    "see": [
+      "Unemployment rate",
+      "Jobless claims",
+      "Revisions",
+      "Data-day volatility",
+      "Economic calendar"
+    ]
+  },
+  "Hawkish / dovish": {
+    "long": "Hawkish and dovish are shorthand for a central bank's leaning. Hawkish means tilted towards tighter policy — higher rates, less stimulus — usually out of inflation concern. Dovish means tilted towards easier policy — lower rates, more support — usually out of growth or employment concern. The labels attach to statements, speeches, individual committee members, and shifts in wording between meetings.\n\nThe mechanism: markets continuously price an expected rate path, so tone changes matter because they shift that path. A single adjective added to a statement can reprice bonds, currencies, and equities within seconds, not because the word is powerful but because thousands of participants update the same forecast simultaneously.\n\nThe terms are relative, not absolute. A bank holding rates steady can deliver a hawkish surprise if markets expected a cut — the tilt is always measured against what was priced.\n\nWhere people get fooled: scoring the tone themselves and trading their own reading. What matters is the market's aggregate interpretation versus prior expectations, and that verdict shows up in bond yields within minutes. If yields didn't move, the speech wasn't hawkish, whatever it sounded like.",
+    "usage": "\"The statement read dovish against expectations and the currency dropped half a cent in minutes.\"",
+    "see": [
+      "FOMC",
+      "Central bank speak",
+      "Rate expectations",
+      "Forward guidance",
+      "Dot plot"
+    ]
+  },
+  "Risk-on / risk-off": {
+    "long": "Risk-on and risk-off describe the market's aggregate appetite for risk on a given day or in a given stretch. Risk-on: equities up, credit spreads tightening, high-beta currencies bid, havens sold. Risk-off: the reverse — stocks down, bonds and the US dollar bid, volatility rising. It is a description of cross-asset correlation, not a cause of anything.\n\nThe mechanism is shared positioning. Many large participants size positions off volatility and run similar exposures, so when something forces one group to cut risk, correlated selling spreads across assets that have no fundamental link. That is why on a hard risk-off day nearly everything falls together and diversification quietly stops working precisely when it is wanted.\n\nThe regime lens is mainly useful for context: a long-equity idea fights the tide on a risk-off day regardless of its own merits.\n\nWhere people get fooled: assuming the labels are stable. Which assets count as havens shifts across regimes — bonds hedged equities for two decades, then fell alongside them when inflation was the threat. Risk-on/risk-off is a snapshot of current correlations, and correlations break exactly when leaned on hardest.",
+    "usage": "\"Classic risk-off session — dollar and bonds bid, everything with a heartbeat sold.\"",
+    "see": [
+      "Flight to quality",
+      "Correlation breakdown",
+      "DXY",
+      "Positioning",
+      "Volatility regime"
+    ]
+  },
+  "Pre-FOMC drift": {
+    "long": "The pre-FOMC drift is a documented tendency for US equities to rise in the roughly 24 hours before scheduled Federal Reserve announcements. It entered the literature through Lucca and Moench at the New York Fed, who found that a striking share of long-run equity returns had historically accrued in these narrow pre-announcement windows — a genuinely odd result, since no new information arrives during them.\n\nProposed mechanisms include compensation for holding risk into a known event and the gradual unwinding of hedges as the announcement approaches, but none is settled. That absence of an agreed mechanism is itself a caution.\n\nThe finding's strength after publication is disputed. Effects that get published attract capital, and capital erodes the thing it chases; later samples look weaker, though researchers argue over how much.\n\nWhere people get fooled: treating a historical average as a live edge. The drift is a statistical tendency across many meetings, invisible inside any single one, and any individual FOMC day can move violently against it. A published anomaly with a contested post-publication record is a research finding, not an instruction.",
+    "usage": "\"He mentioned the pre-FOMC drift paper; the honest reply is that its edge post-publication is disputed.\"",
+    "see": [
+      "FOMC",
+      "Alpha decay in public",
+      "Event risk",
+      "Sample size",
+      "Seasonality"
+    ]
+  },
+  "Economic calendar": {
+    "long": "The economic calendar is the schedule of upcoming data releases and central bank events, usually marked with expected impact, the consensus forecast, and the prior reading. It exists because most violent intraday moves in indices, currencies, and bonds are not random — they cluster around a handful of scheduled timestamps that were public weeks in advance.\n\nThe practical use is defensive. Knowing that CPI or an FOMC decision lands mid-session tells you when spreads widen, when stops become unreliable, and when an open position is exposed to a gap no chart pattern anticipated. The consensus column matters as much as the event: price reacts to the deviation from that number, so the forecast is half the event.\n\nFor a Perth trader, most US releases land between about 8:30pm and 4am AWST, meaning the biggest scheduled risks arrive during the evening and overnight.\n\nWhere people get fooled: checking the calendar after entering. A position opened an hour before a red-flagged release carries event risk the setup never priced. The other failure is trading the release itself at retail speed — the repricing happens faster than any manual order.",
+    "usage": "\"Check the calendar before the session — there's US CPI at 8:30pm Perth time and nothing else that matters.\"",
+    "see": [
+      "Data-day volatility",
+      "Event risk",
+      "Consensus / expected",
+      "News trading restriction",
+      "Trading US hours from Perth"
+    ]
+  },
+  "Central bank speak": {
+    "long": "Central bank speak is the deliberately hedged dialect officials use in statements, minutes, and speeches. Every phrase is chosen knowing markets parse it in real time, so language becomes an instrument of policy: a bank can tighten financial conditions with a sentence, without touching rates. Words like \"patient\", \"transitory\", or \"data-dependent\" carry coded meanings that shift the expected rate path when they appear or vanish.\n\nThe mechanism is expectation management. Since markets price the future path of policy rather than the current setting, changing what markets expect is functionally close to changing policy itself. That is why officials speak so carefully and why algorithmic parsers trade statement diffs within milliseconds of release.\n\nMarkets accordingly read differences, not documents — the change from last meeting's wording is the signal, and one altered adjective can move billions.\n\nWhere people get fooled: doing their own literary analysis and trading it. The market's aggregate interpretation is what moves price, and it shows up in bond yields immediately. Retail parsing of a speech adds nothing to a repricing that completed before the speech ended.",
+    "usage": "\"They dropped 'patient' from the statement — two words changed and the front end repriced instantly.\"",
+    "see": [
+      "Forward guidance",
+      "Hawkish / dovish",
+      "FOMC",
+      "Dot plot",
+      "Priced in"
+    ]
+  },
+  "Flight to quality": {
+    "long": "A flight to quality is the rush from risky assets into safer ones when fear spikes — out of equities, credit, and speculative currencies; into government bonds, the US dollar, gold, and cash. It is the market's fire drill, and it explains why on the worst days bonds can rally hard while everything else falls.\n\nThe mechanism is partly rational repricing of risk and partly forced. Leveraged holders receive margin calls and must sell what they can, not what they want; funds facing redemptions sell their most liquid holdings first. This forced-seller dynamic is why quality flights overshoot and why the very safest, most liquid assets get bid regardless of yield.\n\nWhat counts as \"quality\" is regime-dependent. US Treasuries and the dollar are the usual destinations, but when inflation is the threat, bonds have sold off alongside equities and the shelter list shrinks.\n\nWhere people get fooled: assuming the hedge that worked last crisis works in the next. The bond-equity relationship flips across regimes, and a portfolio built on one regime's correlations can find its diversification was a fair-weather arrangement.",
+    "usage": "\"Yields collapsed and the dollar spiked — a textbook flight to quality, whatever triggered it.\"",
+    "see": [
+      "Risk-on / risk-off",
+      "Treasury / government bond",
+      "Gold as a hedge",
+      "Correlation breakdown",
+      "DXY"
+    ]
+  },
+  "Liquidity conditions": {
+    "long": "Liquidity conditions describe how easily size can be transacted without moving price — market depth, spread width, and the willingness of intermediaries to warehouse risk — plus, in the macro sense, how much cheap money is sloshing through the system via central bank policy. The two senses are related: abundant policy liquidity tends to compress spreads and embolden risk-taking; tightening drains both.\n\nThe mechanism matters because liquidity is procyclical. Depth is plentiful when nobody needs it and evaporates exactly when everyone does — market makers widen or withdraw in stress, so the cost of exiting spikes at the worst moment. Backtests calibrated on normal conditions quietly assume away this behaviour.\n\nConditions also vary by clock: holidays, session boundaries, and the hours outside US trading run structurally thinner, which for a Perth trader includes much of the local afternoon.\n\nWhere people get fooled: treating the quoted spread on a calm Tuesday as the cost of doing business. Execution costs are a distribution with a fat tail, and the tail arrives correlated with drawdowns. Strategies that look fine on average die on the days liquidity leaves.",
+    "usage": "\"Depth is a third of normal ahead of the holiday — liquidity conditions, not news, explain today's chop.\"",
+    "see": [
+      "Liquidity",
+      "Quantitative easing",
+      "Quantitative tightening",
+      "Spread",
+      "Volatility regime"
+    ]
+  },
+  "Positioning": {
+    "long": "Positioning is how the crowd is currently arranged — how long or short various participant groups are, in aggregate, in a given market. It matters because the marginal buyer or seller sets price: if nearly everyone who wants to be long is already long, good news finds few new buyers, while bad news finds a crowd needing to exit through the same door.\n\nThe mechanism explains otherwise baffling reactions. A market falling on good news is often just stretched positioning unwinding — the news was fine, but the holders were full. Squeezes are the extreme case: crowded shorts forced to buy back turn a modest rally violent, unrelated to any fundamental change.\n\nMeasuring positioning is rough. The COT report gives delayed futures data, options open interest gives hints, dealer surveys give anecdotes; all are partial and lagged.\n\nWhere people get fooled: using positioning as a timing tool. Crowded trades can stay crowded for months and get more crowded still. \"Everyone is long\" is context for why a reaction might be asymmetric, not a signal that the turn is here — extremes are only obvious after they resolve.",
+    "usage": "\"The market barely rallied on strong data — positioning was already max long, so there was nobody left to buy.\"",
+    "see": [
+      "COT report",
+      "Priced in",
+      "Short squeeze",
+      "Open interest",
+      "Long squeeze / short squeeze"
+    ]
+  },
+  "Priced in": {
+    "long": "\"Priced in\" means the market has already adjusted for an expected event, so the event occurring produces little or no move. Prices embed forecasts: if a rate hike is fully expected, current prices were set by people who knew it was coming, and the hike's arrival confirms rather than informs. Only the gap between outcome and expectation moves price.\n\nThis is the mechanism behind the oldest market riddles — stocks falling on good earnings, rallying on bad data, ignoring obvious news. The question is never \"is this good?\" but \"is this better or worse than what was already embedded?\" Instruments like rate futures let you read some expectations directly; elsewhere the consensus forecast is the proxy.\n\nDegrees matter: an event can be partially priced, so the residual surprise still moves things, just less than the headline suggests.\n\nWhere people get fooled: trading public knowledge as if it were private insight. If you read it in mainstream coverage, thousands of professionals traded it before you woke up. \"Priced in\" is also unfalsifiable after the fact — any reaction can be rationalised — so treat it as a discipline on your own entries, not an explanation for everything.",
+    "usage": "\"The hike was fully priced — the move came from the press conference, not the decision.\"",
+    "see": [
+      "Consensus / expected",
+      "Expected move",
+      "Positioning",
+      "Event risk",
+      "Implied volatility"
+    ]
+  },
+  "Event risk": {
+    "long": "Event risk is exposure to a scheduled or unscheduled occurrence that can gap price past any stop — a data release, an earnings report, a central bank decision, a surprise headline. Its defining feature is discontinuity: price does not travel through the intervening levels, it jumps, so the usual risk controls that assume you can exit near your stop simply do not apply.\n\nScheduled event risk is manageable because the timestamp is public: you can flatten, reduce size, or accept the gap knowingly. Unscheduled risk — halts, geopolitical shocks, surprise announcements — can only be managed through position sizing that survives the worst gap you can imagine, because no stop order helps when the market reopens somewhere else.\n\nOptions markets price scheduled events explicitly; elevated implied volatility around a known date is the market's fee for carrying the event.\n\nWhere people get fooled: backtesting through events as if fills were continuous. A simulated stop-out at the stop price on a CPI gap is fiction; the real fill was far worse. Prop firms ban news trading for a related reason — the fills, not the forecasts, are the problem.",
+    "usage": "\"Position's fine but she's carrying event risk into Wednesday — CPI could gap straight through the stop.\"",
+    "see": [
+      "Economic calendar",
+      "Gap risk",
+      "Halt on news",
+      "Data-day volatility",
+      "IV crush"
+    ]
+  },
+  "PPI / PCE": {
+    "long": "PPI is the Producer Price Index — inflation measured at the factory gate, the prices businesses receive before goods reach consumers. PCE is the Personal Consumption Expenditures price index, a broader consumer inflation measure than CPI with different weightings and scope. The distinction that matters for markets: PCE, specifically core PCE, is the Federal Reserve's preferred inflation gauge — its 2% target is defined against it.\n\nPPI earns attention as a possible early warning, since producer costs can flow through to consumer prices later — a pipeline logic that holds loosely, with businesses sometimes absorbing costs into margins instead. Certain PPI components also feed directly into the PCE calculation, so a PPI print can shift PCE forecasts before PCE is released.\n\nMarket reaction, as always, keys off the surprise against consensus rather than the level, and core readings — stripping food and energy — carry more policy weight than headlines.\n\nWhere people get fooled: watching CPI exclusively because it gets the headlines, while the central bank steers by core PCE. The two can diverge for months on housing and healthcare weightings, and the policy path follows the gauge the Fed actually targets.",
+    "usage": "\"CPI ran hot but core PCE is the Fed's gauge, and that's still drifting toward target.\"",
+    "see": [
+      "CPI",
+      "Core vs headline",
+      "FOMC",
+      "Consensus / expected"
+    ]
+  },
+  "GDP": {
+    "long": "Gross Domestic Product is the total value of goods and services produced in an economy over a quarter or year — the broadest single measure of economic activity. Growth in GDP is the default definition of an expanding economy; two consecutive quarters of contraction is the popular shorthand for recession, though official recession dating uses a wider set of indicators and arrives long after the fact.\n\nAs a trading input, GDP is slow and stale. It is released quarterly, weeks after the quarter ends, then revised repeatedly as fuller data arrives — the initial print and the final figure can differ materially. Markets react to the surprise against consensus on release day, but the number describes a past the market has already lived through.\n\nFaster proxies — PMIs, employment data, nowcasting models — exist precisely because GDP confirms rather than predicts.\n\nWhere people get fooled: treating GDP as a forward-looking signal. By the time weak GDP prints, equities have usually been trading the slowdown for months; the release tells you what markets already guessed, with error bars. The revisions problem also poisons backtests — testing against final revised figures uses information nobody had at the time.",
+    "usage": "\"GDP confirmed the slowdown everyone traded three months ago — the surprise was a tenth, so the market shrugged.\"",
+    "see": [
+      "Recession",
+      "Business cycle",
+      "Revisions",
+      "Lagging vs leading",
+      "ISM / PMI"
+    ]
+  },
+  "Yield curve": {
+    "long": "The yield curve is the line traced by government bond yields across maturities, from short bills to long bonds. Its normal shape slopes upward — lenders demand more for locking money away longer. The shape compresses the market's entire view of future rates, growth, and inflation into one picture, which is why it is watched obsessively.\n\nAn inverted curve — short yields above long — is the famous signal. The mechanism: short yields track current central bank policy, while long yields embed expectations of future policy. Inversion says the market expects rates to be cut, and central banks cut when economies weaken. Inversions have preceded US recessions with striking consistency, but with lags that are long and highly variable — quarters to years — which makes the curve context, not a timer.\n\nEquities have often rallied substantially between inversion and downturn, punishing anyone who treated the signal as immediate.\n\nWhere people get fooled: trading the inversion headline as an event. The sample of modern inversions is small, the lags vary wildly, and \"predicted\" recessions arrived after the trade would have bled out. The curve tells you where you probably are in the cycle, not what to do this month.",
+    "usage": "\"The curve's been inverted for a year — that's cycle context, not a countdown clock.\"",
+    "see": [
+      "Inversion",
+      "Recession",
+      "Treasury / government bond",
+      "Leading indicator",
+      "Duration"
+    ]
+  },
+  "DXY": {
+    "long": "DXY is the US Dollar Index — a weighted measure of the dollar against a basket of major currencies, dominated by the euro at over half the weight. It is the standard one-glance answer to \"what is the dollar doing?\", and because the dollar is the world's funding and invoicing currency, its direction leaks into nearly everything else.\n\nThe mechanics of the spillover: commodities are priced in dollars, so a stronger dollar mechanically pressures them; emerging markets borrow in dollars, so a rising DXY tightens their conditions; US multinationals earn abroad, so a strong dollar dents their translated earnings. In risk-off episodes the dollar is usually bid as the world scrambles for the reserve currency.\n\nThe index's construction is dated — heavily European, no direct emerging-market weight — so DXY can diverge from broader trade-weighted dollar measures.\n\nWhere people get fooled: reading DXY as a pure dollar signal when it is mostly an inverted euro chart. A move driven by European Central Bank policy shows up as \"dollar strength\" without anything American happening. Check whether the move is the dollar's story or the euro's before building a narrative on it.",
+    "usage": "\"DXY broke higher again, which is half the reason gold and the Aussie are both heavy.\"",
+    "see": [
+      "Currency pair",
+      "Risk-on / risk-off",
+      "Flight to quality",
+      "Majors / minors / exotics",
+      "Commodity"
+    ]
+  },
+  "Quad witching": {
+    "long": "Quad witching is the quarterly Friday — third Friday of March, June, September, and December — when four classes of derivatives expire together: stock index futures, index options, single-stock options, and single-stock futures. The name is theatrical; the mechanism is mundane but real.\n\nExpiring contracts must be settled, rolled, or exercised, and hedges tied to them must be unwound or re-established. That generates enormous mechanical order flow — trading that exists because of the calendar, not because of any view on value. Volume spikes, and price can pin near strikes with heavy open interest as hedging flows push toward them.\n\nThe useful takeaway is interpretive: price action on witching days is contaminated. A sharp move or a strange stall may be expiry plumbing rather than information, and the following Monday often reads cleaner.\n\nWhere people get fooled: building narratives on witching-day moves, or backtesting patterns without flagging these dates. The day's volume is not conviction and its reversals are not sentiment shifts — they are positions dying of old age. Folklore about reliable witching-week direction rests on a few dozen instances, which is a sample, not a law.",
+    "usage": "\"Ignore today's tape — it's quad witching, half the volume is expiry flow with no opinion attached.\"",
+    "see": [
+      "Expiry",
+      "Gamma exposure",
+      "Open interest (options)",
+      "Volume",
+      "Seasonality"
+    ]
+  },
+  "Dot plot": {
+    "long": "The dot plot is a chart the Federal Reserve publishes quarterly showing where each committee member individually expects the policy rate to sit at the end of coming years. Each dot is one official's projection, anonymous. It arrives with the FOMC statement quarterly and is often the day's real market mover.\n\nThe mechanism is simple once seen: the rate decision itself is almost always priced in before the meeting, so it carries little surprise. The dots, though, sketch the future path — and markets are entirely built on the path. A decision exactly as expected paired with dots shifted higher reads as hawkish and can move markets more than the decision ever could.\n\nThe dots are projections, not commitments, and the Fed's own record of following them is poor; members revise freely as data changes.\n\nWhere people get fooled: treating the median dot as a plan. It is a survey of guesses by people who change their minds, historically unreliable beyond a few months. The market trades the shift in dots against prior expectations on the day, then largely discards them — holding a position for months because of a dot chart mistakes a mood for a map.",
+    "usage": "\"The cut was priced; the dots shifting up a notch is what actually moved the bond market.\"",
+    "see": [
+      "FOMC",
+      "Rate expectations",
+      "Priced in",
+      "Forward guidance",
+      "Hawkish / dovish"
+    ]
+  },
+  "Seasonality": {
+    "long": "Seasonality is the claim that markets show calendar-linked tendencies — \"sell in May\", the Santa rally, September weakness, month-end flows. The proposed mechanisms range from plausible (tax-year deadlines, fund rebalancing, harvest cycles in agricultural commodities) to nonexistent (the calendar itself has no causal power over index prices).\n\nThe statistical problem is brutal and worth stating plainly: a seasonal pattern in annual data rests on a sample of a few dozen years, and those years are not independent draws — they share regimes, secular trends, and a handful of dominating outliers. Remove two or three extreme years from most equity seasonal patterns and the effect shrinks toward nothing. With twelve months, weekdays, and holidays to test, some calendar split always looks significant by chance.\n\nCommodity seasonality tied to physical supply cycles has a real mechanism behind it and deserves more respect than equity calendar lore, though costs still eat most of it.\n\nWhere people get fooled: reading a bar chart of average monthly returns as a forecast. Averages built on thirty non-independent observations, without dispersion shown, are closer to folklore than evidence — the dispersion around those bars typically dwarfs the bars themselves.",
+    "usage": "\"The September-weakness chart looks compelling until you notice how few years drive it.\"",
+    "see": [
+      "Sample size",
+      "Overlapping returns",
+      "Cherry-picked period",
+      "Agricultural seasonality",
+      "Data snooping"
+    ]
+  },
+  "Core vs headline": {
+    "long": "Headline inflation is the full measured change in the price basket. Core inflation strips out food and energy. The exclusion is not because groceries and petrol don't matter to households — obviously they do — but because those categories swing with weather, war, and OPEC decisions, none of which monetary policy can influence. Core is the attempt to see the persistent, policy-relevant trend beneath the noise.\n\nCentral banks steer mainly by core measures — in the US, core PCE specifically — because raising rates cannot grow wheat or pump oil. Markets therefore often move on the core number even when the headline grabs the news cycle, and the two can diverge for long stretches when energy prices trend.\n\nEach release effectively contains two surprises, one against the headline consensus and one against core, and the sharper market reaction usually follows core.\n\nWhere people get fooled: trading the headline print while the market keys on core, then finding the move \"makes no sense\". A hot headline with soft core can rally bonds. The politics run opposite: households feel headline, policymakers watch core, and commentary freely switches between them to suit an argument.",
+    "usage": "\"Headline spiked on petrol but core came in soft — the bond market only cared about the second number.\"",
+    "see": [
+      "CPI",
+      "PPI / PCE",
+      "FOMC",
+      "Consensus / expected"
+    ]
+  },
+  "Unemployment rate": {
+    "long": "The unemployment rate is the share of the labour force actively seeking work but not employed. It headlines the monthly jobs report alongside payrolls, and it feeds directly into central bank mandates — the US Federal Reserve is explicitly tasked with maximum employment, so this number shapes rate policy.\n\nThe definitional trap: only people looking for work count as unemployed. Discouraged workers who stop searching leave the labour force entirely, which can push the unemployment rate down while the economy weakens — a statistical improvement masking deterioration. This is why the participation rate must be read alongside it; the two together tell the story either alone distorts.\n\nIt is also a lagging indicator. Firms cut hours before jobs and hire cautiously after recoveries begin, so unemployment peaks after recessions end and troughs before downturns start — a low reading is late-cycle information, not reassurance.\n\nWhere people get fooled: reading a falling rate as unambiguous strength. If it fell because people gave up looking, the signal is inverted. Markets know this, which is why a \"good\" headline rate with weak participation can trade like bad news.",
+    "usage": "\"The rate ticked down, but participation fell too — the improvement is people leaving the count.\"",
+    "see": [
+      "NFP",
+      "Participation rate",
+      "Jobless claims",
+      "Lagging vs leading"
+    ]
+  },
+  "Participation rate": {
+    "long": "The participation rate is the share of the working-age population either employed or actively looking for work — the denominator behind the unemployment rate. It answers a question the headline rate quietly dodges: how many people are in the game at all.\n\nIts value is as a decoder. The unemployment rate only counts active job-seekers, so someone who stops searching vanishes from the unemployed count and flatters the headline number. Falling unemployment with falling participation can mean discouragement, not hiring; rising unemployment with rising participation can mean returning optimism as people resume the search. The pair together carries the information; either alone can invert the truth.\n\nParticipation also moves on slow structural currents — ageing populations, childcare costs, disability trends, migration — so its level is less informative than its direction against recent trend.\n\nWhere people get fooled: ignoring it entirely, then finding the market's reaction to a jobs report inexplicable. A payrolls beat with a participation drop can trade soft because the composition undermines the headline. Traders who read only the top line of the employment report are reacting to a summary of a summary.",
+    "usage": "\"Unemployment fell but so did participation — the market read it as discouragement, not strength.\"",
+    "see": [
+      "Unemployment rate",
+      "NFP",
+      "Revisions",
+      "Consensus / expected"
+    ]
+  },
+  "Jobless claims": {
+    "long": "Initial jobless claims count new filings for unemployment insurance in the US, released every Thursday. It is the highest-frequency read on the labour market — weekly, near-real-time, and simple: when firms start laying off, claims rise within days, not months.\n\nThat timeliness makes claims a genuine early-warning series, watched most intently at suspected turning points. A sustained upward drift in claims often precedes deterioration in the monthly employment report, because layoffs show up here first. The series is noisy week to week — holidays, weather, seasonal-adjustment quirks — so the four-week moving average is the conventional smoothing, and single prints deserve little weight.\n\nThe market reaction follows the usual grammar: surprise against consensus, sized by how much the labour market matters to the current policy debate. In a cycle where the central bank is watching employment, a claims miss can move bonds meaningfully; in other regimes the release passes quietly.\n\nWhere people get fooled: overreacting to one week. Claims data is jagged by nature, and a single spike is usually a seasonal artefact rather than a turn. The signal is in the trend of the smoothed series, and even that gives direction, not timing.",
+    "usage": "\"Claims have drifted up four weeks running — the smoothed trend is doing the talking, not any single print.\"",
+    "see": [
+      "NFP",
+      "Unemployment rate",
+      "Leading indicator",
+      "Economic calendar"
+    ]
+  },
+  "ISM / PMI": {
+    "long": "PMIs — Purchasing Managers' Indexes, of which the US ISM surveys are the best-known — poll businesses monthly on whether activity is improving or deteriorating: new orders, production, employment, prices paid. Readings above 50 indicate expansion, below 50 contraction. The construction is diffusion, not magnitude: it counts how widespread improvement is, not how large.\n\nTheir market value is timeliness. PMIs arrive in the first days of the month, long before hard data covering the same period, so they act as an early sketch of GDP that markets trade months before official confirmation. Sub-components carry their own weight — new orders lean forward, prices paid gets read as an inflation clue, and the spread between orders and inventories is a classic cycle signal.\n\nAs surveys, they measure sentiment as much as activity, and sentiment can detach from output — respondents answer through the mood of the moment.\n\nWhere people get fooled: treating the 50 line as a cliff edge. The difference between 50.2 and 49.8 is statistical noise dressed as a regime change, yet headlines and algorithms treat the crossing as an event. The trend over several months carries the information; the decimal does not.",
+    "usage": "\"ISM printed 49.8 and the headlines declared contraction — over a rounding error on a survey.\"",
+    "see": [
+      "Leading indicator",
+      "Business cycle",
+      "GDP",
+      "Consensus / expected"
+    ]
+  },
+  "Retail sales": {
+    "long": "Retail sales measures monthly consumer spending at retailers — the most direct high-frequency read on the consumer, who drives roughly two-thirds of US economic activity. When the consumer holds, recessions stay hypothetical; when retail sales roll over persistently, the cycle debate gets serious.\n\nThe release has internal structure worth knowing. The headline includes volatile categories like autos and petrol stations; the \"control group\" — stripping autos, petrol, building materials, and food services — feeds GDP calculations directly and is what economists actually watch. A headline beat with a control-group miss is a weaker report than it looks, and markets increasingly trade the control figure.\n\nThe data is nominal, not inflation-adjusted, which matters enormously in high-inflation stretches: rising sales can mean higher prices, not more goods sold — spending more to buy less.\n\nWhere people get fooled: the nominal trap. During inflation spikes, headline retail sales can print strength while real consumption stagnates, and commentary happily reads it either way. Revisions are also chunky, so a surprising print often gets walked back a month later, after the market already traded it.",
+    "usage": "\"Headline sales beat, but strip petrol and it's flat — the control group is the number that feeds GDP.\"",
+    "see": [
+      "Consumer confidence",
+      "GDP",
+      "Revisions",
+      "Data-day volatility"
+    ]
+  },
+  "Consumer confidence": {
+    "long": "Consumer confidence surveys ask households how they feel about their finances, jobs, and the economy — the Conference Board and University of Michigan surveys being the US standards. The premise: confident consumers spend, anxious ones save, so sentiment today hints at consumption tomorrow.\n\nThe premise holds loosely at best. The link between stated confidence and actual spending is weak — people routinely report gloom while spending freely, especially when petrol prices or political headlines sour the mood without touching pay packets. Confidence surveys often track petrol prices and news cycles more faithfully than they track future outlays. The Michigan survey's inflation-expectations component has become the release's real market mover, since central banks watch whether expectations stay anchored.\n\nExtremes carry some contrarian folklore — deep pessimism near cycle bottoms — but the sample of cycles is small and the timing loose.\n\nWhere people get fooled: trading the vibe as if it were the spend. The reliable check is whether retail sales confirm what confidence claims; when the two diverge, actual transactions have the better record. Sentiment tells you what people say; spending data tells you what they did.",
+    "usage": "\"Confidence cratered again, yet retail sales keep printing fine — watch what they do, not what they tell surveys.\"",
+    "see": [
+      "Retail sales",
+      "Leading indicator",
+      "Business cycle",
+      "Consensus / expected"
+    ]
+  },
+  "Housing starts": {
+    "long": "Housing starts count the number of new residential construction projects begun each month. Housing is the most interest-rate-sensitive corner of the real economy — homes are bought with borrowed money, so when rates rise, mortgages bite and starts fall quickly. That sensitivity makes housing an early transmission gauge for monetary policy: rate changes show up here quarters before they show up in broad output.\n\nBuilding permits, released alongside, lean even further forward — a permit precedes a start, so permits are the intention and starts the commitment. Analysts often watch permits as the cleaner leading signal, with starts subject to weather distortion month to month.\n\nThe construction pipeline has long ripple effects: a start today generates months of labour, materials orders, and eventual appliance and furniture purchases, which is why housing downturns propagate so widely despite housing's modest direct share of GDP.\n\nWhere people get fooled: monthly noise. Starts are volatile — weather, financing quirks, multifamily lumpiness — so single prints mislead and revisions are large. The trend over several months carries the cycle signal, and the market reaction to any one print keys off the surprise against consensus, not the number's size.",
+    "usage": "\"Starts dropped hard again — housing feels the rate hikes about two quarters before the rest of the data does.\"",
+    "see": [
+      "Leading indicator",
+      "Business cycle",
+      "GDP",
+      "Revisions"
+    ]
+  },
+  "Leading indicator": {
+    "long": "A leading indicator is a data series that tends to turn before the broader economy does — the promise of tomorrow's news today. Classic examples: building permits, new orders in PMI surveys, jobless claims, the yield curve, and equity prices themselves. Contrast lagging indicators, like unemployment, which confirm turns long after they happen.\n\nThe mechanism behind genuine leads is usually commitment timing. A permit precedes construction; an order precedes production; a layoff notice precedes an unemployment statistic. These series sit earlier in real decision chains, so their information genuinely arrives first.\n\nThe catch is reliability. Leads are variable in length and prone to false signals — indicators famously flag downturns that never arrive, and composite leading indexes have been revised until their historical record looks better than their live one. Note the circularity for traders: equities are themselves a leading indicator, so using economic leads to forecast equities is partly using the market to predict itself.\n\nWhere people get fooled: mistaking \"tends to turn first\" for \"tells you when\". A leading indicator with a lag ranging from three months to two years leads in hindsight and meanders in real time. Direction, sometimes; timing, no.",
+    "usage": "\"Permits and new orders are both rolling over — the leading indicators say late cycle, whatever that's worth for timing.\"",
+    "see": [
+      "Lagging vs leading",
+      "Yield curve",
+      "ISM / PMI",
+      "Jobless claims"
+    ]
+  },
+  "Revisions": {
+    "long": "Revisions are the corrections applied to economic data after first release. Initial prints are estimates built on partial survey returns; as fuller data arrives, the figures are restated — sometimes drastically. Payrolls routinely moves by tens of thousands of jobs in revision, and annual benchmark revisions have erased or added whole quarters of apparent momentum. The first print is the rough draft the market trades; the truth arrives later, unnoticed.\n\nThe market structure this creates is odd: maximum reaction attaches to the least reliable version of the number, because the first estimate is the newest information even though it is the worst measurement. Revisions to prior months, buried below the headline, sometimes matter more than the new print — a beat paired with heavy downward revisions is a weak report wearing a strong headline.\n\nFor research, revisions poison naive backtests. Testing a strategy against today's revised historical series uses information nobody possessed at the time; honest work requires point-in-time data as it originally stood.\n\nWhere people get fooled: remembering the headline and never the correction. Narratives are built on first prints, and the quiet restatement two months later rarely dislodges them.",
+    "usage": "\"The beat was revised away two months later, but the market traded the original print and never looked back.\"",
+    "see": [
+      "NFP",
+      "GDP",
+      "Point-in-time data",
+      "Look-ahead bias"
+    ]
+  },
+  "Consensus / expected": {
+    "long": "Consensus is the average forecast of surveyed economists or analysts for an upcoming data release or earnings report — the number printed in the \"expected\" column of every economic calendar. It matters because it is the benchmark the market has already traded: current prices embed the consensus, so the release's market impact comes from the deviation, not the level.\n\nThis is the central grammar of data trading. Inflation at 5 percent can rally markets if 5.4 was expected; a company growing revenue strongly can crater if consensus assumed stronger. Asking \"was the number good?\" is the wrong question; the only tradeable question is \"was it different from what was priced?\"\n\nConsensus has known blind spots: it is a survey average that lags fast-moving situations, clusters (forecasters herd toward each other to avoid standing out), and can drift from the market's true expectation — which is why whisper numbers exist.\n\nWhere people get fooled: judging releases in absolute terms and finding market reactions perverse. \"Great jobs number, market fell\" stops being mysterious once you check consensus — and sometimes the real benchmark had moved beyond the published survey, so price reacts to a gap you never saw quoted.",
+    "usage": "\"Consensus was 200k, it printed 180k — the miss is the trade, not the number.\"",
+    "see": [
+      "Whisper number",
+      "Priced in",
+      "Economic calendar",
+      "Data-day volatility"
+    ]
+  },
+  "Whisper number": {
+    "long": "The whisper number is the market's unofficial expectation for a release — what traders actually anticipate, as opposed to the published consensus of surveyed analysts. The two diverge because published forecasts are sticky: analysts update slowly, herd toward each other, and carry institutional caution, while positioning adjusts in real time to news flow, channel checks, and momentum in related data.\n\nThe mechanism explains a classic puzzle: a company beats consensus and the stock falls anyway. If the whisper sat above the published number, the \"beat\" was actually a miss against real expectations — price was set by people expecting more. The published consensus was the strawman; the whisper was the market.\n\nWhispers are unmeasurable by definition. They can sometimes be inferred — from price run-ups into the event, options skew, or how prior similar releases were treated — but any specific whisper figure quoted to you is someone's guess wearing confidence.\n\nWhere people get fooled: trading the printed consensus as the true bar. When a beat sells off, the recorded explanation becomes \"whisper miss\" — unfalsifiable after the fact, which makes the concept as useful for excuse-making as for analysis. Handle with tongs.",
+    "usage": "\"Beat consensus by five cents and dropped anyway — the whisper was clearly higher than the published bar.\"",
+    "see": [
+      "Consensus / expected",
+      "Earnings",
+      "Priced in",
+      "Event risk"
+    ]
+  },
+  "Data-day volatility": {
+    "long": "Data-day volatility is the concentrated burst of price movement around scheduled economic releases — CPI, payrolls, central bank decisions. The clustering is mechanical: information arrives at a known timestamp, thousands of participants reprice simultaneously, and algorithms react within milliseconds. The result is a market that can do a normal week's range in ninety seconds.\n\nThe microstructure around the stamp is the part retail traders underestimate. Market makers widen or pull quotes before the release to avoid being run over, so spreads balloon exactly when volume spikes. Stops execute far from their levels, market orders fill at prices that look like errors, and the first move frequently reverses fully once the detail beneath the headline is digested — an initial spike on the headline, a reversal on the core figure or revisions.\n\nFor a Perth trader, major US releases land between about 8:30pm and 4:30am AWST, so this volatility arrives during the evening and overnight.\n\nWhere people get fooled: believing fast reflexes can compete at the stamp. The repricing is over before a human finishes reading the headline; what remains for retail is the widened spread and the whipsaw. Backtests that assume normal fills through these windows are quietly fictional.",
+    "usage": "\"The spread on gold tripled ten seconds before CPI hit — that's data-day conditions, not a broker glitch.\"",
+    "see": [
+      "Economic calendar",
+      "Event risk",
+      "Slippage",
+      "Gap risk",
+      "News trading restriction"
+    ]
+  },
+  "Business cycle": {
+    "long": "The business cycle is the economy's recurring rhythm of expansion, peak, contraction, and trough. Growth builds, credit flows, hiring tightens; then excesses accumulate, policy tightens, activity rolls over; contraction clears the excess and the sequence restarts. The phases repeat; their lengths do not — expansions have run from under a year to over a decade, which is what makes the cycle a map without a scale.\n\nMarkets care because asset classes and sectors perform differently by phase, and because markets themselves lead the cycle: equities typically peak before the economy does and bottom during the gloom, while recessions are only dated officially long after they began. Trading the cycle therefore means trading a thing whose position is only knowable in hindsight, using indicators that lead by variable amounts.\n\nCycle vocabulary — early, mid, late — is genuinely useful for context: what regime is plausible, which risks are live, what has historically followed.\n\nWhere people get fooled: mistaking the map for a timetable. \"Late cycle\" has been declared for years at a stretch while markets ground higher. Cycle position suggests what could come next, never when — and the sample of complete modern cycles is embarrassingly small.",
+    "usage": "\"Late-cycle signals everywhere, but late cycle can run for years — it's context, not a countdown.\"",
+    "see": [
+      "Recession",
+      "GDP",
+      "Credit cycle",
+      "Yield curve",
+      "Rotation"
+    ]
+  },
+  "Recession": {
+    "long": "A recession is a broad, sustained contraction in economic activity — falling output, employment, income, and spending together. The popular shorthand is two consecutive quarters of negative GDP growth; the official US designation comes from the NBER, which weighs a wider set of indicators and, crucially, dates recessions retrospectively — the announcement typically arrives many months after the recession began, sometimes after it has ended.\n\nThat lag structure defines the trading problem. Markets do not wait for the announcement: equities usually peak before the recession starts and begin recovering during its depths, while the official confirmation lands on a market already trading the next expansion. Trading \"the recession\" off the declaration is trading old news with maximum conviction.\n\nRecession forecasting is a graveyard. Indicators like yield curve inversion have preceded downturns with long, variable lags, and economists as a profession have missed most recessions in real time while predicting several that never arrived.\n\nWhere people get fooled: waiting for certainty. By the time a recession is undeniable — officially dated, in the headlines — the equity drawdown associated with it is historically closer to its end than its beginning. Certainty and opportunity arrive on opposite schedules.",
+    "usage": "\"NBER dated the recession start today — fourteen months after the fact, with the index already off its lows.\"",
+    "see": [
+      "GDP",
+      "Business cycle",
+      "Yield curve",
+      "Soft landing",
+      "Unemployment rate"
+    ]
+  },
+  "Soft landing": {
+    "long": "A soft landing is the hoped-for outcome where a central bank cools inflation with higher rates without tipping the economy into recession — slowing the plane to taxi speed without hitting the runway nose-first. The opposite, a hard landing, is tightening that breaks something: rising unemployment, contracting output, a proper downturn.\n\nThe difficulty is mechanical. Rate hikes act with long and variable lags, so the bank is steering by instruments that report where the economy was months ago; tightening enough to kill inflation but not growth means threading a needle whose position is only visible in hindsight. Genuine soft landings are historically rare — the mid-1990s US episode is the canonical example, and its rarity is the point.\n\nFor markets, the phrase functions as a regime narrative. \"Soft landing priced in\" means equities are valued on the assumption of the benign path, which makes them exposed to both alternatives: inflation re-accelerating or growth cracking.\n\nWhere people get fooled: treating the narrative's popularity as evidence. Soft-landing consensus has peaked shortly before several hard landings, because the data always looks fine until the lags catch up. The claim is only ever verifiable after the fact.",
+    "usage": "\"Everything's priced for the soft landing, which means both tails — reacceleration or recession — are cheap surprises.\"",
+    "see": [
+      "Recession",
+      "FOMC",
+      "Priced in",
+      "Business cycle"
+    ]
+  },
+  "Stagflation": {
+    "long": "Stagflation is the toxic combination of stagnant growth, elevated unemployment, and high inflation running together. It was long thought contradictory — standard models assumed weak economies produce weak inflation — until the 1970s oil shocks delivered a decade of both and broke the models.\n\nThe mechanism is usually a supply shock: energy, food, or supply chains make everything costlier to produce, pushing prices up while simultaneously strangling output. Demand-driven inflation comes with a hot economy; supply-driven inflation arrives with a weakening one, and that difference is what corners policymakers. Raising rates fights the inflation but deepens the stagnation; cutting supports growth but feeds the inflation. Every tool helps one problem and worsens the other.\n\nFor portfolios it is the nightmare regime because the classic hedge fails: bonds and equities can fall together, as inflation punishes bonds while weak growth punishes stocks. The 60/40 structure quietly assumes this regime stays rare.\n\nWhere people get fooled: crying stagflation at every awkward quarter of sticky prices and soft growth. The 1970s episode was severe and persistent; the label gets applied to conditions nowhere near it. Mild versions matter mainly through the policy paralysis they threaten, not the suffering itself.",
+    "usage": "\"Hot CPI and a GDP miss in the same week — the stagflation chatter started before lunch.\"",
+    "see": [
+      "CPI",
+      "GDP",
+      "Recession",
+      "Business cycle"
+    ]
+  },
+  "Credit cycle": {
+    "long": "The credit cycle is the expansion and contraction of lending across the economy. In the upswing, lenders compete, standards loosen, spreads compress, and increasingly marginal borrowers get funded. In the downswing, defaults surprise, lenders retrench, standards tighten, and refinancing that was routine becomes impossible. Credit is the economy's oxygen supply, and its cycle often drives the business cycle rather than merely following it.\n\nThe self-reinforcing mechanics matter: easy credit lifts asset prices, which improves collateral values, which justifies more lending — until it reverses, and the same loop runs downward with forced selling attached. The turn is usually visible first in credit spreads: the extra yield on risky debt over government bonds is a live market vote on default risk, and spreads widening while equities stay calm is a divergence with a respectable record of resolving in credit's favour.\n\nCredit stress also compounds mechanically — refinancing walls mean debt raised in easy years matures into tight years, forcing distress on a schedule.\n\nWhere people get fooled: watching equities and ignoring credit entirely. Credit markets are larger, more institutional, and often earlier — equity investors have repeatedly celebrated while spreads quietly priced the trouble ahead.",
+    "usage": "\"High-yield spreads have widened for a month while stocks make highs — credit is voting early again.\"",
+    "see": [
+      "Credit spread",
+      "Business cycle",
+      "Default risk",
+      "Liquidity conditions"
+    ]
+  },
+  "Volatility regime": {
+    "long": "A volatility regime is a persistent stretch of characteristically high or low volatility. Markets alternate between calm periods where daily ranges compress and turbulent ones where they explode, and each state, once established, tends to persist — volatility clusters. Calm begets calm, storms beget storms, and transitions between regimes are abrupt rather than gradual.\n\nThe mechanism runs through positioning. Low volatility invites leverage and size — the same risk budget accommodates bigger positions when daily swings are small. When volatility jumps, those positions all shrink simultaneously, selling begets volatility, and the feedback flips the regime. This is why the shift from calm to turbulent is so violent: the calm itself built the crowding that fuels the storm.\n\nFor any systematic work, regime awareness is fundamental: a strategy's results averaged across both regimes can conceal that all the profit came from one and all the ruin from the other.\n\nWhere people get fooled: sizing positions off the recent calm. Position sizes calibrated in a low-volatility regime are, by construction, too large for the transition — which arrives without notice. The regime you backtested in is a fact about the past, not a property of the strategy.",
+    "usage": "\"The system's numbers split cleanly by volatility regime — profitable in calm, bled in turbulence.\"",
+    "see": [
+      "Volatility clustering",
+      "Regime change",
+      "VIX",
+      "Realised volatility",
+      "Implied volatility"
+    ]
+  },
+  "Bull market": {
+    "long": "A bull market is a sustained period of rising prices — conventionally tagged as a rise of 20 percent from a low, though the threshold is pure convention with no mechanical significance. The deeper signature is behavioural: dips get bought, bad news gets shrugged off, and staying invested is rewarded for long enough that caution starts to look like a character flaw.\n\nThe mechanics feed on themselves. Rising prices draw in flows, which raise prices, which improve every backward-looking statistic, which draws more flows. Meanwhile rising collateral values support more leverage. This reflexivity is why bull markets run further than any valuation argument says they should — and why calling tops has ruined more careers than riding them.\n\nThe textbook shape climbs a \"wall of worry\": persistent scepticism accompanies the whole advance, and the moment nobody is worried anymore is traditionally treated as more concerning than the worry itself.\n\nWhere people get fooled: crediting themselves for what the tide did. A rising index makes most long positions profitable regardless of the reasoning behind them, and years of bull-market results tell you very little about a trader's actual edge. The honest benchmark question is always: did the approach beat simply holding?",
+    "usage": "\"Three years of gains and every strategy in the group chat looks brilliant — that's the bull market talking.\"",
+    "see": [
+      "Bear market",
+      "Trend",
+      "Buy and hold",
+      "Melt-up risk"
+    ]
+  },
+  "Bear market": {
+    "long": "A bear market is a sustained decline in prices — conventionally a drop of 20 percent from a peak, a threshold with no mechanical meaning but firm media significance. Beyond the label, bear markets differ from corrections in character: rallies get sold rather than dips bought, good news gets ignored, and time itself becomes the enemy as months of lower highs grind down conviction.\n\nThe mechanics amplify on the way down. Falling prices trigger margin calls and risk-limit breaches, forcing sales that push prices lower; redemptions force funds to sell what is liquid rather than what is weak. Volatility rises, correlations converge, and diversification thins out just when it is needed. Counter-trend rallies within bear markets are famously sharp — the most violent short-term rallies in market history occurred inside major declines — which makes bottoms genuinely hard to distinguish from traps in real time.\n\nDurations vary from weeks to years, and the label is only awarded in hindsight, well after the decline began.\n\nWhere people get fooled: expecting the bottom to announce itself. Bottoms form amid maximum pessimism, and the sharpest rallies arrive while the news is still terrible — waiting for comfort means missing the turn by design.",
+    "usage": "\"Every rally for six months got sold within a week — textbook bear market behaviour.\"",
+    "see": [
+      "Bull market",
+      "Bear market rally",
+      "Capitulation",
+      "Drawdown"
+    ]
+  },
+  "Bear market rally": {
+    "long": "A bear market rally is a sharp rise within an ongoing decline — a rally that looks like the turn and isn't. The uncomfortable statistical fact: the sharpest short-term rallies in market history have overwhelmingly occurred inside bear markets, not bull markets. The most violent upside days cluster within the worst downtrends, which is exactly backwards from intuition and exactly why these rallies are so convincing.\n\nThe mechanism is positioning, not optimism. In a decline, shorts accumulate and longs sit underinvested; any bounce forces shorts to buy back, and underweight managers chase for fear of missing the bottom. That buying is mechanical and exhausts itself — nobody in the chain necessarily believes in the move, which is why it can die as abruptly as it started. Speed and violence, the qualities that make a rally feel real, are here evidence of forced flows rather than conviction.\n\nIdentification is only possible in hindsight: a bear market rally and an actual bottom look identical for weeks.\n\nWhere people get fooled: reading intensity as validity. \"The strength of this move proves the low is in\" fails precisely because bear rallies are the strongest moves there are. Ferocity is not information.",
+    "usage": "\"An eight percent week straight up — either the bottom or a textbook bear market rally, and you only find out later.\"",
+    "see": [
+      "Bear market",
+      "Dead cat bounce",
+      "Short squeeze",
+      "Capitulation"
+    ]
+  },
+  "Melt-up risk": {
+    "long": "Melt-up risk is the danger on the upside: a market accelerating into a euphoric, near-vertical climb driven by fear of missing out rather than fundamentals. It cuts both ways — being out means watching gains compound absurdly; being in means holding an asset whose ascent has structurally weakened its own foundations, since melt-ups are how blow-off tops form.\n\nThe mechanism is chasing. As prices accelerate, underinvested professionals face career risk for lagging benchmarks, retail arrives via headlines, shorts capitulate and buy back, and option hedging by dealers can mechanically amplify the climb. Each source of buying is exhausted as it acts — the melt-up consumes its future demand, which is why the aftermath is often abrupt.\n\nFor anyone systematic, melt-ups are where short strategies get destroyed and where valuation discipline underperforms most painfully; the final leg of a bubble is among the most profitable and least survivable stretches to trade against.\n\nWhere people get fooled: on both sides. Sceptics short too early and are carried out; believers mistake the steepest phase for a new paradigm and size up at the top. The melt-up punishes conviction in either direction — its only reliable property is that it ends.",
+    "usage": "\"He's underweight and the index goes vertical — that's melt-up risk working on him daily.\"",
+    "see": [
+      "Melt-up",
+      "Blow-off top",
+      "FOMO",
+      "Bull market",
+      "Positioning"
+    ]
+  },
+  "Rotation": {
+    "long": "Rotation is capital shifting between sectors, styles, or asset classes without necessarily changing the market's overall level — money leaving technology for energy, growth for value, large caps for small. The index can sit flat while violent repricing happens underneath, which is why breadth watchers call some sessions \"rotation days\": the surface calm hides churn.\n\nThe mechanism ties to the cycle and to rates. Different businesses thrive in different conditions — banks like rising rates, growth stocks are hurt by them because their distant earnings get discounted harder, energy follows its commodity, defensives collect flows when fear rises. As expectations about growth, inflation, and policy shift, portfolios reweight accordingly, and the reweighting is the rotation.\n\nRotation is read as a health signal: leadership passing from sector to sector while the index advances suggests broad participation; an advance narrowing to a handful of names is treated as fragility. Like most breadth lore, the record is looser than the conviction of its adherents.\n\nWhere people get fooled: chasing last quarter's leaders precisely as capital rotates out of them. Sector performance is streaky, and buying the recent winner's chart often means arriving at the rotation's departure gate.",
+    "usage": "\"Index flat, but energy up three and tech down two — pure rotation under the surface.\"",
+    "see": [
+      "Sector",
+      "Risk-on / risk-off",
+      "Business cycle",
+      "Positioning"
+    ]
+  },
+  "Sector": {
+    "long": "A sector is a grouping of companies in similar business lines — the standard GICS scheme divides equity markets into eleven: technology, financials, energy, healthcare, and so on. The taxonomy exists because these groupings share economic exposures: banks move with rates, energy with oil, utilities with bond yields. A stock's sector often explains more of its daily move than anything about the company itself.\n\nThat co-movement is the practical point. A trader long three bank stocks holds close to one position in triplicate, not three ideas — intra-sector correlation quietly concentrates what looks like diversification. Sector ETFs exist precisely because the group is tradeable as a unit, and index-level moves are often just two or three sectors doing the work.\n\nComposition varies by market: the ASX 200 is dominated by financials and materials, so Australian index exposure is substantially a bet on banks and miners, while US indices lean heavily on technology.\n\nWhere people get fooled: stock-picking within a sector and attributing the result to the pick. When the sector moves, most of its members move together; the choice of sector did the heavy lifting, and the specific ticker was mostly along for the ride.",
+    "usage": "\"Her three 'diversified' holdings are all financials — that's one sector bet wearing three tickers.\"",
+    "see": [
+      "Rotation",
+      "ASX 200",
+      "Correlation to the index",
+      "ETF",
+      "Factor investing"
+    ]
+  },
+  "Structural break": {
+    "long": "A structural break is a permanent change in the statistical behaviour of a market or relationship — not a bad stretch within a stable process, but the process itself changing. Decimalisation reshaped equity microstructure; the rise of index funds altered flow patterns; a currency peg breaking rewrites a pair's entire distribution. After a genuine break, historical data describes a market that no longer exists.\n\nThe research consequence is severe: every backtest assumes the future resembles the sampled past. A structural break invalidates that assumption silently — the strategy keeps producing signals, the signals just no longer mean what they meant. This differs from ordinary regime change (calm to volatile and back), which cycles; a break is one-way.\n\nDetection is the hard part. Statistically, a break and a drawdown look identical for a long time, and formal break tests have low power in real time — they confirm breaks comfortably after the fact. This is why strategy retirement rules exist: predefined performance bounds that force the question before conviction can argue.\n\nWhere people get fooled: explaining away deterioration. \"Temporary underperformance\" and \"the world changed\" produce the same equity curve for months, and hope reliably votes for the first interpretation.",
+    "usage": "\"The edge died in 2018 and never returned — in hindsight, a structural break, not a drawdown.\"",
+    "see": [
+      "Regime change",
+      "Stationarity",
+      "Backtest",
+      "Alpha decay in public",
+      "Walk-forward"
+    ]
+  }
+}
