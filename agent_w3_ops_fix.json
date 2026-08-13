@@ -1,0 +1,7 @@
+{
+"Journaling the near-misses":{
+"long":"Journaling the near-misses is recording the trades that almost happened and the disasters that almost did: the rule violation that got away with it, the setup skipped from fear, the fat-finger caught at the confirmation screen, the stop nearly moved.\n\nThe practice imports a core idea from aviation and medical safety: incidents and accidents share causes, so the incidents — vastly more numerous — are the cheap data. A rewarded rule break is the most important near-miss in trading, because the reward trains repetition and the repetition eventually meets the outcome the rule existed to prevent. Logged, it is visible as the leading indicator it is; unlogged, it is remembered as a win.\n\nSkipped valid setups are the other half — hesitation is a performance leak the profit column never shows, and only a record of what should have been taken reveals its cost.\n\nWhere people get fooled: journals that only contain executed trades. That dataset cannot see drift while it is still cheap: by the time rule-breaking shows up in results, the habit is months old and has a track record of its own to defend it. The near-miss log catches the same failure at the stage where fixing it costs a sentence of writing instead of a drawdown.",
+"usage":"Generally a log of violations that worked, setups skipped and errors caught in time — the leading indicators the P&L column shows too late.",
+"see":["Process vs outcome","Trading journal","Discipline","Tilt"]
+}
+}

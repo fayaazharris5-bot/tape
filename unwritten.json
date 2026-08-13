@@ -137,22 +137,6 @@
   "Send it",
   "Sim / paper"
  ],
- "fx": [
-  "Currency pair",
-  "Base / quote currency",
-  "Pipette",
-  "Majors / minors / exotics",
-  "Carry trade",
-  "Swap / rollover fee",
-  "Interbank market",
-  "Dealing desk / B-book",
-  "ECN broker",
-  "Requote",
-  "Fixing",
-  "NDF",
-  "Triangular relationship",
-  "FX session overlap"
- ],
  "exec": [
   "Colocation",
   "Market impact",
@@ -221,22 +205,6 @@
   "Latency to broker",
   "Fail-safe default"
  ],
- "scam": [
-  "Track record screenshot",
-  "Verified track record",
-  "Signal group",
-  "Guaranteed returns",
-  "Ponzi",
-  "Recovery scam",
-  "Affiliate funnel",
-  "Survivor content",
-  "Complexity as authority",
-  "Falsifiability",
-  "Credential over mechanism",
-  "Economic rationale",
-  "Copy trading",
-  "Course arbitrage"
- ],
  "cpat": [
   "Long-legged doji",
   "Dragonfly doji",
@@ -288,31 +256,6 @@
   "False breakout",
   "Trendline",
   "Pattern subjectivity"
- ],
- "ind2": [
-  "Simple moving average",
-  "Exponential moving average",
-  "Lag",
-  "Repainting",
-  "Golden cross / death cross",
-  "Overbought / oversold",
-  "Stochastic oscillator",
-  "Bollinger squeeze",
-  "Keltner Channel",
-  "ADX",
-  "Ichimoku",
-  "Donchian Channel",
-  "OBV",
-  "CCI",
-  "Williams %R",
-  "SuperTrend",
-  "Parabolic SAR",
-  "Pivot points",
-  "Heikin Ashi",
-  "Renko",
-  "Market profile",
-  "Indicator stacking",
-  "Parameter choice"
  ],
  "eq": [
   "Share",
