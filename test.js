@@ -438,15 +438,27 @@ d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:tru
 ok(d.getElementById("tpanel").hidden,"close button dismisses the panel");
 
 /* a term with no long body degrades rather than showing a hole */
-/* fixture chosen dynamically: any hard-coded term eventually gets written,
-   which broke this test once (Pip). Pick a term that still lacks a body. */
-var stubTerm=(w.D||[]).find(function(x){return !x.long;});
-ok(!!stubTerm,"at least one term still lacks a body (retire this block when all are written)");
+/* Fixture chosen dynamically: any hard-coded term eventually gets written,
+   which broke this test once (Pip).
+   2026-08-14: the corpus reached 100% written, so no real term lacks a body
+   any more and the old "find one" fixture had nothing to find. The path
+   still has to work — every term added from here starts without a body —
+   so synthesise the empty case by removing a body in memory and restoring
+   it afterwards. Intended content change; the behaviour assertions below
+   are unchanged. */
+var stubTerm=(w.D||[]).find(function(x){return !x.long;}), savedLong;
+if(!stubTerm){
+  stubTerm=(w.D||[])[0];
+  savedLong=stubTerm.long;
+  delete stubTerm.long;
+}
+ok(!!stubTerm,"a term with no expanded body is available to test the placeholder path");
 d.getElementById("term-"+stubTerm.t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""))
  .dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
 ok(!!d.querySelector("#tpanel .tpstub"),"terms without an expanded body show an honest placeholder");
 ok(!/undefined/.test(d.getElementById("tpanel").textContent),"placeholder path leaks no undefined");
 d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+if(savedLong!==undefined)stubTerm.long=savedLong;   /* leave D as we found it */
 
 /* deep link opens the panel directly */
 var domDeep=boot("https://example.com/a.html#t=order-block"); await wait(900);
