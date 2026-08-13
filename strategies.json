@@ -1,0 +1,117 @@
+[
+ {
+  "name": "momentum_hold - C 1d",
+  "source": "Strategy Lab realistic_v1 costs, run 2026-07-30T09:39:38+00:00",
+  "market": "C",
+  "timeframe": "1d",
+  "session": "",
+  "bias": "",
+  "entry": "",
+  "invalidation": "",
+  "target": "",
+  "riskNote": "",
+  "tags": [
+   "strategy-lab",
+   "momentum_hold",
+   "gate-failed"
+  ],
+  "evidence": "untested",
+  "sampleSize": 30,
+  "results": "Out-of-sample: win rate 73.3% with expectancy 84.72 per trade in account currency (the engine does not produce R), profit factor 3.51, max drawdown 20.6%, over 30 out-of-sample trades. Beat the random-walk control by 0.227, but it would take only about 968 trials for a result this good to appear by chance, and this search has run 58698. That is a fail, not a pass. Deflated Sharpe 0.170. p=0.358 (uncorrected).",
+  "notes": "Imported from the Strategy Lab, which had run 58698 trials at export. Parameters: {'lookback': 30, 'hold': 20, 'min_return': 0.0}. The engine records no entry trigger, invalidation or target, so those fields are blank rather than filled with plausible text - write them yourself from the strategy definition.",
+  "trades": [],
+  "provenance": "file"
+ },
+ {
+  "name": "liquidity_sweep - COST 1d",
+  "source": "Strategy Lab realistic_v1 costs, run 2026-07-30T09:39:38+00:00",
+  "market": "COST",
+  "timeframe": "1d",
+  "session": "",
+  "bias": "",
+  "entry": "",
+  "invalidation": "",
+  "target": "",
+  "riskNote": "",
+  "tags": [
+   "strategy-lab",
+   "liquidity_sweep",
+   "gate-failed"
+  ],
+  "evidence": "untested",
+  "sampleSize": 66,
+  "results": "Out-of-sample: win rate 68.2% with expectancy 8.53 per trade in account currency (the engine does not produce R), profit factor 2.53, max drawdown 6.8%, over 66 out-of-sample trades. Beat the random-walk control by 0.059, but it would take only about 475 trials for a result this good to appear by chance, and this search has run 58698. That is a fail, not a pass. Deflated Sharpe 0.120. p=0.716 (uncorrected).",
+  "notes": "Imported from the Strategy Lab, which had run 58698 trials at export. Parameters: {'lookback': 3, 'reclaim_hold': 3}. The engine records no entry trigger, invalidation or target, so those fields are blank rather than filled with plausible text - write them yourself from the strategy definition.",
+  "trades": [],
+  "provenance": "file"
+ },
+ {
+  "name": "momentum_hold - GE 1d",
+  "source": "Strategy Lab realistic_v1 costs, run 2026-07-30T09:39:38+00:00",
+  "market": "GE",
+  "timeframe": "1d",
+  "session": "",
+  "bias": "",
+  "entry": "",
+  "invalidation": "",
+  "target": "",
+  "riskNote": "",
+  "tags": [
+   "strategy-lab",
+   "momentum_hold",
+   "gate-failed"
+  ],
+  "evidence": "untested",
+  "sampleSize": 30,
+  "results": "Out-of-sample: win rate 76.7% with expectancy 85.48 per trade in account currency (the engine does not produce R), profit factor 3.32, max drawdown 23.4%, over 30 out-of-sample trades. Beat the random-walk control by 1.460, but it would take only about 373 trials for a result this good to appear by chance, and this search has run 58698. That is a fail, not a pass. Deflated Sharpe 0.113. p=0.706 (uncorrected).",
+  "notes": "Imported from the Strategy Lab, which had run 58698 trials at export. Parameters: {'lookback': 30, 'hold': 20, 'min_return': 0.0}. The engine records no entry trigger, invalidation or target, so those fields are blank rather than filled with plausible text - write them yourself from the strategy definition.",
+  "trades": [],
+  "provenance": "file"
+ },
+ {
+  "name": "momentum_hold - GS 1d",
+  "source": "Strategy Lab realistic_v1 costs, run 2026-07-30T09:39:38+00:00",
+  "market": "GS",
+  "timeframe": "1d",
+  "session": "",
+  "bias": "",
+  "entry": "",
+  "invalidation": "",
+  "target": "",
+  "riskNote": "",
+  "tags": [
+   "strategy-lab",
+   "momentum_hold",
+   "gate-failed"
+  ],
+  "evidence": "untested",
+  "sampleSize": 30,
+  "results": "Out-of-sample: win rate 80.0% with expectancy 71.73 per trade in account currency (the engine does not produce R), profit factor 4.28, max drawdown 21.5%, over 30 out-of-sample trades. Beat the random-walk control by 0.493, but it would take only about 344 trials for a result this good to appear by chance, and this search has run 58698. That is a fail, not a pass. Deflated Sharpe 0.095. p=0.540 (uncorrected).",
+  "notes": "Imported from the Strategy Lab, which had run 58698 trials at export. Parameters: {'lookback': 30, 'hold': 20, 'min_return': 0.0}. The engine records no entry trigger, invalidation or target, so those fields are blank rather than filled with plausible text - write them yourself from the strategy definition.",
+  "trades": [],
+  "provenance": "file"
+ },
+ {
+  "name": "mean_revert - AMD 1d",
+  "source": "Strategy Lab realistic_v1 costs, run 2026-07-30T09:39:38+00:00",
+  "market": "AMD",
+  "timeframe": "1d",
+  "session": "",
+  "bias": "",
+  "entry": "",
+  "invalidation": "",
+  "target": "",
+  "riskNote": "",
+  "tags": [
+   "strategy-lab",
+   "mean_revert",
+   "gate-failed"
+  ],
+  "evidence": "untested",
+  "sampleSize": 36,
+  "results": "Out-of-sample: win rate 80.6% with expectancy 65.60 per trade in account currency (the engine does not produce R), profit factor 10.78, max drawdown 22.3%, over 36 out-of-sample trades. Beat the random-walk control by 2.099, but it would take only about 307 trials for a result this good to appear by chance, and this search has run 58698. That is a fail, not a pass. Deflated Sharpe 0.053. p=0.786 (uncorrected).",
+  "notes": "Imported from the Strategy Lab, which had run 58698 trials at export. Parameters: {'drop': 0.05, 'recover': 0.03, 'max_hold': 5}. The engine records no entry trigger, invalidation or target, so those fields are blank rather than filled with plausible text - write them yourself from the strategy definition.",
+  "trades": [],
+  "provenance": "file"
+ }
+]

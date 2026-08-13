@@ -83,12 +83,45 @@ answer into this file immediately**, then act on it.
   walk-forward results; control-gate failures stay "untested" regardless of
   returns, with the failure recorded in results; fields the engine does not
   produce stay empty.
-  → path confirmed: **YES** — `C:\Users\fayaa\Downloads\ai trading thing\strategy-lab`
-  exists and carries the markers this file describes: `engine/`, `daily.py`,
-  `config.json`, `NEXT.md`, and `results/PREDICTIONS.md` (alongside
-  `PBO_REPORT.md` and the tier lists). Verified by direct inspection on
-  2026-08-14, not inferred. `sync_strategies.py` is NOT written yet — that
-  is the next step and has not been asked for.
+  → **DONE.** Path confirmed by direct inspection on 2026-08-14:
+  `C:\Users\fayaa\Downloads\ai trading thing\strategy-lab`, carrying `engine/`,
+  `daily.py`, `config.json`, `NEXT.md` and `results/PREDICTIONS.md`.
+  `sync_strategies.py` is written and run. See "Strategy Lab bridge" below.
+
+## Strategy Lab bridge — `sync_strategies.py`
+
+```bash
+py -3 sync_strategies.py            # top 20, realistic costs, writes strategies.json
+py -3 sync_strategies.py --gate-only   # only rows clearing the full gate
+```
+
+Then load `strategies.json` through the app's existing **Import** button. No
+"Load from Strategy Lab" button was added: a web page cannot read a fixed local
+path, so it would have been a second file picker beside the first — exactly the
+"feature whose main effect is more features" the list below rules out.
+
+The Lab's database is `results/results.db`, table `honest_runs`. Schema as
+inspected: `oos_n_trades, oos_win_rate, oos_expectancy, oos_profit_factor,
+oos_payoff_ratio, oos_max_drawdown, oos_sharpe, oos_dsr, oos_p_value,
+oos_trials_to_kill, vs_random, vs_buy_and_hold, flags, cost_model, params`.
+Cost models are `realistic_v1` and `flat_legacy` — **not** `brutal_v1`.
+
+What the data actually says, measured on 2026-08-14 and not to be softened:
+
+- Ledger: **58,698 rows**. Best `oos_trials_to_kill` anywhere: **3,670**.
+  Best deflated Sharpe: **0.18**. Rows with DSR > 0.95: **zero**.
+- So **nothing clears the gate**, every export is `untested`, and `--gate-only`
+  exits 2 with that stated plainly. That is the correct result and it matches
+  the Lab's standing finding — it is not a bug in the script.
+- The gate is `vs_random > 0` **and** `oos_trials_to_kill >= <rows in
+  honest_runs>`. Both halves are the Lab's own numbers; no threshold was
+  invented here. `vs_random > 0` alone passes 1,886 rows and means nothing at
+  this trial count — beating one random draw is what noise does.
+- **Expectancy is in account currency, not R.** The brief asked for R; the
+  engine does not produce it. The sentence says which it is rather than
+  relabelling dollars as R.
+- Rows are deduped to one per strategy/asset/timeframe — the table holds many
+  near-identical re-runs of the same variant.
 
 ## Do not build unless asked
 

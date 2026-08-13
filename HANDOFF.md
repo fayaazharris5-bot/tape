@@ -159,12 +159,16 @@ print(len(names))
 
 ## Blocked on the user — never guess
 
-- GitHub username -> publish via README commands.
+- GitHub username -> publish via README commands. Checked directly: no
+  `git config --global user.name/user.email` is set and `gh` is not installed,
+  so this genuinely cannot be derived from the machine. Only the user has it.
 - The user's strategy rules (10am/10pm session play; TJR) -> dictated
   verbatim, one field at a time, else the library stays empty.
-- Strategy Lab path -> then sync_strategies.py per the user's Task 11 mapping
-  (sampleSize = real trade count; "backtested" only for OOS/walk-forward;
-  random-walk-gate failures stay untested with the failure in results).
+- ~~Strategy Lab path~~ **DONE** — path confirmed, `sync_strategies.py` written,
+  run and verified. See the "Strategy Lab bridge" section of CLAUDE.md for the
+  db schema, the real cost-model names, and the measured numbers. Headline:
+  58,698 trials, best trials-to-kill 3,670, zero rows clear the gate, so every
+  exported strategy is `untested`. That is the honest outcome, not a defect.
 
 ## Next queue
 
