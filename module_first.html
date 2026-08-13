@@ -23,18 +23,18 @@ function markSeen(){
 var CONTENT=
   "<p class='tf-intro'>One page before everything else. Nothing in it is advice — it is arithmetic you can check yourself.</p>"+
 
-  "<h3>What trading costs before you have an opinion</h3>"+
+  "<h2>What trading costs before you have an opinion</h2>"+
   "<p>Every trade pays the market's toll before it pays you. On the Micro E-mini Nasdaq (MNQ), one tick is 0.25 points and is worth $0.50. Entering with a market order crosses the spread, which costs about one tick, and round-trip commission at a typical retail broker adds roughly another dollar — call it $1.50 all-in per round trip. That sounds small until you put it beside a target. A 10-point winner on MNQ pays $20, so the $1.50 toll is 7.5% of the prize, surrendered before direction mattered at all. The same $1.50 comes out of every loser too, and slippage on stops only adds to it. Resting a limit order can save the spread at the price of sometimes missing the fill — the cost moves, it does not vanish.</p>"+
   "<p>Now scale it by frequency. Five round trips a day over twenty trading days is a hundred round trips: about $150 a month paid out whatever else happens. Trade more, pay more; the toll never takes a day off. Any method you consider has to clear this bar before it earns anything, which is why the cost arithmetic belongs in front of any opinion about where price is headed.</p>"+
 
-  "<h3>The base rates</h3>"+
+  "<h2>The base rates</h2>"+
   "<p>Most people who trade short-term in retail accounts lose money over time. You do not have to take this page's word for it, because regulators publish the evidence where brokers must show it. In the European Union, CFD brokers are required to display on their own websites the percentage of their retail accounts that lose money — scroll to the foot of any EU-regulated broker's homepage and the figure is printed there, drawn from that broker's own books. In Australia, ASIC restricted how CFDs could be offered to retail clients after reviewing actual client outcomes across the industry. These are not claims made by critics; they are disclosures firms are legally required to make about their own customers. The figures come from live account data, not surveys, and they vary by firm and by period; which side of the line most accounts sit on does not. Read a few of them before funding anything. Whatever number you find is the base rate you start from.</p>"+
 
-  "<h3>What our own testing found</h3>"+
+  "<h2>What our own testing found</h2>"+
   "<p class='tf-verbatim'>Across roughly 58,700 backtests in this project's companion research engine, no strategy family produced a repeatable edge after costs. Buy-and-hold beat the active strategies on average. A random-entry control ranks near the top of the entire results database. 0 of 134 strategy groups beat buy-and-hold under White's Reality Check.</p>"+
   "<p>A profitable-looking result at that scale of search is expected from noise alone, which is why this app keeps saying “test it” instead of “trust it”.</p>"+
 
-  "<h3>A realistic path</h3>"+
+  "<h2>A realistic path</h2>"+
   "<p>Read the guided path in this app end to end before placing a trade anywhere. Practise in simulation before money, and treat sim results as a ceiling rather than a promise, because live fills are worse. When you do trade real funds, use the smallest size available and stay there far longer than feels necessary — small size keeps the tuition cheap while you find out how you actually behave in a live position. Log every trade, and draw no conclusion about yourself or any method from fewer than 30 logged trades; below that, the numbers are mostly noise. Record the plan before entry and the exit after, in the same words you would accept from someone else. The journal tells the truth your memory won't. Memory keeps the near-misses and edits the losses; the journal keeps the arithmetic. The goal of this app is literacy and honest record-keeping, not signals.</p>"+
 
   "<p class='tf-close'>Nothing in this app predicts anything, recommends any trade, or knows your situation. It defines things and keeps honest score.</p>";
@@ -104,7 +104,7 @@ if(document.readyState==="loading"){
 #tf-banner[aria-expanded="true"]{border-radius:2px 2px 0 0;color:var(--ink)}
 #tf-body{background:var(--card);border:1px solid var(--rule);border-top:0;border-radius:0 0 2px 2px;padding:16px 20px 20px}
 #tf-body>*{max-width:68ch}
-#tf-body h3{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:-.01em;color:var(--ink);margin:20px 0 6px}
+#tf-body h2{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:-.01em;color:var(--ink);margin:20px 0 6px}
 #tf-body p{margin:0 0 12px;font-size:15px;line-height:1.65;color:var(--ink)}
 #tf-body .tf-intro{font-family:var(--mono);font-size:12.5px;color:var(--ink3);margin:2px 0 4px}
 #tf-body .tf-verbatim{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink2);
