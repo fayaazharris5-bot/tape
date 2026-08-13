@@ -8700,7 +8700,7 @@ function detHTML(s){
     .filter(function(r){return r[1];})
     .map(function(r){return '<div class="srow"><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join("");
   var h='<button class="btn sclose" data-detclose aria-label="Close detail">×</button>'+
-    '<div class="shead"><h3>'+esc(s.name)+
+    '<div class="shead"><h3 id="sdet-title">'+esc(s.name)+
     (s.source?'<span class="by">'+esc(s.source)+'</span>':'')+'</h3>'+
     '<span class="badge '+ev[2]+'">'+ev[1]+' · n='+nOf(s)+'</span></div>'+
     (facts?'<div class="facts">'+facts+'</div>':'')+
@@ -8739,21 +8739,50 @@ function detHTML(s){
   h+='<p class="note">This view only reads. Logging and editing happen on the card.</p>';
   return h;
 }
+/* Modal semantics match the term panel: role/aria-modal/labelled by the
+   heading, focus moved in and restored on close, background scroll
+   locked, and Tab kept inside. Without the trap, tabbing walks into the
+   995-card grid behind the overlay. */
+var detLastFocus=null;
 function renderDet(){
   var el=document.getElementById("sdetwrap");
-  if(!detKey){if(el)el.remove();return;}
+  if(!detKey){
+    if(el)el.remove();
+    document.body.classList.remove("tpopen");
+    return;
+  }
   var s=find(detKey);
-  if(!s){detKey=null;if(el)el.remove();return;}
+  if(!s){detKey=null;if(el)el.remove();document.body.classList.remove("tpopen");return;}
   if(!el){el=document.createElement("div");el.id="sdetwrap";document.getElementById("panel-strats").appendChild(el);}
-  el.innerHTML='<div class="sdetov"><article class="scard sdet">'+detHTML(s)+'</article></div>';
-  el.querySelector("[data-detclose]").onclick=closeDet;
+  el.innerHTML='<div class="sdetov"><article class="scard sdet" role="dialog" aria-modal="true" '+
+    'aria-labelledby="sdet-title" tabindex="-1">'+detHTML(s)+'</article></div>';
+  el.querySelector("[data-detclose]").onclick=function(){closeDet();};
   el.querySelector(".sdetov").onclick=function(e){if(e.target===this)closeDet();};
+  document.body.classList.add("tpopen");
   el.querySelector("[data-detclose]").focus();
 }
-function openDet(k){detKey=k;renderDet();syncHash();}
-function closeDet(){detKey=null;renderDet();syncHash();}
+function openDet(k){
+  if(!detKey)detLastFocus=document.activeElement;
+  detKey=k;renderDet();syncHash();
+}
+function closeDet(){
+  detKey=null;renderDet();syncHash();
+  if(detLastFocus&&detLastFocus.focus){try{detLastFocus.focus();}catch(e){}}
+  detLastFocus=null;
+}
 TAPE_NS.openStratDetail=openDet;
-document.addEventListener("keydown",function(e){if(e.key==="Escape"&&detKey)closeDet();});
+document.addEventListener("keydown",function(e){
+  if(!detKey)return;
+  if(e.key==="Escape"){e.preventDefault();closeDet();return;}
+  if(e.key==="Tab"){
+    var p=document.querySelector(".sdet");if(!p)return;
+    var f=p.querySelectorAll('button:not([disabled]),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(!f.length)return;
+    var first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+});
 
 var _render=render;render=function(){_render();syncHash();if(detKey)renderDet();};
 

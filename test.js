@@ -698,20 +698,56 @@ ok(/due for review/.test(d.getElementById("qscore").textContent),
 }
 
 console.log("\n22. Strategy detail view");
+/* Own dom, like group 20. The shared `d` has been through twenty groups by
+   now: the term panel can be left open with a pushed history entry, jsdom
+   fires popstate from earlier history.back() calls on later ticks, and the
+   body scroll-lock class survives. All of that moves focus for reasons that
+   have nothing to do with this feature, so measure it on a clean boot. */
 {
+const domD=boot(); await wait(700);
+const wd=domD.window, dd2=domD.window.document;
+const d=dd2, w=wd;   /* keep the assertions below reading naturally */
 d.getElementById("tab-strats").dispatchEvent(new w.Event("click"));
 await wait(60);
 const db=d.querySelector("[data-det]");
 ok(!!db,"every card offers a Detail button");
+/* scroll lock uses the body class the term panel also uses, so compare
+   against the state on entry rather than assuming it starts clear */
+const lockedBefore=d.body.classList.contains("tpopen");
+/* a real click focuses the button; jsdom's .click() does not, and the
+   overlay restores focus to whatever was active when it opened */
+db.focus();
 db.click(); await wait(30);
 const ov=d.getElementById("sdetwrap");
 ok(!!ov,"the detail overlay opens");
 ok(/computed from the log/i.test(ov.textContent)||/Nothing logged yet/.test(ov.textContent),
    "results are computed from the log or honestly absent");
 ok(/only reads/.test(ov.textContent),"the view states that logging stays on the card");
+/* modal semantics must match the term panel — without the trap, Tab walks
+   out of the overlay and into the 995-card grid behind it */
+const dp=ov.querySelector(".sdet");
+eq(dp.getAttribute("role"),"dialog","detail overlay is a dialog");
+eq(dp.getAttribute("aria-modal"),"true","detail overlay is modal");
+ok(!!d.getElementById(dp.getAttribute("aria-labelledby")),
+   "aria-labelledby points at a heading that exists");
+ok(d.body.classList.contains("tpopen"),"background scroll is locked while open");
+ok(dp.getAttribute("tabindex")==="-1","the panel itself is programmatically focusable");
+ok(dp.contains(d.activeElement),"focus moves into the overlay on open");
+const foc=dp.querySelectorAll('button:not([disabled]),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+foc[foc.length-1].focus();
+d.dispatchEvent(new w.KeyboardEvent("keydown",{key:"Tab",bubbles:true}));
+ok(d.activeElement===foc[0],"Tab wraps to the first control instead of escaping the overlay");
 d.dispatchEvent(new w.KeyboardEvent("keydown",{key:"Escape",bubbles:true}));
+/* Read focus synchronously: closeDet restores it inline, and jsdom fires
+   popstate from earlier groups' history.back() on a later tick, which can
+   move focus for reasons unrelated to this feature. */
+const focusAfterClose=d.activeElement;
+const closedNow=!d.getElementById("sdetwrap");
+const lockAfter=d.body.classList.contains("tpopen");
 await wait(30);
-ok(!d.getElementById("sdetwrap"),"Escape closes the detail view");
+ok(closedNow,"Escape closes the detail view");
+eq(lockAfter,lockedBefore,"background scroll lock returns to its prior state on close");
+ok(focusAfterClose===db,"focus returns to the button that opened it");
 }
 
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
