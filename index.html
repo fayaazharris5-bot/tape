@@ -6374,3 +6374,132 @@ if(ts) ts.addEventListener("click",function(){ setTimeout(mount,0); });
 mount();
 })();
 </script>
+<!-- module: module_first.html -->
+<script>
+(function(){
+"use strict";
+
+/* ---- Read this first — the honest page ---- */
+
+var KEY="tape.intro.v1";
+var mem={};
+
+function seen(){
+  var v=null;
+  try{ v=window.localStorage.getItem(KEY); }
+  catch(e){ v=null; }
+  if(v===null&&Object.prototype.hasOwnProperty.call(mem,KEY)) v=mem[KEY];
+  return v==="1";
+}
+function markSeen(){
+  mem[KEY]="1";
+  try{ window.localStorage.setItem(KEY,"1"); }
+  catch(e){}
+}
+
+var CONTENT=
+  "<p class='tf-intro'>One page before everything else. Nothing in it is advice — it is arithmetic you can check yourself.</p>"+
+
+  "<h3>What trading costs before you have an opinion</h3>"+
+  "<p>Every trade pays the market's toll before it pays you. On the Micro E-mini Nasdaq (MNQ), one tick is 0.25 points and is worth $0.50. Entering with a market order crosses the spread, which costs about one tick, and round-trip commission at a typical retail broker adds roughly another dollar — call it $1.50 all-in per round trip. That sounds small until you put it beside a target. A 10-point winner on MNQ pays $20, so the $1.50 toll is 7.5% of the prize, surrendered before direction mattered at all. The same $1.50 comes out of every loser too, and slippage on stops only adds to it. Resting a limit order can save the spread at the price of sometimes missing the fill — the cost moves, it does not vanish.</p>"+
+  "<p>Now scale it by frequency. Five round trips a day over twenty trading days is a hundred round trips: about $150 a month paid out whatever else happens. Trade more, pay more; the toll never takes a day off. Any method you consider has to clear this bar before it earns anything, which is why the cost arithmetic belongs in front of any opinion about where price is headed.</p>"+
+
+  "<h3>The base rates</h3>"+
+  "<p>Most people who trade short-term in retail accounts lose money over time. You do not have to take this page's word for it, because regulators publish the evidence where brokers must show it. In the European Union, CFD brokers are required to display on their own websites the percentage of their retail accounts that lose money — scroll to the foot of any EU-regulated broker's homepage and the figure is printed there, drawn from that broker's own books. In Australia, ASIC restricted how CFDs could be offered to retail clients after reviewing actual client outcomes across the industry. These are not claims made by critics; they are disclosures firms are legally required to make about their own customers. The figures come from live account data, not surveys, and they vary by firm and by period; which side of the line most accounts sit on does not. Read a few of them before funding anything. Whatever number you find is the base rate you start from.</p>"+
+
+  "<h3>What our own testing found</h3>"+
+  "<p class='tf-verbatim'>Across roughly 58,700 backtests in this project's companion research engine, no strategy family produced a repeatable edge after costs. Buy-and-hold beat the active strategies on average. A random-entry control ranks near the top of the entire results database. 0 of 134 strategy groups beat buy-and-hold under White's Reality Check.</p>"+
+  "<p>A profitable-looking result at that scale of search is expected from noise alone, which is why this app keeps saying “test it” instead of “trust it”.</p>"+
+
+  "<h3>A realistic path</h3>"+
+  "<p>Read the guided path in this app end to end before placing a trade anywhere. Practise in simulation before money, and treat sim results as a ceiling rather than a promise, because live fills are worse. When you do trade real funds, use the smallest size available and stay there far longer than feels necessary — small size keeps the tuition cheap while you find out how you actually behave in a live position. Log every trade, and draw no conclusion about yourself or any method from fewer than 30 logged trades; below that, the numbers are mostly noise. Record the plan before entry and the exit after, in the same words you would accept from someone else. The journal tells the truth your memory won't. Memory keeps the near-misses and edits the losses; the journal keeps the arithmetic. The goal of this app is literacy and honest record-keeping, not signals.</p>"+
+
+  "<p class='tf-close'>Nothing in this app predicts anything, recommends any trade, or knows your situation. It defines things and keeps honest score.</p>";
+
+function build(){
+  var root=document.createElement("section");
+  root.id="tape-first";
+  root.setAttribute("aria-label","Read this first");
+  root.innerHTML=
+    "<button type='button' id='tf-banner' aria-controls='tf-body' aria-expanded='false'>"+
+      "<span class='tf-line'>Read this first — the honest page</span>"+
+      "<span class='tf-caret' aria-hidden='true'>+</span>"+
+    "</button>"+
+    "<div id='tf-body' hidden>"+
+      CONTENT+
+      "<p class='tf-actions'><button type='button' id='tf-got'>Got it — show me the glossary</button></p>"+
+    "</div>";
+  return root;
+}
+
+function setOpen(root,open){
+  var banner=root.querySelector("#tf-banner");
+  var caret=root.querySelector(".tf-caret");
+  var body=root.querySelector("#tf-body");
+  banner.setAttribute("aria-expanded",open?"true":"false");
+  caret.textContent=open?"−":"+";
+  body.hidden=!open;
+}
+
+function mount(){
+  var host=document.getElementById("panel-terms");
+  if(!host||document.getElementById("tape-first")) return;
+  var root=build();
+  host.insertBefore(root,host.firstChild);
+
+  var banner=root.querySelector("#tf-banner");
+  var got=root.querySelector("#tf-got");
+
+  banner.addEventListener("click",function(){
+    setOpen(root,banner.getAttribute("aria-expanded")!=="true");
+  });
+  got.addEventListener("click",function(){
+    markSeen();
+    setOpen(root,false);
+    banner.focus();
+  });
+
+  setOpen(root,!seen());
+}
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",mount);
+}else{
+  mount();
+}
+})();
+</script>
+<style>
+#tape-first{max-width:1000px;margin:0 auto;padding:0 20px}
+#tf-banner{display:flex;align-items:center;gap:10px;width:100%;margin:14px 0 0;text-align:left;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink2);
+  background:var(--tint);border:1px solid var(--rule);border-radius:2px;padding:10px 14px;cursor:pointer}
+#tf-banner:hover{color:var(--ink);border-color:var(--rule2)}
+#tf-banner:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+#tf-banner .tf-line{min-width:0}
+#tf-banner .tf-caret{margin-left:auto;color:var(--ink3);flex:none}
+#tf-banner[aria-expanded="true"]{border-radius:2px 2px 0 0;color:var(--ink)}
+#tf-body{background:var(--card);border:1px solid var(--rule);border-top:0;border-radius:0 0 2px 2px;padding:16px 20px 20px}
+#tf-body>*{max-width:68ch}
+#tf-body h3{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:-.01em;color:var(--ink);margin:20px 0 6px}
+#tf-body p{margin:0 0 12px;font-size:15px;line-height:1.65;color:var(--ink)}
+#tf-body .tf-intro{font-family:var(--mono);font-size:12.5px;color:var(--ink3);margin:2px 0 4px}
+#tf-body .tf-verbatim{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink2);
+  border-left:2px solid var(--rule2);padding:2px 0 2px 12px}
+#tf-body .tf-close{font-family:var(--mono);font-size:12.5px;color:var(--ink2);
+  border-top:1px solid var(--rule);padding-top:12px;margin:18px 0 0}
+#tf-body .tf-actions{margin:16px 0 0}
+#tf-got{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;padding:10px 16px;
+  background:var(--accent);border:1px solid var(--accent);color:var(--paper);border-radius:2px;cursor:pointer}
+#tf-got:hover{border-color:var(--signal)}
+#tf-got:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  #tf-body{animation:tf-in .18s ease-out}
+  @keyframes tf-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+}
+@media (max-width:900px), (pointer: coarse){
+  #tf-banner{min-height:44px}
+  #tf-got{min-height:44px}
+}
+@media print{#tape-first{display:none!important}}
+</style>

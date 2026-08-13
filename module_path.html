@@ -1,0 +1,494 @@
+<script>
+(function () {
+  "use strict";
+
+  var KEY = "tape.path.v1";
+
+  /*PATH-DATA-START*/
+  var STAGES = [
+    {
+      "title": "What a market is and what trading costs",
+      "why": "Every trade pays the spread, commissions and slippage before it earns a cent, so the cost structure is lesson one.",
+      "terms": ["Exchange", "Broker", "Bid", "Ask", "Spread", "Liquidity", "Volume", "Tick", "Commission", "Slippage", "Market maker", "Retail trader"]
+    },
+    {
+      "title": "Orders and positions",
+      "why": "These are the machine's actual controls, and you should know exactly what each one does before pressing any of them.",
+      "terms": ["Market order", "Limit order", "Stop order", "Stop-limit", "Stop loss", "Take profit", "Bracket order", "Long", "Short", "Position size", "Partial fill", "Entry / exit", "Position vs order", "Time in force"]
+    },
+    {
+      "title": "Risk arithmetic — the survival maths",
+      "why": "Position sizing and expectancy decide whether an account survives long enough for skill to matter, which is why the maths comes before any method.",
+      "terms": ["R", "Risk per trade", "Position sizing", "Risk:reward", "Expectancy", "Win rate", "Profit factor", "Drawdown", "Risk of ruin", "Recovery maths", "Kelly criterion", "Law of large numbers"]
+    },
+    {
+      "title": "Reading charts without indicators",
+      "why": "Bare price comes first: learn what a chart does and does not show before any overlay starts interpreting it for you.",
+      "terms": ["Candlestick", "OHLCV", "Timeframe", "Trend", "Range", "Support / resistance", "Swing high / swing low", "Breakout", "False breakout", "Pullback", "Consolidation", "Gap", "Volume confirmation"]
+    },
+    {
+      "title": "The psychology failure modes",
+      "why": "More accounts are ended by these habits than by any missing technique, so learn to recognise them in yourself early.",
+      "terms": ["FOMO", "Revenge trading", "Overtrading", "Loss aversion", "Sunk cost fallacy", "Confirmation bias", "Recency bias", "Hindsight bias", "Gambler's fallacy", "Overconfidence after a win streak", "Tilt", "Averaging down", "Discipline"]
+    },
+    {
+      "title": "Evidence — how to know if anything works",
+      "why": "Testing an idea badly feels exactly like testing it well; this stage is how you tell the difference.",
+      "terms": ["Backtest", "Sample size", "Overfitting", "Look-ahead bias", "Survivorship bias", "Selection bias", "Data snooping", "p-hacking", "In-sample / out-of-sample split", "Walk-forward", "Forward test", "Sharpe ratio", "Random trader benchmark", "Trading journal"]
+    },
+    {
+      "title": "Instruments and leverage",
+      "why": "Know precisely what you are buying, and what borrowed size does to the stage-three arithmetic, before touching any of it.",
+      "terms": ["Share", "ETF", "Index fund", "CFD", "Futures", "Options", "Forex pair", "Leverage", "Margin", "Margin call", "Liquidation", "Perpetual (perp)", "Funding rate"]
+    },
+    {
+      "title": "Frameworks and scepticism",
+      "why": "Named frameworks come last on purpose: their claims should be weighed against the costs, maths and evidence standards you now carry.",
+      "terms": ["Wyckoff method", "Elliott Wave", "Fibonacci retracement", "Market structure", "Smart money", "Order block", "Fair value gap", "Break of structure", "Change of character", "Liquidity sweep", "Kill zone", "Reality check on this section"]
+    }
+  ];
+  /*PATH-DATA-END*/
+
+  var memStore = {};
+
+  function storeGet(key) {
+    var val = null;
+    try { val = window.localStorage.getItem(key); } catch (err) { val = null; }
+    if (val === null && Object.prototype.hasOwnProperty.call(memStore, key)) { val = memStore[key]; }
+    return val;
+  }
+
+  function storeSet(key, val) {
+    memStore[key] = val;
+    try { window.localStorage.setItem(key, val); } catch (err) {}
+  }
+
+  function slugOf(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  function loadVisited() {
+    var set = {};
+    var raw = storeGet(KEY);
+    if (raw) {
+      try {
+        var arr = JSON.parse(raw);
+        if (arr && arr.length && arr.slice) {
+          for (var i = 0; i < arr.length; i++) { set[String(arr[i])] = true; }
+        }
+      } catch (err) {}
+    }
+    return set;
+  }
+
+  function saveVisited(set) {
+    var arr = [];
+    for (var k in set) {
+      if (Object.prototype.hasOwnProperty.call(set, k)) { arr.push(k); }
+    }
+    try { storeSet(KEY, JSON.stringify(arr)); } catch (err) {}
+  }
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    if (text) { node.textContent = text; }
+    return node;
+  }
+
+  function init() {
+    var host = document.getElementById("panel-terms");
+    if (!host) { return; }
+    if (document.getElementById("tape-path-start-here")) { return; }
+
+    var visited = loadVisited();
+
+    var s, i;
+    var totalTerms = 0;
+    var pathSlugs = {};
+    for (s = 0; s < STAGES.length; s++) {
+      totalTerms += STAGES[s].terms.length;
+      for (i = 0; i < STAGES[s].terms.length; i++) {
+        pathSlugs[slugOf(STAGES[s].terms[i])] = true;
+      }
+    }
+
+    var startCount = 0;
+    for (var pk in pathSlugs) {
+      if (Object.prototype.hasOwnProperty.call(pathSlugs, pk) && visited[pk]) { startCount++; }
+    }
+    var startOpen = startCount === 0;
+
+    var panel = el("section", "tp-path");
+    panel.id = "tape-path-start-here";
+    if (!startOpen) { panel.setAttribute("data-collapsed", "1"); }
+
+    var toggle = el("button", "tp-path-toggle");
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", startOpen ? "true" : "false");
+    toggle.setAttribute("aria-controls", "tape-path-body");
+    var title = el("span", "tp-path-title", "Start here — a guided path");
+    var sub = el("span", "tp-path-sub", "");
+    var caret = el("span", "tp-path-caret", startOpen ? "−" : "+");
+    toggle.appendChild(title);
+    toggle.appendChild(sub);
+    toggle.appendChild(caret);
+    panel.appendChild(toggle);
+
+    var body = el("div", "tp-path-body");
+    body.id = "tape-path-body";
+    panel.appendChild(body);
+
+    body.appendChild(el("p", "tp-path-intro",
+      "Nearly a thousand terms with no reading order is a wall, not a curriculum. " +
+      "This path sequences a hundred-odd of them: costs first, survival maths early, named frameworks last. " +
+      "Work through a stage in order and tap a term to open it; it gets marked as visited. " +
+      "Finishing makes you literate, not profitable — literacy is what the rest of the glossary assumes."));
+
+    var bar = el("div", "tp-path-bar");
+    bar.setAttribute("role", "progressbar");
+    bar.setAttribute("aria-valuemin", "0");
+    bar.setAttribute("aria-valuemax", String(totalTerms));
+    bar.setAttribute("aria-label", "Guided path progress");
+    var fill = el("div", "tp-path-fill");
+    bar.appendChild(fill);
+    body.appendChild(bar);
+
+    var stagesList = el("ol", "tp-path-stages");
+    body.appendChild(stagesList);
+
+    var countEls = [];
+    var chipEls = [];
+    var stageSlugs = [];
+
+    for (s = 0; s < STAGES.length; s++) {
+      (function (stage, idx) {
+        var item = el("li", "tp-stage");
+        var head = el("div", "tp-stage-head");
+        head.appendChild(el("span", "tp-stage-num", String(idx + 1)));
+        head.appendChild(el("span", "tp-stage-title", stage.title));
+        var count = el("span", "tp-stage-count", "");
+        head.appendChild(count);
+        item.appendChild(head);
+        item.appendChild(el("p", "tp-stage-why", stage.why));
+
+        var chips = el("div", "tp-stage-chips");
+        var slugs = [];
+        for (var t = 0; t < stage.terms.length; t++) {
+          (function (name) {
+            var slug = slugOf(name);
+            slugs.push(slug);
+            var btn = el("button", "tp-chip", name);
+            btn.type = "button";
+            if (visited[slug]) { btn.classList.add("tp-done"); }
+            btn.addEventListener("click", function () {
+              if (!visited[slug]) {
+                visited[slug] = true;
+                saveVisited(visited);
+                btn.classList.add("tp-done");
+                update();
+              }
+              try {
+                if (window.__openTerm) { window.__openTerm(slug); }
+              } catch (err) {}
+            });
+            chips.appendChild(btn);
+            chipEls.push(btn);
+          })(stage.terms[t]);
+        }
+        stageSlugs.push(slugs);
+        countEls.push(count);
+        item.appendChild(chips);
+        stagesList.appendChild(item);
+      })(STAGES[s], s);
+    }
+
+    var foot = el("div", "tp-path-foot");
+    var reset = el("button", "tp-path-reset", "Reset progress");
+    reset.type = "button";
+    foot.appendChild(reset);
+    body.appendChild(foot);
+
+    var armed = false;
+    var armTimer = null;
+
+    function disarm() {
+      armed = false;
+      if (armTimer) { window.clearTimeout(armTimer); armTimer = null; }
+      reset.classList.remove("tp-armed");
+      reset.textContent = "Reset progress";
+    }
+
+    reset.addEventListener("click", function () {
+      if (!armed) {
+        armed = true;
+        reset.classList.add("tp-armed");
+        reset.textContent = "Tap again to confirm";
+        armTimer = window.setTimeout(disarm, 4000);
+        return;
+      }
+      disarm();
+      visited = {};
+      saveVisited(visited);
+      for (var c = 0; c < chipEls.length; c++) { chipEls[c].classList.remove("tp-done"); }
+      update();
+    });
+
+    toggle.addEventListener("click", function () {
+      var isCollapsed = panel.getAttribute("data-collapsed") === "1";
+      if (isCollapsed) {
+        panel.removeAttribute("data-collapsed");
+        toggle.setAttribute("aria-expanded", "true");
+        caret.textContent = "−";
+      } else {
+        panel.setAttribute("data-collapsed", "1");
+        toggle.setAttribute("aria-expanded", "false");
+        caret.textContent = "+";
+      }
+    });
+
+    function update() {
+      var done = 0;
+      for (var q = 0; q < stageSlugs.length; q++) {
+        var n = 0;
+        for (var w = 0; w < stageSlugs[q].length; w++) {
+          if (visited[stageSlugs[q][w]]) { n++; }
+        }
+        done += n;
+        countEls[q].textContent = n + "/" + stageSlugs[q].length;
+      }
+      sub.textContent = done + " of " + totalTerms + " visited";
+      bar.setAttribute("aria-valuenow", String(done));
+      var pct = totalTerms > 0 ? Math.round((done / totalTerms) * 100) : 0;
+      fill.style.width = pct + "%";
+    }
+
+    update();
+
+    host.insertBefore(panel, host.firstChild);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+<style>
+.tp-path {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  margin: 0 0 16px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--disp);
+  color: var(--ink);
+}
+.tp-path-toggle {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--card);
+  color: var(--ink);
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--disp);
+}
+.tp-path-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.tp-path-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.tp-path-sub {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+.tp-path-caret {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink3);
+}
+.tp-path-body {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--rule);
+}
+.tp-path[data-collapsed="1"] .tp-path-body {
+  display: none;
+}
+.tp-path-intro {
+  margin: 12px 0 10px;
+  color: var(--ink2);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 72ch;
+}
+.tp-path-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.tp-path-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+.tp-path-stages {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tp-stage {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  min-width: 0;
+}
+.tp-stage-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.tp-stage-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  border: 1px solid var(--rule2);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.tp-stage-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+  min-width: 0;
+}
+.tp-stage-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+.tp-stage-why {
+  margin: 6px 0 9px;
+  color: var(--ink3);
+  font-size: 12.5px;
+  line-height: 1.45;
+  max-width: 78ch;
+}
+.tp-stage-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.tp-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink2);
+  background: var(--card);
+  border: 1px solid var(--rule2);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+  line-height: 1.25;
+  max-width: 100%;
+  min-width: 0;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.tp-chip:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.tp-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.tp-chip.tp-done {
+  background: var(--tint);
+  color: var(--ink3);
+  border-color: var(--rule);
+}
+.tp-chip.tp-done::before {
+  content: "\2022\00a0";
+  color: var(--up);
+}
+.tp-path-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.tp-path-reset {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink3);
+  background: var(--paper);
+  border: 1px solid var(--rule2);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.tp-path-reset:hover {
+  color: var(--down);
+  border-color: var(--down);
+}
+.tp-path-reset:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.tp-path-reset.tp-armed {
+  color: var(--down);
+  border-color: var(--down);
+  background: var(--tint);
+}
+@media (max-width: 900px), (pointer: coarse) {
+  .tp-chip,
+  .tp-path-reset,
+  .tp-path-toggle {
+    min-height: 44px;
+  }
+  .tp-chip {
+    padding: 10px 14px;
+  }
+  .tp-path-reset {
+    padding: 10px 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-path,
+  .tp-path * {
+    transition: none;
+    animation: none;
+  }
+}
+@media print {
+  .tp-path {
+    display: none;
+  }
+}
+</style>
