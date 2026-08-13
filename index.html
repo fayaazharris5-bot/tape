@@ -8754,20 +8754,37 @@ function renderDet(){
   var s=find(detKey);
   if(!s){detKey=null;if(el)el.remove();document.body.classList.remove("tpopen");return;}
   if(!el){el=document.createElement("div");el.id="sdetwrap";document.getElementById("panel-strats").appendChild(el);}
+  /* Re-rendering replaces the whole overlay, which destroys whatever was
+     focused inside it. Move focus only when it was ours to begin with —
+     on first open, or when the element that had it has just been thrown
+     away. A re-render triggered from elsewhere must not yank focus out of
+     whatever the user is actually using. Both flags must be read BEFORE
+     innerHTML replaces the children. */
+  var hadFocusInside = el.contains(document.activeElement);
+  var firstOpen = !el.firstChild;
   el.innerHTML='<div class="sdetov"><article class="scard sdet" role="dialog" aria-modal="true" '+
     'aria-labelledby="sdet-title" tabindex="-1">'+detHTML(s)+'</article></div>';
   el.querySelector("[data-detclose]").onclick=function(){closeDet();};
   el.querySelector(".sdetov").onclick=function(e){if(e.target===this)closeDet();};
   document.body.classList.add("tpopen");
-  el.querySelector("[data-detclose]").focus();
+  if(firstOpen||hadFocusInside) el.querySelector("[data-detclose]").focus();
 }
 function openDet(k){
   if(!detKey)detLastFocus=document.activeElement;
   detKey=k;renderDet();syncHash();
 }
 function closeDet(){
+  var wasKey=detKey;
   detKey=null;renderDet();syncHash();
-  if(detLastFocus&&detLastFocus.focus){try{detLastFocus.focus();}catch(e){}}
+  /* The card list may have been rebuilt while the overlay was open, which
+     detaches the button that opened it — focusing a detached node silently
+     does nothing and leaves focus on the body. Fall back to the button's
+     replacement, then to the search box, so keyboard focus is never lost. */
+  var target=detLastFocus;
+  if(!target||!document.body.contains(target)){
+    target=(wasKey&&document.querySelector('[data-det="'+wasKey.replace(/"/g,'\\"')+'"]'))||$("sq");
+  }
+  if(target&&target.focus){try{target.focus();}catch(e){}}
   detLastFocus=null;
 }
 TAPE_NS.openStratDetail=openDet;

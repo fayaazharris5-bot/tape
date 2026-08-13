@@ -733,7 +733,18 @@ ok(!!d.getElementById(dp.getAttribute("aria-labelledby")),
 ok(d.body.classList.contains("tpopen"),"background scroll is locked while open");
 ok(dp.getAttribute("tabindex")==="-1","the panel itself is programmatically focusable");
 ok(dp.contains(d.activeElement),"focus moves into the overlay on open");
-const foc=dp.querySelectorAll('button:not([disabled]),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+/* A re-render replaces the overlay's DOM. It must not yank focus when
+   focus is genuinely elsewhere — use a real focusable element, since
+   body.focus() is a no-op and would leave focus inside the overlay. */
+const outside=d.getElementById("sq");
+outside.focus();
+d.dispatchEvent(new w.CustomEvent("tape:strats-changed"));
+await wait(30);
+ok(!!d.getElementById("sdetwrap"),"the overlay survives a re-render");
+ok(d.activeElement===outside,"a re-render does not steal focus when focus is elsewhere");
+/* the overlay's nodes were just replaced, so re-query before using them */
+const dp2=d.querySelector(".sdet");
+const foc=dp2.querySelectorAll('button:not([disabled]),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
 foc[foc.length-1].focus();
 d.dispatchEvent(new w.KeyboardEvent("keydown",{key:"Tab",bubbles:true}));
 ok(d.activeElement===foc[0],"Tab wraps to the first control instead of escaping the overlay");
@@ -747,7 +758,12 @@ const lockAfter=d.body.classList.contains("tpopen");
 await wait(30);
 ok(closedNow,"Escape closes the detail view");
 eq(lockAfter,lockedBefore,"background scroll lock returns to its prior state on close");
-ok(focusAfterClose===db,"focus returns to the button that opened it");
+/* the re-render above detached the original button, so focus must land on
+   its replacement rather than being silently lost to the body */
+ok(focusAfterClose&&focusAfterClose.getAttribute&&
+   focusAfterClose.getAttribute("data-det")===db.getAttribute("data-det"),
+   "focus returns to the Detail button even after the card list was rebuilt");
+ok(focusAfterClose!==d.body,"focus is never left on the body when the overlay closes");
 }
 
 console.log("\n23. Fill-log pairing (bot and exchange exports)");
