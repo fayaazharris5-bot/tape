@@ -750,6 +750,68 @@ eq(lockAfter,lockedBefore,"background scroll lock returns to its prior state on 
 ok(focusAfterClose===db,"focus returns to the button that opened it");
 }
 
+console.log("\n23. Fill-log pairing (bot and exchange exports)");
+{
+/* ccxt and most exchange/bot exports log FILLS \u2014 one row per leg, no P&L
+   and no exit column \u2014 so the row-per-trade reading yields nothing. These
+   get paired FIFO into round trips. */
+const ccxt=
+ "timestamp,symbol,side,amount,price,cost,fee\n"+
+ "2026-08-01T10:00:00Z,BTC/USDT,buy,0.5,60000,30000,15\n"+
+ "2026-08-01T14:00:00Z,BTC/USDT,sell,0.5,61000,30500,15\n";
+const F=w.__parseStatement(ccxt,"bot.csv");
+eq(F.stats.n,1,"two opposing fills pair into one round trip");
+ok(F.paired===true,"the result is flagged as having been paired from fills");
+near(F.stats.net,470,0.01,"P&L is gross less both legs' fees (500 - 30)");
+eq(F.trades[0].dir,"long","the opening leg sets the direction");
+
+/* a partial close leaves the rest open \u2014 an open position is not a trade */
+const partial=
+ "timestamp,symbol,side,amount,price\n"+
+ "2026-08-01T10:00:00Z,ETH/USDT,buy,2,3000\n"+
+ "2026-08-01T11:00:00Z,ETH/USDT,sell,1,3100\n";
+const P2=w.__parseStatement(partial,"partial.csv");
+eq(P2.stats.n,1,"a partial close produces one trade");
+near(P2.stats.net,100,0.01,"only the closed quantity is counted");
+eq(P2.skipped,1,"the still-open lot is reported, not closed at an invented price");
+
+/* shorts: the opening leg is a sell, so profit is entry minus exit */
+const shorts=
+ "timestamp,symbol,side,amount,price\n"+
+ "2026-08-01T10:00:00Z,NQ,sell,1,20000\n"+
+ "2026-08-01T11:00:00Z,NQ,buy,1,19900\n";
+const S2=w.__parseStatement(shorts,"short.csv");
+eq(S2.trades[0].dir,"short","a sell-first sequence is read as a short");
+near(S2.stats.net,100,0.01,"a short that falls 100 points makes 100");
+
+/* closing more than is open flips the position rather than inventing a trade */
+const flip=
+ "timestamp,symbol,side,amount,price\n"+
+ "2026-08-01T10:00:00Z,NQ,buy,1,20000\n"+
+ "2026-08-01T11:00:00Z,NQ,sell,2,20100\n";
+const FL=w.__parseStatement(flip,"flip.csv");
+eq(FL.stats.n,1,"only the matched quantity becomes a trade");
+near(FL.stats.net,100,0.01,"the matched leg is priced, the remainder is not");
+eq(FL.skipped,1,"the reversed remainder is left open, not counted as profit");
+
+/* FIFO, not average cost: the oldest lot closes first */
+const fifo=
+ "timestamp,symbol,side,amount,price\n"+
+ "2026-08-01T10:00:00Z,NQ,buy,1,20000\n"+
+ "2026-08-01T10:30:00Z,NQ,buy,1,20200\n"+
+ "2026-08-01T11:00:00Z,NQ,sell,1,20100\n";
+const FI=w.__parseStatement(fifo,"fifo.csv");
+near(FI.trades[0].entry,20000,0.01,"the oldest lot is the one closed");
+near(FI.stats.net,100,0.01,"FIFO gives +100 here; average cost would give 0");
+
+/* a row-per-trade file must not be re-read as fills */
+const rowPerTrade=
+ "Symbol,Side,Qty,Entry,Exit,PnL\n"+
+ "MNQ,Buy,1,100,110,10\n";
+const RT=w.__parseStatement(rowPerTrade,"rows.csv");
+ok(!RT.paired,"a file with a P&L column is never treated as a fill log");
+}
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();

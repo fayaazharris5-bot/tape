@@ -10224,13 +10224,17 @@ function parseCsv(text){
 var FIELD_HINTS={
   symbol:  ["symbol","instrument","contract","market","ticker","product","asset"],
   side:    ["side","direction","type","b/s","buy/sell","action","position"],
-  qty:     ["qty","quantity","size","volume","contracts","lots","units","filled"],
+  qty:     ["qty","quantity","size","volume","contracts","lots","units","filled","amount"],
   entry:   ["entry","entryprice","openprice","avgentry","priceopen","open","buyprice","fillprice"],
   exit:    ["exit","exitprice","closeprice","avgexit","priceclose","close","sellprice"],
   pnl:     ["pnl","p/l","profit","netpnl","realized","realised","gross","net","result","profitloss"],
   opened:  ["opened","opentime","entrytime","datetime","date","opendate","time","tradedate"],
   closed:  ["closed","closetime","exittime","closedate"],
-  fees:    ["commission","fees","fee","charges","costs"]
+  fees:    ["commission","fees","fee","charges","costs"],
+  /* Fill logs (ccxt, most exchange exports, most bots) carry ONE price
+     column because each row is one side of a trade, not a round trip.
+     Kept separate from `entry` so no existing dialect's mapping changes. */
+  price:   ["price","fillprice","avgprice","executionprice","tradeprice"]
 };
 function norm(h){ return String(h).toLowerCase().replace(/[^a-z/]/g,""); }
 function detect(header){
@@ -10251,6 +10255,68 @@ function num(v){
   /* accounting negatives: (12.50) means -12.50 */
   if(/^\(.*\)$/.test(String(v).trim())) n=-Math.abs(n);
   return n;
+}
+
+/* A fill log has a side, a quantity and a single price per row, and no
+   round-trip information — no P&L column and no separate exit price. */
+function looksLikeFills(map){
+  return map.side!==undefined && map.qty!==undefined &&
+         (map.price!==undefined || map.entry!==undefined) &&
+         map.pnl===undefined && map.exit===undefined;
+}
+
+/* FIFO matching, per symbol, the convention exchanges and brokers use for
+   realised P&L. Opposite-side fills close the oldest open lot first; a fill
+   larger than the lot in front of it rolls onto the next one, and any
+   remainder opens a new lot in the other direction. Fees are charged
+   proportionally to the quantity actually matched, so a partial close is
+   not billed for the whole leg.
+
+   Unmatched lots at the end of the file are still open positions, not
+   trades, so they are reported as skipped rather than closed at an
+   invented price. */
+function pairFills(rows,map){
+  var priceIdx = map.price!==undefined ? map.price : map.entry;
+  var books={}, trades=[], skipped=0;
+  rows.forEach(function(r){
+    var sym = map.symbol!==undefined ? String(r[map.symbol]||"").trim() : "";
+    var sideRaw = String(r[map.side]||"").toLowerCase();
+    var dir = /sell|short|s\b/.test(sideRaw) ? "short" : "long";
+    var qty = Math.abs(num(r[map.qty]));
+    var px  = num(r[priceIdx]);
+    var fee = map.fees!==undefined ? Math.abs(num(r[map.fees])) : 0;
+    if(!isFinite(qty)||!isFinite(px)||qty<=0){ skipped++; return; }
+    if(!isFinite(fee)) fee=0;
+    var when = map.opened!==undefined ? String(r[map.opened]||"").trim() : "";
+
+    var book = books[sym] || (books[sym]=[]);
+    var feePerUnit = qty>0 ? fee/qty : 0;
+
+    /* same direction as the book, or an empty book: this fill opens size */
+    if(!book.length || book[0].dir===dir){
+      book.push({dir:dir,qty:qty,px:px,feePerUnit:feePerUnit,when:when});
+      return;
+    }
+    /* opposite direction: close against the oldest lots first */
+    var left=qty;
+    while(left>0 && book.length && book[0].dir!==dir){
+      var lot=book[0];
+      var m=Math.min(left,lot.qty);
+      var gross = lot.dir==="long" ? (px-lot.px)*m : (lot.px-px)*m;
+      trades.push({
+        symbol:sym, dir:lot.dir, qty:m, entry:lot.px, exit:px,
+        opened:lot.when, closed:when,
+        fees:(lot.feePerUnit+feePerUnit)*m,
+        pnl: gross - (lot.feePerUnit+feePerUnit)*m
+      });
+      lot.qty-=m; left-=m;
+      if(lot.qty<=1e-12) book.shift();
+    }
+    /* more closing size than was open: the remainder opens the other way */
+    if(left>1e-12) book.push({dir:dir,qty:left,px:px,feePerUnit:feePerUnit,when:when});
+  });
+  Object.keys(books).forEach(function(k){ skipped += books[k].length; });
+  return {trades:trades,skipped:skipped};
 }
 
 function toTrades(rows){
@@ -10279,6 +10345,14 @@ function toTrades(rows){
     t.pnl=p;
     out.push(t);
   });
+  /* Fill logs produce nothing above, because every row is one leg with no
+     P&L and no exit. Pair them into round trips instead — but only when
+     the row-per-trade reading found nothing, so no existing dialect is
+     affected. */
+  if(!out.length && skipped && looksLikeFills(map)){
+    var paired=pairFills(rows.slice(1),map);
+    if(paired.trades.length) return {trades:paired.trades,map:map,skipped:paired.skipped,paired:true};
+  }
   return {trades:out,map:map,skipped:skipped};
 }
 
@@ -10327,7 +10401,7 @@ function equitySpec(eq){
   return {k:"e",base:0,s:[{v:pts,c:pts[pts.length-1]>=0?"u":"d",t:"cumulative P&L"}]};
 }
 
-function report(s,fileName,skipped,map){
+function report(s,fileName,skipped,map,paired){
   var found=Object.keys(map).filter(function(k){return map[k]!==undefined;});
   var chart="";
   try{ if(window.svgFor) chart='<figure class="impfig">'+window.svgFor(equitySpec(s.equity))+
@@ -10337,6 +10411,10 @@ function report(s,fileName,skipped,map){
   if(s.n<30) flags.push("Fewer than 30 trades. Treat every number here as provisional — the confidence interval below shows how wide the uncertainty still is.");
   if(s.profitFactor>3&&s.n<100) flags.push("A profit factor above 3 on a small sample usually means a short favourable stretch, not an edge.");
   if(map.fees===undefined) flags.push("No commission column was found, so these figures are gross. Real costs will be worse.");
+  if(paired) flags.push("This file logged individual fills, not completed trades, so round trips were "+
+    "reconstructed by matching opposite fills oldest-first (FIFO) per symbol. If your broker reports "+
+    "realised P&L on a different basis, its totals will differ. Any position still open at the end of "+
+    "the file is counted as skipped, not as a trade.");
 
   return '<div class="impcard">'+
     '<div class="imphead"><h3>'+esc(fileName)+'</h3>'+
@@ -10363,7 +10441,7 @@ function report(s,fileName,skipped,map){
 window.__parseStatement=function(text,name){
   var res=toTrades(parseCsv(text));
   var s=stats(res.trades);
-  return {stats:s,skipped:res.skipped,map:res.map,trades:res.trades};
+  return {stats:s,skipped:res.skipped,map:res.map,trades:res.trades,paired:res.paired};
 };
 
 /* ---------- UI ---------- */
@@ -10401,7 +10479,7 @@ function mount(){
             'It needs a header row and either a profit/loss column, or entry, exit and quantity columns.</p>';
           return;
         }
-        out.innerHTML=report(res.stats,f.name,res.skipped,res.map);
+        out.innerHTML=report(res.stats,f.name,res.skipped,res.map,res.paired);
         if(TAPE_NS.toast) TAPE_NS.toast("Read "+res.stats.n+" trades");
       }catch(e){
         out.innerHTML='<p class="imperr">Could not read that file: '+esc(e.message)+'</p>';
