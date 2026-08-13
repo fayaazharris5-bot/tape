@@ -655,6 +655,36 @@ ok(/n=1/.test(dp.getElementById("panel-strats").textContent),
    "Strategies tab re-renders on tape:strats-changed \u2014 n=1 without reload");
 }
 
+console.log("\n21. SM-2 quiz scheduling");
+{
+ok(typeof w.__qgrade==="function","SM-2 grader is exposed for testing");
+const today=new Date().toISOString().slice(0,10);
+let s={n:1,w:0};
+w.__qgrade(s,true);
+ok(s.reps===1&&s.iv===1,"first correct answer: interval 1 day");
+near(s.ef,2.5,0.001,"quality 4 leaves the easiness factor unchanged");
+ok(/^\d{4}-\d{2}-\d{2}$/.test(s.due)&&s.due>today,"a due date lands in the future");
+w.__qgrade(s,true);
+ok(s.reps===2&&s.iv===6,"second correct answer: interval 6 days");
+w.__qgrade(s,true);
+ok(s.reps===3&&s.iv===15,"third correct answer: interval grows by the easiness factor (6 \u00d7 2.5)");
+w.__qgrade(s,false);
+ok(s.reps===0&&s.iv===1,"a wrong answer resets the repetition count and brings the term back tomorrow");
+near(s.ef,1.96,0.001,"a wrong answer lowers the easiness factor");
+for(let i=0;i<9;i++)w.__qgrade(s,false);
+near(s.ef,1.3,0.001,"the easiness factor never falls below the SM-2 floor of 1.3");
+/* the quiz flow reports the schedule after an answer */
+d.getElementById("tab-quiz").dispatchEvent(new w.Event("click"));
+await wait(60);
+const opt=d.querySelector("#qbody .qopt");
+ok(!!opt,"a question renders on the main dom");
+opt.click(); await wait(30);
+ok(/Next review/.test(d.getElementById("qbody").textContent),
+   "answering shows when the term comes back");
+ok(/due for review/.test(d.getElementById("qscore").textContent),
+   "the score line reports how many seen terms are due");
+}
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
