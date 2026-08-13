@@ -49,11 +49,14 @@ Python is `py -3` on this machine — plain `python` hits the Store shim and fai
 `unwritten 0`. Run it after ANY content change; it regenerates
 `unwritten.json`, which is what writer briefs read their term lists from.
 
-`py -3 audit_claims.py` re-checks every body actually spliced into
-index.html — the ban regexes, and that each closes with the
-"Where people get fooled:" paragraph. Currently: 994 bodies, 0 ban hits,
-0 structural misses. Exit code is non-zero on any hit, so it works as a
-gate. Run it after content changes alongside the suite.
+Two audit scripts, both exiting non-zero on a finding so they work as
+gates. Run them after content changes alongside the suite:
+
+- `py -3 audit_claims.py` — re-checks every body actually spliced into
+  index.html: the ban regexes, and that each closes with the
+  "Where people get fooled:" paragraph. Currently 994 bodies, 0 hits.
+- `py -3 audit_coverage.py` — field coverage. Currently 0 bodies missing
+  `usage`, 0 missing `see`, 0 terms missing an example, 48 sections.
 
 Body count is 994 for 995 terms because **"Chop" exists twice** — once in
 `pa`, once in `slang` — with near-identical definitions, so both cards
@@ -167,6 +170,31 @@ print(len(names))
 1. Second/third charts (viz2) for the priority structural terms.
 2. Decide the "Chop" duplicate (see content status).
 3. Publishing — blocked on the GitHub username.
+
+## Quality baseline — measured, not assumed
+
+Re-measure before claiming any of this changed:
+- Load: 1.9 MB raw, **631 KB gzipped**; 115 ms to DOM-interactive,
+  192 ms to load complete; 10,653 DOM nodes. GitHub Pages gzips, so the
+  transfer figure is the one that matters. No optimisation needed.
+- Accessibility: 2,401 buttons all have accessible names, 21 form fields
+  all labelled, 72 chart SVGs all labelled, one h1, `lang` set, and
+  heading order is continuous (the read-this-first page jumped H1→H3
+  until its headings were promoted to h2).
+- Both modals (term panel, strategy detail) carry role=dialog,
+  aria-modal, an accessible name, a focus trap, focus restore and a body
+  scroll lock. The scroll lock adds and removes in balanced pairs — the
+  only two sites are the term panel and the detail overlay.
+- Zero console errors on load.
+
+### Testing note that will bite you
+
+Group 22 boots its own dom on purpose. On the shared `d`, after ~20
+groups, the term panel can be left open with a pushed history entry, and
+jsdom fires `popstate` from earlier `history.back()` calls on later
+ticks — which re-opens it and moves focus. Chasing that as an app bug
+wastes time: it is test contamination, and the fix is isolation, not a
+weaker assertion. Group 20 (Paper) does the same for the same reason.
 
 Done and not worth redoing: responsive check at 360/768/1440 in both
 colour schemes across every tab, with the strategy detail overlay open
