@@ -175,7 +175,9 @@ ok([...d3.querySelectorAll(".qopt .qsec")].every(x=>/ICT/.test(x.textContent)),"
 console.log("9. Accessibility basics");
 eq(d.getElementById("count").getAttribute("aria-live"),"polite","term count is announced");
 eq(d.getElementById("sstats").getAttribute("aria-live"),"polite","strategy stats announced");
-eq(d.querySelectorAll('[role="tab"]').length,4,"four tabs with role=tab");
+/* 4 -> 5 on 2026-08-13: the Paper tab (local simulator, Task 9) was added
+   deliberately. */
+eq(d.querySelectorAll('[role="tab"]').length,5,"five tabs with role=tab");
 ok([...d.querySelectorAll('[role="tab"]')].every(t=>t.getAttribute("aria-controls")),"tabs point at their panels");
 ok([...d.querySelectorAll(".lnk")].every(b=>b.getAttribute("aria-label")),"copy-link buttons are labelled");
 
