@@ -100,8 +100,14 @@ more features.
 
 ## Publishing
 
-Preview artifact (pass as `url` when publishing from a new conversation so the
-link stays stable):
-`https://claude.ai/code/artifact/cfa1078d-9ac2-4163-9abd-5b2cc5a1b016`
+Never hand `index.html` to the Artifact publisher directly — it wraps the
+file in its own document skeleton. Run `py -3 build_artifact.py` first and
+publish the `artifact_tape.html` fragment it produces. See HANDOFF.md for
+the details and the pre-publish verification.
+
+Current artifact:
+`https://claude.ai/code/artifact/24dc6b25-6da7-4603-9171-32356c72db13`
+(republish the same file path in the same conversation to keep this URL, or
+pass it as `url` from a new one).
 
 Keep `C:\Users\fayaa\Downloads\index.html` and `test.js` synced as plain copies.

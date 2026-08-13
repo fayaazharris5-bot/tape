@@ -209,6 +209,32 @@ dependency is the Live chart embed, which has a tested offline fallback.
 
 ## Publishing
 
-Artifact URL (pass as `url` when publishing from a new conversation):
-https://claude.ai/code/artifact/cfa1078d-9ac2-4163-9abd-5b2cc5a1b016
+`index.html` cannot be handed to the Artifact publisher directly: the
+publisher wraps whatever it is given in its own
+`<!doctype html><head>…</head><body>FILE</body>` skeleton, so a complete
+document ends up nested inside a body. `py -3 build_artifact.py` solves
+this — it strips the doctype and `<html>` wrapper (and handles explicit
+`<head>`/`<body>` too, if the source ever grows them), drops the now-inert
+charset meta, keeps title/style/script/JSON-LD, and reports any external
+reference that the artifact CSP would block. It exits non-zero if any
+document-level tag survives. Output: `artifact_tape.html`.
+
+Verified before publishing by wrapping the fragment exactly as the
+publisher does and loading it: 995 entries, 72 charts, 5 tabs, quiz and
+paper render, both modals work, zero overflow, zero console errors.
+
+**Current artifact (this app, complete):**
+https://claude.ai/code/artifact/24dc6b25-6da7-4603-9171-32356c72db13
+
+Older URL from a previous session:
+`https://claude.ai/code/artifact/cfa1078d-9ac2-4163-9abd-5b2cc5a1b016`
+— updating it in place would have required `force:true`, which discards
+whatever that other session published. Not done without the user asking.
+To consolidate onto the old URL, confirm the overwrite is wanted first.
+
+One CSP note: the Live chart's TradingView iframe is the single external
+reference and will be blocked in an artifact. That tab already degrades
+to its tested offline notice, so nothing breaks — it just cannot show a
+live chart there.
+
 Also keep C:\Users\fayaa\Downloads\index.html and test.js synced (plain copies).

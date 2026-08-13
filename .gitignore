@@ -3,3 +3,4 @@ package-lock.json
 *.log
 .DS_Store
 build-monetise.py
+_artifact_preview.html
