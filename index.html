@@ -5279,6 +5279,14 @@ document.addEventListener("keydown",function(e){
 buildTools();buildChips();render();
 $("cnt-terms").textContent=document.querySelectorAll("#grid .entry").length;
 
+/* The Paper tab writes trade logs straight to storage; re-read and
+   re-render when it says so, unless an edit or merge is mid-flight. */
+document.addEventListener("tape:strats-changed",function(){
+  if(editing||pending)return;
+  var fresh=load();
+  if(Array.isArray(fresh)){STRATS=fresh;buildChips();render();}
+});
+
 var hp=parseHash();
 if(hp.lib){
   decodeLib(hp.lib).then(function(arr){
@@ -7540,7 +7548,8 @@ if(document.readyState==="loading"){
 "use strict";
 
 var KEY="tape.paper.v1";
-var SKEY="tape.strats.v1";
+var SKEY="tg.strats.v1";       /* the Strategies tab reads and writes this name */
+var SKEY_ALT="tape.strats.v1"; /* migrated copy; only trusted when the live key is absent */
 var CAPTION="Paper results overstate live results: fills are kinder, and nothing here bleeds conviction like real money.";
 
 /* ---------- helpers ---------- */
@@ -7596,10 +7605,20 @@ function save(){lsSet(KEY,JSON.stringify(S));}
 function perPoint(){return S.settings.tickSize>0?S.settings.tickValue/S.settings.tickSize:0;}
 function findPos(id){var i;for(i=0;i<S.positions.length;i++){if(S.positions[i].id===id)return S.positions[i];}return null;}
 
-/* ---------- strategy library link (tape.strats.v1) ---------- */
+/* ---------- strategy library link (tg.strats.v1) ----------
+   The library lives under the OLD tg.* name: boot marks tape.migrated
+   before the Strategies tab first saves, so the tape.* copy never
+   appears on a fresh profile. Read the live key first and write back
+   to whichever key the list actually came from. */
+function stratRaw(){
+  var raw=localStorage.getItem(SKEY);
+  if(raw!=null)return {key:SKEY,raw:raw};
+  raw=localStorage.getItem(SKEY_ALT);
+  return {key:raw!=null?SKEY_ALT:SKEY,raw:raw};
+}
 function stratNames(){
   try{
-    var raw=localStorage.getItem(SKEY);if(!raw)return [];
+    var raw=stratRaw().raw;if(!raw)return [];
     var arr=JSON.parse(raw);if(!Array.isArray(arr))return [];
     var out=[];arr.forEach(function(s){if(s&&s.name)out.push(String(s.name));});
     return out;
@@ -7607,15 +7626,17 @@ function stratNames(){
 }
 function logToStrategy(name,dir,r){
   try{
-    var raw=localStorage.getItem(SKEY);
-    var arr=raw?JSON.parse(raw):null;
+    var src=stratRaw();
+    var arr=src.raw?JSON.parse(src.raw):null;
     if(!Array.isArray(arr))return "Strategy list could not be read, so nothing was logged there.";
     var s=null,i;
     for(i=0;i<arr.length;i++){if(arr[i]&&arr[i].name===name){s=arr[i];break;}}
     if(!s)return "Strategy “"+name+"” is no longer in the list, so nothing was logged there.";
     if(!Array.isArray(s.trades))s.trades=[];
     s.trades.push({d:today(),dir:dir,r:r2(r),n:"paper"});
-    localStorage.setItem(SKEY,JSON.stringify(arr));
+    s.sampleSize=s.trades.length;
+    localStorage.setItem(src.key,JSON.stringify(arr));
+    try{document.dispatchEvent(new CustomEvent("tape:strats-changed"));}catch(e2){}
     return "Logged "+signR(r)+" to “"+name+"”.";
   }catch(e){return "Strategy log write failed, so the trade is recorded here only.";}
 }

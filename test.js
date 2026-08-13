@@ -616,6 +616,45 @@ ok(!/\b(api[_-]?key|apikey|secret|accessToken|access_token|bearer)\b\s*[:=]\s*["
 ok(!/id="[^"]*(apikey|api-key|token|secret|password)[^"]*"/i.test(htmlNow),
    "no input is named to collect a key, token, secret or password");
 
+console.log("\n20. Paper \u2192 strategy link");
+/* Regression: on a fresh profile the library lives ONLY under tg.strats.v1
+   (boot marks tape.migrated before the Strategies tab first saves), so the
+   Paper tab must read and write that key \u2014 found broken in a real browser
+   on 2026-08-13 when the dropdown stayed empty. */
+{
+const domP=boot(); await wait(700);
+const wp=domP.window,dp=wp.document;
+ok(wp.localStorage.getItem("tg.strats.v1")!==null,"fresh profile: library seeded under the tg key");
+ok(wp.localStorage.getItem("tape.strats.v1")===null,"fresh profile: no tape.strats.v1 copy exists");
+dp.getElementById("tab-paper").click();
+const sel=dp.getElementById("pp-strat");
+ok([...sel.options].some(o=>o.value==="Example \u2014 delete me"),
+   "strategy dropdown lists the library despite the key split");
+dp.getElementById("pp-entry").value="23450";
+dp.getElementById("pp-stop").value="23440";
+dp.getElementById("pp-risk").value="1";
+sel.value="Example \u2014 delete me";
+dp.getElementById("pp-open-btn").click();
+const SP=JSON.parse(wp.localStorage.getItem("tape.paper.v1"));
+eq(SP.positions.length,1,"position opened");
+eq(SP.positions[0].qty,2,"size derived from risk and stop distance ($50 \u00f7 $20/contract \u2192 2)");
+dp.getElementById("pp-exit-"+SP.positions[0].id).value="23460";
+dp.querySelector('#pp-open button[data-act="close"]').click();
+const lib=JSON.parse(wp.localStorage.getItem("tg.strats.v1"));
+const ex=lib.find(s=>s.name==="Example \u2014 delete me");
+eq(ex.trades.length,1,"closing writes the R entry to the tg key the Strategies tab reads");
+const tr=ex.trades[0];
+ok(tr.n==="paper"&&tr.dir==="long"&&typeof tr.r==="number"&&/^\d{4}-\d{2}-\d{2}$/.test(tr.d),
+   "log entry is {d,dir,r,n:'paper'}");
+near(tr.r,0.89,0.01,"R is net of spread and commission on both fills");
+eq(ex.sampleSize,1,"sampleSize tracks the trade log like the Strategies tab does");
+ok(wp.localStorage.getItem("tape.strats.v1")===null,"the write went to the live key, not a dead copy");
+/* the Strategies tab must show the new n without a page reload */
+dp.getElementById("tab-strats").click(); await wait(60);
+ok(/n=1/.test(dp.getElementById("panel-strats").textContent),
+   "Strategies tab re-renders on tape:strats-changed \u2014 n=1 without reload");
+}
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
