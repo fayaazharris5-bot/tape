@@ -1,0 +1,500 @@
+{
+ "Contract specification": {
+  "long": "Every futures contract comes with an exchange-published rulebook: the contract specification. It defines the underlying, the contract size and multiplier, the minimum tick and its dollar value, the listed expiry months, the settlement method, trading hours, and any daily price limits. Nothing about a futures market is negotiable at the point of trade; the spec fixed it all in advance.\n\nTake the Micro E-mini Nasdaq (MNQ): $2 per index point, a minimum tick of 0.25 points worth $0.50, quarterly expiries, cash settlement. From those few lines you can derive everything that matters for risk: notional value at the current price, dollars at stake per tick, and what happens if you hold to expiry. The spec is the primary source; broker marketing is not.\n\nWhere people get fooled: assuming contracts that chart alike behave alike. Two markets with similar-looking charts can differ tenfold in notional and tick value, and one may settle in cash while the other delivers a physical commodity. Reading the spec takes five minutes; sizing a position without it is guessing.",
+  "usage": "Traders check the spec once when first touching a market and again ahead of expiry weeks; the habit costs minutes and removes an entire category of surprise.",
+  "see": [
+   "Multiplier",
+   "Tick value",
+   "Expiry",
+   "Settlement",
+   "Futures"
+  ]
+ },
+ "Multiplier": {
+  "long": "The multiplier is the fixed dollar amount a contract pays or loses per one-point move in the underlying. The E-mini S&P (ES) carries $50 per index point; the Micro E-mini Nasdaq (MNQ) carries $2 per point; a standard crude oil contract covers 1,000 barrels, so a $1 move in oil is $1,000 per contract.\n\nIt exists because futures are standardised: instead of choosing how many shares to buy, you choose how many contracts, and the multiplier converts price movement into money at a fixed rate. All position sizing in futures starts here. Points of expected movement, times the multiplier, times the number of contracts, equals dollars of exposure to that movement.\n\nWhere people get fooled: judging risk from how the chart looks. A quiet 40-point drift on the Nasdaq is $80 on one MNQ and $800 on one NQ, the same chart with a tenfold difference in consequence. The multiplier, not the chart, decides what a move costs you.",
+  "usage": "Desks quote risk in dollars per point rather than in contracts, which keeps a micro and a full-size contract from ever being confused in conversation.",
+  "see": [
+   "Contract specification",
+   "Notional value",
+   "Tick value",
+   "Micro / mini"
+  ]
+ },
+ "Notional value": {
+  "long": "Notional value is the full economic exposure a contract represents: the current price multiplied by the contract multiplier. With the Nasdaq index around 23,500, one MNQ at $2 per point carries roughly $47,000 of notional exposure. That is the size of the position you actually hold, whatever your account balance says.\n\nMargin muddies this. The performance bond required to open the position is a small fraction of notional, often a few percent, which is where the leverage in futures comes from. The market does not know or care what you deposited; profits and losses accrue on the notional amount, point by point, at the full multiplier.\n\nWhere people get fooled: mistaking the margin deposit for the amount at risk. A $500 day-trading margin against a $47,000 position is roughly ninety times leverage, and a 1% move against the position is around $470. Losses are not limited to the deposit; they are limited only by the size of the notional move.",
+  "usage": "Experienced futures traders size from notional first and only then look at margin; the reverse order is how accounts end up leveraged ninety to one by accident.",
+  "see": [
+   "Multiplier",
+   "Leverage",
+   "Initial vs maintenance margin",
+   "Notional vs premium"
+  ]
+ },
+ "Initial vs maintenance margin": {
+  "long": "Futures margin is a returnable performance bond: a good-faith deposit held while a position is open and given back when it closes. It is not a loan, nothing is borrowed, and no interest is charged on it. Initial margin is the amount required to open a position; maintenance margin is the lower threshold your account equity must stay above to keep it.\n\nIf equity falls below maintenance, the broker issues a margin call: restore the account to the initial level or the position is closed for you. Exchanges set the minimums and adjust them with volatility; brokers may require more. The gap between initial and maintenance exists so that normal daily fluctuation does not trigger constant calls.\n\nWhere people get fooled: treating margin as the cost of the trade, or worse, as the exchange's sizing recommendation. Minimum margin is the exchange protecting the clearing house, calibrated to a day or two of adverse movement. It is not a statement about what a sensible position looks like for your account.",
+  "usage": "A common habit is tracking how far account equity sits above maintenance in points of adverse movement rather than dollars; it converts an abstract threshold into a distance on the chart.",
+  "see": [
+   "Margin",
+   "Margin call",
+   "Day trading margin",
+   "Leverage vs margin"
+  ]
+ },
+ "Day trading margin": {
+  "long": "Day trading margin is a reduced deposit some futures brokers accept for positions opened and closed within the same session, sometimes as low as $50 for a micro contract against an exchange initial margin in the low thousands. It exists because the broker's exposure to you is shorter: they can watch the position live and flatten it before the session ends.\n\nThe reduction is a credit decision by the broker, not a reduction in risk. The notional exposure is identical, the multiplier is identical, and a fast move is just as expensive. Hold past the broker's cutoff and full initial margin applies immediately; most brokers auto-liquidate anything still open, at whatever price the market offers at that moment.\n\nWhere people get fooled: sizing positions off the day margin. Fifty dollars controlling tens of thousands in notional is leverage that turns routine volatility into account-ending events, and the broker's auto-flatten happens at their convenience, not yours. The low deposit is an operational allowance, not an invitation.",
+  "usage": "Traders who use day margins usually treat them as an execution convenience while sizing as if full initial margin applied; the discount never becomes the position.",
+  "see": [
+   "Initial vs maintenance margin",
+   "Overnight risk",
+   "Leverage",
+   "Margin call"
+  ]
+ },
+ "Settlement": {
+  "long": "Settlement is how a futures contract turns price changes into money. Daily settlement marks every open position to an exchange-determined settlement price, and the difference flows between accounts in cash that evening. Losses are debited and gains credited every single day the position is open, which is why futures losses are never just on paper.\n\nFinal settlement happens at expiry and comes in two forms set by the contract specification. Cash-settled contracts, like equity index futures, pay out the difference against a final index value. Physically settled contracts, like most energy and grain markets, resolve into an obligation to deliver or receive the actual commodity at a specified place and time.\n\nWhere people get fooled: not internalising that daily settlement drains real cash from a losing position immediately, which is what triggers margin calls mid-trade rather than at the end. And holding a physically settled contract too close to expiry converts a price view into a logistics problem the account holder never intended to have.",
+  "usage": "Old hands reconcile their account's cash movement against the daily settlement price rather than the last traded price, because settlement is the number the clearing house actually used.",
+  "see": [
+   "Expiry",
+   "Physical delivery risk",
+   "Contract specification",
+   "Margin call"
+  ]
+ },
+ "Expiry": {
+  "long": "Every futures contract has a finite life, ending on a last trading day defined in the contract specification. Equity index futures list quarterly, in March, June, September and December; energy contracts list monthly. After expiry the contract ceases to exist, settling in cash or delivery, and exposure continues only if you have opened the next month yourself.\n\nBecause contracts die, futures positions are maintained through rolling: closing the expiring month and opening the next. Activity migrates ahead of the deadline. In index futures most volume shifts during the roll week, roughly eight days before expiry, so the practical end of a contract's life arrives before the official one.\n\nWhere people get fooled: holding into expiry without a plan, then discovering their broker force-closed the position, rolled it at an uncontrolled price, or, in a deliverable market, started delivery proceedings. Expiry dates sit in the spec, published years ahead; being surprised by one is entirely avoidable.",
+  "usage": "Most desks diarise roll dates for anything they hold and treat expiry-week price action as a separate, mechanics-driven regime.",
+  "see": [
+   "Settlement",
+   "Front month",
+   "Rollover",
+   "Continuous contract"
+  ]
+ },
+ "Front month": {
+  "long": "The front month is the nearest actively traded expiry: the contract with the most volume and the tightest spread, and the one price screens usually mean when they quote a futures market. Nearly all short-term trading concentrates there, because liquidity begets liquidity and the tightest market attracts the next order too.\n\nFront by the calendar and front by volume diverge around the roll. Days before expiry, volume migrates to the next month while the expiring contract still technically exists. In that window, trading the old contract means wider spreads, thinner depth, and prices increasingly driven by expiry mechanics rather than fresh opinion about the underlying.\n\nWhere people get fooled: comparing prices across months as if the difference were a forecast. The next month trading above the front is usually term structure at work, carry, storage and financing, not the market predicting a rise. And charts that switch contracts at the roll jump for mechanical reasons, not because anything happened to the underlying.",
+  "usage": "When quoting or charting a futures market, confirm which expiry the data refers to; around roll week the default on many platforms changes underneath you.",
+  "see": [
+   "Expiry",
+   "Rollover",
+   "Open interest",
+   "Term structure",
+   "Continuous contract"
+  ]
+ },
+ "Roll yield": {
+  "long": "A futures position held across months must be rolled: sell the expiring contract, buy the next. When the curve is in contango, futures priced above spot and converging towards spot as expiry approaches, each roll re-buys exposure in a higher-priced contract that then decays towards spot. Repeated over many rolls this produces a persistent drag on returns known as negative roll yield. In backwardation the arithmetic reverses and rolling adds a tailwind.\n\nIt is not a fee anyone charges, and no cash line item appears anywhere. It emerges from the arithmetic of convergence, which is why it is invisible on a spot chart and only shows up when you compare the spot price's path against the realised return of a rolled position over time.\n\nWhere people get fooled: buying an oil-futures product expecting the spot chart. In 2020, futures-based oil products lagged the eventual recovery badly, because steep contango meant every monthly roll surrendered ground. The chart they watched and the return they received were two different objects.",
+  "usage": "Before holding any futures-based product for weeks, practitioners look at the curve first; the shape of the first few months tells you what the position pays or bleeds just for existing.",
+  "see": [
+   "Contango / backwardation",
+   "Term structure",
+   "Rollover",
+   "Carry",
+   "Volatility ETP decay"
+  ]
+ },
+ "Continuous contract": {
+  "long": "A continuous contract is a stitched-together price series built from many individual expiries, made so charts and backtests can span years without breaks. Since each real contract lives only months, someone must choose when to switch from one expiry to the next and how to treat the price gap between them at the join.\n\nThe two main treatments both distort something. Unadjusted stitching keeps real prices but leaves artificial jumps at every roll, which read as gaps that never traded as gaps. Back-adjustment shifts history to remove the jumps, keeping returns honest but altering every historical price level, so the resulting chart shows prices that never traded.\n\nWhere people get fooled: forgetting the series is synthetic. Absolute-level rules, round numbers, multi-year support, all-time highs, are meaningless on a back-adjusted chart, because those levels never printed. And backtests run on unadjusted series book phantom overnight gains at every roll. Know which series you are looking at before trusting anything drawn on it.",
+  "usage": "Careful researchers keep two series per market, unadjusted for levels and back-adjusted for returns, and note which one every chart and test uses.",
+  "see": [
+   "Back-adjustment",
+   "Adjusted price",
+   "Rollover",
+   "Front month"
+  ]
+ },
+ "Back-adjustment": {
+  "long": "Back-adjustment builds a continuous futures series by shifting all history up or down at each roll so the join is seamless and returns flow continuously across contracts. The offset applied at every roll accumulates backwards through time, so the further back you look, the further the adjusted price sits from anything that ever traded.\n\nThe trade-off is deliberate: point and percentage changes become trustworthy for research, while absolute levels become fiction. Deep history on a back-adjusted energy chart can even show negative prices purely as an artefact of accumulated offsets. For return-based work this is the right series; for level-based work it is actively misleading.\n\nWhere people get fooled: drawing decade-old support and resistance on a back-adjusted chart. Those levels never printed, no order ever rested there, and no participant remembers them, so any rule anchored to them is anchored to an arithmetic artefact. Absolute-level rules are meaningless on back-adjusted data; use unadjusted prices for levels and adjusted prices for returns.",
+  "usage": "The standard discipline is labelling every stored series with its adjustment method and roll rule, because two continuous series of the same market can disagree everywhere.",
+  "see": [
+   "Continuous contract",
+   "Adjusted price",
+   "Backtest",
+   "Data quality"
+  ]
+ },
+ "Limit up / limit down": {
+  "long": "Many futures markets carry exchange-set daily price limits: bands beyond which trading cannot occur, or pauses trigger. Grain markets are the classic case. Corn, wheat and soybeans can move their full daily allowance and lock there, bid at the limit with no sellers, or offered at the limit with no buyers, until the next session.\n\nA locked market is the scenario that matters. Your stop order does nothing, because no trade can occur beyond the limit at any size. A position on the wrong side of a limit move is trapped, and if the news is big enough the market can reopen the next day and lock again. A USDA WASDE report can move grains to their limits within seconds of release.\n\nWhere people get fooled: believing a stop loss bounds their risk. In a limit-locked market the exit does not exist at any price you can access, and multi-day locks compound the damage before the first fill is possible. Position sizing in limit markets has to assume the limit scenario, not the normal one.",
+  "usage": "Grain traders check the remaining distance to the day's limits the way index traders check the overnight high and low; it is part of the pre-session read.",
+  "see": [
+   "Circuit breaker",
+   "Halt",
+   "WASDE",
+   "Gap risk"
+  ]
+ },
+ "Circuit breaker": {
+  "long": "Circuit breakers are market-wide trading halts triggered by outsized moves. On US equities they are staged pauses at 7%, 13% and 20% declines in the S&P 500, and overnight index futures are separately capped at a 5% move in either direction. The design intent is a forced cooling-off: interrupt feedback loops where selling begets selling faster than humans can reassess.\n\nDuring a halt nothing trades and orders queue. On reopen, price is set by an auction, and it can reopen far from where it halted; the halt pauses trading, it does not pause the repricing of information. March 2020 triggered the equity breakers repeatedly, each reopen gapped, and overnight futures spent hours pinned at their band with sellers queued and unable to trade through it.\n\nWhere people get fooled: assuming continuous exit is always available. Risk plans built on being able to close whenever you choose fail exactly when they matter most, because the halt arrives during the event you needed to escape. The breaker protects market plumbing, not any individual position.",
+  "usage": "Desks keep breaker thresholds and reopen procedures written down before volatile events, because the halt itself is the wrong moment to be reading exchange documentation.",
+  "see": [
+   "Limit up / limit down",
+   "Halt",
+   "Volatility",
+   "Liquidity"
+  ]
+ },
+ "Globex hours": {
+  "long": "Globex is CME's electronic trading platform, and its hours define when most US futures trade: roughly 23 hours a day, opening Sunday evening US time and running to Friday afternoon, with a short daily maintenance break in the late US afternoon. A trading day therefore starts the prior evening, and the overnight session belongs to the next day's date.\n\nLiquidity is nothing like uniform across those hours. Depth concentrates in the US day session; the overnight is thin, with wider effective spreads and a market that travels further on less volume. European hours sit somewhere in between. The same order that fills silently at midday in New York can move the market noticeably at 3am.\n\nWhere people get fooled: reading overnight charts as if they were day-session charts. Thin markets print clean-looking moves that a handful of orders produced, and executing against them costs more than the chart implies. Session context, meaning who is actually awake and trading, matters as much as whatever shape is on the screen.",
+  "usage": "Practitioners annotate charts by session, Asia, Europe and US, because the same price behaviour reads differently depending on who was awake when it printed.",
+  "see": [
+   "Session",
+   "Overnight risk",
+   "Liquidity",
+   "Trading US hours from Perth"
+  ]
+ },
+ "Open outcry": {
+  "long": "Open outcry was the pit: traders standing in a ring, executing by voice and hand signal, price discovery happening in a physical crowd. It dominated futures for over a century before electronic matching replaced it. Today nearly all volume is electronic, and the few surviving pits are marginal or ceremonial.\n\nIts fingerprints remain. Day-session hours, settlement windows and some data conventions still echo pit schedules, and a generation of trading literature was written by and about pit traders: books describing edges that lived in reading the crowd, hearing the order flow, and standing physically next to the information as it arrived.\n\nWhere people get fooled: importing pit-era folklore into electronic markets. Claims about what the floor knows, or techniques built on watching the crowd, describe a market structure that no longer exists; order flow now arrives anonymised through a matching engine at microsecond speed. Respect the old books as history, not as a manual for the current mechanism.",
+  "usage": "When reading older trading books, date the microstructure claims: anything that depends on the pit describes a market that retired decades ago.",
+  "see": [
+   "Globex hours",
+   "Exchange",
+   "Order book / DOM",
+   "Time and sales"
+  ]
+ },
+ "Basis": {
+  "long": "Basis is the difference between the cash or spot price of a thing and its futures price. For a grain elevator it is the local cash bid minus the exchange contract; more generally, spot minus futures. It exists because of carry: storage, financing and convenience separate the price of the thing now from the price of the thing later.\n\nIts defining behaviour is convergence. As expiry approaches, futures and spot meet, because at delivery they become the same transaction. Before then, basis moves with local supply, freight and storage scarcity, and for anyone hedging, that movement is the risk left over after the hedge removes outright price risk.\n\nWhere people get fooled: treating convergence as a schedule. Basis reliably converges at expiry, but its path there is not fixed, and positions built on basis normalising by a certain date can be hurt badly when it widens first. The direction of convergence is mechanical; the timing of everything before it is not.",
+  "usage": "Physical-market participants quote basis as its own number with its own history, and judge a hedge's quality by basis behaviour rather than by price direction.",
+  "see": [
+   "Basis trade",
+   "Basis risk",
+   "Contango / backwardation",
+   "Convenience yield",
+   "Settlement"
+  ]
+ },
+ "Basis trade": {
+  "long": "A basis trade holds the physical or spot asset against an opposite futures position, aiming to capture the gap between them as it converges. Cash-and-carry is the classic form: buy the asset, sell the future priced above it, deliver or unwind at expiry, and keep the difference minus costs.\n\nThe gross edge is small and fairly mechanical, so real-world versions run large leverage to make it pay. The Treasury basis trade run by hedge funds finances bond purchases through repo at many multiples of capital. The convergence itself is close to certain; surviving the journey is not, because financing can be pulled and margin calls arrive mid-trade.\n\nWhere people get fooled: hearing near-riskless and forgetting the leverage. When basis widens temporarily, as it did in Treasuries in March 2020, leveraged holders are forced out at the worst point of a trade that ends up converging exactly as expected. The trade is sound arithmetic; the failure mode is the balance sheet carrying it.",
+  "usage": "When a basis trade is described as riskless, practitioners ask two questions, at what leverage and funded how; the answers contain all of the actual risk.",
+  "see": [
+   "Basis",
+   "Basis / cash-and-carry",
+   "Arbitrage",
+   "Leverage",
+   "Counterparty risk"
+  ]
+ },
+ "Spread trade": {
+  "long": "A spread trade is simultaneously long one futures contract and short a related one: the same market across two delivery months (a calendar spread), or two related markets, crude against its products, one index against another. The position profits or loses on the difference between the legs rather than the direction of either, and both legs open and close together as one position.\n\nExchanges recognise that offsetting legs reduce risk and charge substantially less margin for recognised spreads than for two outright positions. Spreads generally move less than outrights, and the structure isolates a specific relationship, storage economics, refinery margins, relative strength, rather than a raw directional view.\n\nWhere people get fooled: reading lower margin as low risk. Correlated legs decouple precisely in stressed conditions, and a spread built to be calm can move like two losing outrights at once. Add the doubled execution cost of two legs, and a small expected edge in a spread needs careful accounting before it survives contact with reality.",
+  "usage": "Spread traders chart the spread itself, with its own levels and volatility, rather than watching two outright legs and doing the subtraction mentally.",
+  "see": [
+   "Calendar spread",
+   "Crack spread",
+   "Basis trade",
+   "Correlation",
+   "Margin"
+  ]
+ },
+ "Tick value": {
+  "long": "A tick is the smallest price increment a contract can trade in; tick value is what that increment is worth in money, the tick size multiplied by the contract multiplier. On ES, 0.25 index points at $50 per point makes each tick $12.50. On MNQ, the same 0.25 points at $2 per point makes each tick $0.50.\n\nTick value is the natural unit for cost accounting. Crossing the bid-ask spread costs at least one tick, slippage is measured in ticks, and a profit target of twenty ticks against a spread-plus-commission cost of two ticks means costs consume a tenth of the gross target before anything else goes wrong.\n\nWhere people get fooled: strategies whose average gross gain per trade is only a few ticks. At that scale, spread, slippage and commission are not a haircut on the edge; they are frequently larger than the edge, and the finer the timeframe, the more completely the tick arithmetic dominates the outcome.",
+  "usage": "A useful habit is expressing every cost and target in ticks before entering a market; if the spread is a meaningful fraction of the target, the arithmetic has already answered the question.",
+  "see": [
+   "Tick",
+   "Multiplier",
+   "Contract specification",
+   "Point / handle",
+   "Cost model"
+  ]
+ },
+ "Gap risk": {
+  "long": "Gap risk is the exposure that comes from price jumping between trades rather than passing through every level. A stop order does not execute at its trigger price; it executes at the next available price, and when a market gaps, that can be dramatically worse. Futures trade nearly around the clock, which narrows the windows but does not remove them: weekends, halts, limit moves and expiry transitions all remain.\n\nThe practical consequence is that a stop defines intended risk, not maximum risk. Weekend headline risk in particular is uncapped for holders. A peg breaking or a geopolitical event lands all at once on the Sunday open, and the fill arrives wherever liquidity first exists, not where the order was resting.\n\nWhere people get fooled: sizing positions as if stop distance were the worst case. Size should survive a gap of several stop-distances, because eventually one arrives. The Swiss franc in January 2015 filled stops enormous distances beyond their triggers; that is what gap risk means in practice.",
+  "usage": "Practitioners stress-test position size against a gap of several stop-distances, especially across weekends, and let that scenario rather than the stop set the maximum size.",
+  "see": [
+   "Overnight risk",
+   "Gap and overnight risk",
+   "Stop loss",
+   "Slippage",
+   "Limit up / limit down"
+  ]
+ },
+ "Overnight risk": {
+  "long": "Overnight risk is the exposure carried between sessions, through the close, the maintenance break, and the hours when your market is thin and the news does not stop. Earnings, central bank decisions and geopolitical headlines: much of what reprices markets happens outside the hours when liquidity is deepest and you are watching.\n\nFor futures traders the mechanics bite twice. Day-trading margin evaporates at the broker's cutoff, so holding overnight requires posting full initial margin, and accounts sized for intraday leverage get force-flattened at the close whether the moment is good or not. And the overnight book is thin, so any exit found there costs more than the same exit by day.\n\nWhere people get fooled: habits and backtests built on daytime liquidity carried into overnight holding. The calm of most overnight sessions hides a distribution with heavy tails: positions held overnight collect many quiet nights and, occasionally, one violent repricing. Holding should be a sized, deliberate decision, not a default.",
+  "usage": "A common discipline is deciding before entry whether a trade is allowed to hold overnight, with the margin and sizing implications settled then rather than at the close.",
+  "see": [
+   "Gap risk",
+   "Globex hours",
+   "Day trading margin",
+   "Event risk"
+  ]
+ },
+ "Commodity": {
+  "long": "A commodity is a standardised physical good, crude oil, gold, copper, wheat, where one unit is interchangeable with another of the same grade, which is what makes exchange trading possible in the first place. Most commodity trading is done through futures rather than the physical article, because almost nobody wants a thousand barrels delivered.\n\nCommodities differ from equities in a structural way: they generate no cash flows. A share entitles you to a stream of earnings; a bar of gold entitles you to a bar of gold. Pricing is driven by production costs, inventories, storage, transport and weather, and the realised return of a rolled futures position depends on the curve as much as on the spot price.\n\nWhere people get fooled: applying equity intuitions, cheap versus history, buy and hold the chart, to instruments where holding costs money and the futures curve determines what a position actually earns. A commodity's spot price can double while a rolled long position in it goes nowhere after contango drag.",
+  "usage": "Analysts treat each commodity as its own micro-market with its own inventory and logistics data, rather than as one asset class that moves together.",
+  "see": [
+   "Futures",
+   "Storage cost",
+   "Convenience yield",
+   "Hedger",
+   "Speculator"
+  ]
+ },
+ "Storage cost": {
+  "long": "Storage cost is what it takes to hold a physical commodity through time: warehouse or tank space, insurance, spoilage, and the financing cost of the capital tied up. It is the reason commodities are not free to hold, and it anchors the shape of the futures curve.\n\nIn a normal market, futures price above spot by roughly the cost of storing and financing the commodity until delivery. That is contango: futures above spot, converging at expiry. If futures rose much further than carry justifies, owning spot and selling futures would lock in a profit, and that arbitrage pulls the gap back towards the cost of carry.\n\nWhere people get fooled: forgetting that storage is a physical constraint, not an abstraction. When storage runs out, the arbitrage that disciplines prices cannot operate, and prices break intuition entirely. Cushing's tanks effectively filling in April 2020 was the mechanism behind WTI trading at −$37 a barrel. Spot and futures only track each other while someone can actually store the stuff.",
+  "usage": "Physical traders watch inventory and storage-utilisation data as leading context for curve shape; when tanks or silos approach full, curve behaviour changes character.",
+  "see": [
+   "Contango / backwardation",
+   "Convenience yield",
+   "Carry",
+   "Negative prices",
+   "Roll yield"
+  ]
+ },
+ "Convenience yield": {
+  "long": "Convenience yield is the implied benefit of holding the physical commodity now rather than a promise of it later: the refinery that cannot run on a futures contract, the mill that needs actual wheat this week. It behaves like a dividend that only physical holders collect, and it is the reason spot can price above futures even though storage costs money.\n\nIt cannot be observed directly. It is inferred as the residual that makes the cost-of-carry arithmetic balance. When inventories are scarce, the premium for immediate availability is high, curves flip into backwardation, and the market effectively pays holders of physical for their optionality. When inventories are ample, it collapses towards nothing.\n\nWhere people get fooled: treating convenience yield as an income stream a financial trader can harvest. It accrues to those who hold and use the physical commodity; a futures position receives none of it. What the financial trader inherits instead is the curve shape it produces, and the roll consequences that follow from that shape.",
+  "usage": "Curve watchers read backwardation as the market pricing scarcity of the physical now, a statement about current inventories rather than a forecast of future spot prices.",
+  "see": [
+   "Storage cost",
+   "Contango / backwardation",
+   "Basis",
+   "Term structure"
+  ]
+ },
+ "Crude oil grades": {
+  "long": "Crude oil is not one product. Grades differ by density, light to heavy, and sulphur content, sweet to sour, and each benchmark is tied to a delivery mechanism: WTI is light, sweet crude delivered into Cushing, Oklahoma by pipeline; Brent is a waterborne North Sea benchmark that loads onto ships. Refineries are tuned to particular grades and pay accordingly.\n\nBecause delivery geography differs, the benchmarks can diverge sharply. In April 2020, WTI traded at −$37 a barrel while Brent stayed positive: landlocked storage at Cushing was effectively full, while seaborne Brent could still resort to floating storage on tankers. The same commodity in a headline sense, under different physical constraints, produced radically different prices.\n\nWhere people get fooled: trading oil as a single idea. A view formed from Brent-centric news but expressed through a WTI-linked product carries a grade-spread risk the trader never chose, and grade spreads move on pipelines and tanker rates, not on the oil-demand narrative that motivated the trade.",
+  "usage": "Energy traders name the grade and the delivery point when discussing price, because oil being up conceals which oil and where, and the difference is tradeable in itself.",
+  "see": [
+   "Crack spread",
+   "OPEC",
+   "Negative prices",
+   "Basis",
+   "Physical delivery risk"
+  ]
+ },
+ "Crack spread": {
+  "long": "The crack spread is the difference between the price of refined products, petrol and distillates such as diesel or heating oil, and the price of the crude oil they are made from. It is the refiner margin: what the market currently pays for the act of turning crude into usable fuel.\n\nIt trades as a futures spread, conventionally in ratios like 3-2-1, three crude against two petrol and one distillate, to approximate a refinery's output mix. Refiners sell the crack to lock in processing margins ahead of time; speculators trade it as a view on refining capacity, outages and seasonal product demand rather than on oil itself.\n\nWhere people get fooled: reading the crack as an oil-direction bet. Crude and products can both rise while the spread collapses, and the reverse, because the spread prices refining capacity, which moves on outages, maintenance seasons and product inventories. It is a margin on an industrial process, and it behaves like one.",
+  "usage": "Refining analysts read crack spreads as a health gauge for the refining system; wide cracks alongside weak crude often say more about capacity than about demand.",
+  "see": [
+   "Crude oil grades",
+   "Spread trade",
+   "Hedger",
+   "Basis"
+  ]
+ },
+ "OPEC": {
+  "long": "OPEC is the cartel of major oil-producing states, extended by allies in the wider OPEC+ arrangement, that coordinates production targets to influence the oil price. Its meetings and quota decisions are scheduled, intensely watched, and capable of gapping crude markets within seconds of a headline.\n\nThe mechanism is supply withheld or released, but the market trades expectations of it. Forecasts circulate for weeks beforehand and price settles where consensus sits, so the reaction to an announcement reflects the gap between decision and expectation rather than the decision alone. A production cut can be sold hard if a larger one was anticipated. Compliance adds another layer: announced quotas and actual barrels pumped are not the same series.\n\nWhere people get fooled: trading the headline at face value. By the time the announcement prints, positioning has often spent weeks arranging itself around the expected outcome, and the sharpest moves come from surprises about cohesion, a meeting collapsing, a price war breaking out, rather than from the quota arithmetic itself.",
+  "usage": "Ahead of OPEC meetings, practitioners write down the consensus expectation first, because the market's reaction only makes sense measured against it.",
+  "see": [
+   "Crude oil grades",
+   "Event risk",
+   "Economic calendar",
+   "Gap risk",
+   "Priced in"
+  ]
+ },
+ "Precious vs industrial metals": {
+  "long": "Metals split into two economic species. Precious metals, gold above all and silver partly, trade as monetary assets: their prices respond to real interest rates, the dollar, and demand for stores of value. Industrial metals, copper, aluminium, nickel and zinc, trade as inputs: their prices track construction, manufacturing and the business cycle.\n\nThe distinction is about what moves the price, not about chemistry. Gold has minimal industrial consumption relative to its above-ground stockpile, so investment flows dominate; copper is consumed, so inventories and Chinese construction data matter more than any monetary variable. Silver sits awkwardly in both camps and borrows volatility from each in turn.\n\nWhere people get fooled: applying gold logic to copper or the reverse, buying industrial metals as a refuge heading into a slowdown, or expecting gold to track economic growth. Correlations between the two groups shift with the macro regime, and a metals basket blends drivers that can pull in opposite directions at once.",
+  "usage": "Metals analysts check which group is leading a metals move, monetary or industrial, before reading any macro story into it.",
+  "see": [
+   "Gold as a hedge",
+   "Commodity",
+   "Business cycle",
+   "Real yield",
+   "Correlation"
+  ]
+ },
+ "Gold as a hedge": {
+  "long": "Gold's record as a hedge is real but specific. Over very long horizons it has held purchasing power, and in acute crises it often catches flight-to-quality flows. Mechanically, its price responds most consistently to real yields, the interest forgone by holding a metal that pays nothing, and to the dollar, rather than to inflation prints directly.\n\nThe inconvenient history: gold peaked in 1980 and spent roughly two decades underwater afterwards, through years of positive inflation. In 2021 and 2022, inflation ran at multi-decade highs while gold went roughly sideways, because real yields were rising at the same time and the variable that actually drives gold was pushing the other way.\n\nWhere people get fooled: buying gold as a short-horizon inflation hedge on the strength of the long-horizon story. The hedge is conditional. It works when real yields fall or crisis demand spikes, which sometimes coincides with inflation and sometimes does not. Horizon matters more than the label.",
+  "usage": "Practitioners who track gold watch real yields alongside it; the pair explains most of what the inflation narrative usually gets credited with.",
+  "see": [
+   "Precious vs industrial metals",
+   "Real yield",
+   "DXY",
+   "Flight to quality",
+   "Correlation"
+  ]
+ },
+ "Agricultural seasonality": {
+  "long": "Agricultural markets carry genuine seasonal structure because production does: planting, growing season, harvest, and the weather risk concentrated in each phase. Supply arrives in pulses, storage smooths it imperfectly, and the northern and southern hemispheres run offset cycles for many crops. This is one of the few calendar effects with a real physical mechanism behind it.\n\nBut the futures curve already knows the calendar. Harvest pressure and pre-harvest scarcity are priced into the relevant contract months well in advance, so the tradeable component is not the cycle itself but deviations from it: drought during pollination, an early frost, a surprise in planted acreage. The known cycle is carried in the curve; only news moves it.\n\nWhere people get fooled: seasonal average charts. Averaging fifteen years of prices produces smooth, compelling shapes that are frequently dominated by two or three outlier years, and a pattern already priced into the curve cannot be captured by simply buying the calendar. The mechanism is real; the naive trade on it is not.",
+  "usage": "Grain analysts compare this year's conditions against the seasonal norm rather than trading the norm itself; the deviation is where the information lives.",
+  "see": [
+   "Seasonality",
+   "WASDE",
+   "Storage cost",
+   "Hedger",
+   "Term structure"
+  ]
+ },
+ "WASDE": {
+  "long": "WASDE, the World Agricultural Supply and Demand Estimates, is the USDA's monthly balance sheet for the major crops: production, yield, stocks and usage estimates for the United States and the world. It is the scheduled information event in grain markets, released at a fixed time and repriced within seconds.\n\nThe market trades the difference between the numbers and the average analyst estimate, not the numbers themselves. A surprise in ending stocks or yield can move corn, wheat or soybeans to their daily price limits, and a limit-locked grain market offers no exit at any size until trading resumes. Old-crop and new-crop months can react in opposite directions to the same report.\n\nWhere people get fooled: holding leveraged grain positions through the release as if it were a normal trading day. WASDE risk is not the average outcome, which is usually modest, but the tail: the report that locks the market against you before any order of yours can matter.",
+  "usage": "Grain desks treat WASDE dates as scheduled risk events, flattening or sizing down beforehand, much as index traders treat central bank days.",
+  "see": [
+   "Agricultural seasonality",
+   "Limit up / limit down",
+   "Economic calendar",
+   "Event risk",
+   "Gap risk"
+  ]
+ },
+ "Hedger": {
+  "long": "A hedger uses futures to shed a price risk their business already owns: the farmer selling next harvest's corn forward, the airline buying fuel exposure, the miner locking in a metal price. The hedge's purpose is certainty, fixing a price today so the business can plan, not profit on the futures leg itself.\n\nThis is the economic engine of futures markets. Hedgers are willing to accept slightly worse expected prices in exchange for offloading risk, which means that hedgers, in aggregate, pay speculators to hold price risk for them. That transfer, an insurance premium moving from those who want certainty to those who sell it, is one of the few real, documented premia in markets.\n\nWhere people get fooled: reading hedger positioning as a market opinion. A grain producer short thousands of contracts is not bearish; they own the crop, and the short completes the position. Commercial positioning in the COT report reflects business structure first and price view a distant second.",
+  "usage": "Analysts read commercial futures positioning alongside the physical business it hedges; the futures leg on its own tells half a story.",
+  "see": [
+   "Speculator",
+   "COT report",
+   "Hedge",
+   "Variance risk premium"
+  ]
+ },
+ "Speculator": {
+  "long": "A speculator takes price risk on purpose, with no underlying business exposure to offset, long or short purely in the expectation of profit. In the economics of futures markets, speculators are the counterparty the hedgers need: they absorb the risk that commercial players are paying to shed.\n\nThat framing matters because it identifies where a durable return can come from. Hedgers accept slightly unfavourable pricing in exchange for certainty, so the risk transfer from hedgers to speculators carries a premium, one of the few real, documented sources of compensation in markets that does not require out-predicting anyone. It is earned by warehousing risk through time, not by being clever about direction.\n\nWhere people get fooled: assuming the premium arrives automatically. Most retail speculation is short-horizon trading against other speculators, a zero-sum contest before costs, which touches none of the hedging-transfer economics. Collecting that premium takes patience, diversification and survival through drawdowns; rapid trading mostly collects the costs instead.",
+  "usage": "The practitioner's question about any speculative strategy is which risk it is being paid to hold; if there is no answer, the returns must come from other traders' mistakes, which is a harder living.",
+  "see": [
+   "Hedger",
+   "COT report",
+   "Edge",
+   "Carry",
+   "Retail trader"
+  ]
+ },
+ "COT report": {
+  "long": "The Commitments of Traders report is the CFTC's weekly snapshot of positioning in US futures markets, splitting open interest into categories: commercials and swap dealers, managed money, small traders. It is published weekly with a lag, released on Friday afternoon and reflecting positions as of the preceding Tuesday.\n\nIts genuine value is structural. It shows who is carrying the risk, how hedged the commercials are and how crowded managed money is, which is context no price chart contains. Positioning extremes are widely watched on the logic that a market where nearly everyone is already long has fewer marginal buyers left to arrive.\n\nWhere people get fooled: treating it as a timing tool. The data is three days stale on arrival and positioning can stay extreme for months while price trends on regardless. Category definitions are coarse, swap dealers blur hedging and speculation, and backtested COT rules often depend on thresholds chosen in hindsight. It is a map of who holds risk, not a schedule of when that matters.",
+  "usage": "Practitioners note the Tuesday data date before reacting to a Friday release; whatever the market did on Wednesday and Thursday is not in the numbers.",
+  "see": [
+   "Hedger",
+   "Speculator",
+   "Positioning",
+   "Open interest",
+   "Lag"
+  ]
+ },
+ "Physical delivery risk": {
+  "long": "Physically settled futures resolve into the actual commodity. Hold a position past first notice day and delivery machinery engages: warehouse receipts for metal, barrels at a pipeline hub, grain at an elevator, obligations designed for commercial infrastructure rather than a retail account.\n\nIn practice, retail brokers block delivery by force-closing positions before the notice period. That protection is itself the risk: the forced exit happens on the broker's schedule, alongside every other trapped holder exiting through the same door. April 2020 in WTI was this dynamic at scale. Longs with no ability to take delivery all had to sell an expiring contract at once, and the price collapsed through zero.\n\nWhere people get fooled: saying they would never actually take delivery, which is true and beside the point. The risk was never trucks of oil arriving at the house; it is being a forced seller in a crowd of forced sellers, at the exact moment the market knows you have no alternative.",
+  "usage": "Futures traders keep first notice and last trading dates for deliverable contracts on a calendar, and are flat or rolled well before either arrives.",
+  "see": [
+   "Settlement",
+   "Expiry",
+   "Negative prices",
+   "Rollover"
+  ]
+ },
+ "Negative prices": {
+  "long": "In April 2020, the expiring WTI crude contract traded at −$37 a barrel: holders paid others to take oil off their hands. Storage at the delivery point, Cushing, was effectively full, and longs facing physical delivery had no tanks, no buyers with tanks, and a contract expiring into that reality. The print is documented exchange history, not folklore.\n\nThe episode exposed an assumption buried in tools and models: that prices floor at zero. Options pricing models, broker risk systems and retail platforms variously failed or misbehaved because negative prices sat outside their design. Exchanges have since made negative pricing an explicit, supported possibility in the affected contracts.\n\nWhere people get fooled: believing a long position can only lose what the asset is worth. When holding the asset carries obligations, storage, delivery, disposal, its price can pass below zero, and a long futures position keeps losing money the whole way down. Worst-case reasoning that stops at zero is not worst-case reasoning.",
+  "usage": "Risk checklists written after 2020 ask explicitly what happens to the position, and to the platform it sits on, if the price prints below zero.",
+  "see": [
+   "Physical delivery risk",
+   "Storage cost",
+   "Crude oil grades",
+   "Settlement"
+  ]
+ },
+ "Derivative": {
+  "long": "A derivative is a contract whose value derives from something else: an index, a share, a barrel of oil, an interest rate. Futures, options, forwards, swaps, CFDs and warrants are all derivatives. None of them requires owning the underlying; each is an agreement about its price.\n\nTheir economic function is risk transfer, moving exposure from someone who has it and does not want it to someone who is paid to hold it. The wrapper determines everything practical: how much leverage is embedded, whether losses are capped or open-ended, who stands behind payment, and what the position costs to hold. The same underlying exposure through different wrappers produces radically different outcomes.\n\nWhere people get fooled: putting all the analysis into the underlying and treating the wrapper as detail. Most retail damage in derivatives comes from the instrument's mechanics, financing drag, margin calls, barriers, counterparty terms, rather than from being wrong about the underlying's direction. Pick the market second; understand the wrapper first.",
+  "usage": "The practitioner's first questions about any derivative are about the wrapper rather than the underlying: leverage, loss cap, counterparty, holding cost, in that order.",
+  "see": [
+   "Futures",
+   "Option",
+   "Forward",
+   "Swap",
+   "CFD"
+  ]
+ },
+ "Forward": {
+  "long": "A forward is a private agreement to exchange an asset at a fixed price on a future date, the over-the-counter ancestor of the futures contract. Terms are bespoke: any quantity, any date, any settlement mechanics the two parties accept. Corporates hedging currency exposure are the classic users.\n\nThe differences from futures are structural. No exchange, no clearing house, and typically no daily margining, so profits and losses accumulate silently until settlement and each side simply trusts the other to pay. That makes counterparty risk the defining feature: a deeply profitable forward is only worth what the losing side can actually deliver. Non-deliverable forwards extend the idea to restricted currencies, settling the difference in dollars instead.\n\nWhere people get fooled: the invisibility of accumulating losses. With no daily settlement forcing recognition, a losing forward feels free until it comes due, and businesses have been broken by forwards they stopped watching. The flexibility is genuinely valuable; it is paid for in spread and in counterparty exposure.",
+  "usage": "Corporate treasurers mark forwards to market internally even when nobody demands it, precisely because the structure itself never forces the recognition.",
+  "see": [
+   "Futures",
+   "Derivative",
+   "Counterparty risk",
+   "NDF",
+   "Settlement"
+  ]
+ },
+ "Total return swap": {
+  "long": "A total return swap exchanges the complete economic return of an asset, price change plus dividends, for a financing payment. One party gets the exposure without ever owning the asset; the other, typically a bank, holds the asset and collects a fee for the service. It is synthetic ownership by contract.\n\nThe defining property is invisibility. Because the swap holder never owns the shares, the position appears on no register, and disclosure rules built around ownership look straight past it. Archegos in 2021 accumulated enormous, concentrated equity exposure through swaps spread across several banks, none of whom could see the whole picture, and its collapse forced billions in losses as the positions unwound.\n\nWhere people get fooled: assuming visible markets show the real positioning. Swap-held exposure tends to surface only when it fails, arriving as otherwise inexplicable selling pressure in specific names. And for anyone offered swap-like retail products, the same structure applies at small scale: financing costs compound quietly, and the counterparty's solvency is part of the position.",
+  "usage": "After Archegos, prime brokers price swap clients on declared total exposure across firms; the episode is the standard case study in how leverage hides.",
+  "see": [
+   "Swap",
+   "Counterparty risk",
+   "Derivative",
+   "Leverage",
+   "Fee opacity"
+  ]
+ },
+ "Warrant": {
+  "long": "A warrant is an option-like instrument issued by a bank or a company rather than written on an options exchange: the right to buy or sell an underlying at a set price before expiry, packaged as a listed security. The issuer creates it, prices it, and usually acts as the main market-maker in it.\n\nThat last detail is the economics. With an exchange-traded option, competing market-makers discipline the price; with a warrant, the issuer sets both sides of the quote, and its margin lives inside the spread and the pricing of volatility. Terms are bespoke, barriers, gearing and unusual expiries, and comparing value across issuers is hard by design.\n\nWhere people get fooled: buying the leverage without pricing the decay and the spread. Warrant marketing leads with gearing; the time decay, the issuer's pricing margin and the exit spread all sit in the fine print, and the counterparty you sell back to is the party that profits from the pricing. The headline leverage is real; so is everything it costs.",
+  "usage": "Practitioners compare a warrant against the equivalent exchange-traded option where one exists; the price difference is the packaging cost made visible.",
+  "see": [
+   "Option",
+   "Leverage",
+   "Knock-in / knock-out",
+   "Extrinsic value",
+   "Fee opacity"
+  ]
+ },
+ "Structured product": {
+  "long": "A structured product is a pre-packaged combination of simpler instruments, typically a bond plus one or more options, sold as a single note with a narrative: capital protection, enhanced income, participation in upside. The packaging is the product; every component exists separately, and usually more cheaply, elsewhere.\n\nThe economics favour the issuer by construction. Fees are embedded in the pricing of the components rather than listed anywhere, the option positions inside are priced at the issuer's margin, and the impressive headline, a high coupon or a protected floor, is funded by a risk the buyer has taken without necessarily recognising it, most often a sold option somewhere in the structure.\n\nWhere people get fooled: reading the marketing sentence instead of the payoff diagram. An enhanced-income note is usually a sold put by another name; a protected note is a bond plus a small call, with the protection resting entirely on the issuer's solvency. If the payoff cannot be drawn by hand, that is itself information.",
+  "usage": "The craft habit is decomposing any structured note into its bond and option parts and pricing them separately; the gap between that sum and the offer price is the fee.",
+  "see": [
+   "Capital protection",
+   "Knock-in / knock-out",
+   "Fee opacity",
+   "Counterparty risk",
+   "Complexity as authority"
+  ]
+ },
+ "Fee opacity": {
+  "long": "Fee opacity is cost that exists but appears on no statement: the spread crossed on every trade, financing markups inside CFDs and warrants, the issuer's margin embedded in a structured product's pricing, roll drag inside a futures-based product. Explicit commission, the number platforms advertise, is often the smallest component of true cost.\n\nThe pattern is consistent: the more packaged the product, the more of its cost migrates from the visible line to the invisible ones. A zero-commission platform that widens its spread by a fraction of a point costs an active trader far more than a commissioned broker with tight execution, and no invoice ever says so.\n\nWhere people get fooled: comparing products on their stated fees. The honest comparison is the total cost of a round trip, spread, commission, financing and any embedded pricing margin, measured against a benchmark price. The products that fare worst under that test are reliably the ones whose marketing leads with the word free.",
+  "usage": "Cost-aware traders measure round-trip cost against the mid price across a sample of their own fills, which converts invisible fees into a number.",
+  "see": [
+   "Structured product",
+   "Spread",
+   "Commission",
+   "Cost model",
+   "Warrant"
+  ]
+ },
+ "Capital protection": {
+  "long": "Capital protection is a structured-product promise: hold the note to maturity and receive at least your capital back, plus some participation in an underlying's performance. Mechanically it is usually a zero-coupon bond, which grows back to the principal by maturity, with the remainder spent on a call option for the upside participation.\n\nThe costs are real but quiet. The protection consumes the interest the money would have earned, participation in upside is typically capped or diluted, dividends are forgone, and exiting before maturity means selling at market value, where the protection does not apply. Above all, the promise is only as strong as the issuer: protected notes issued by Lehman Brothers became claims in a bankruptcy.\n\nWhere people get fooled: hearing protected and thinking risk-free. The protected outcome is one specific path, full term and a solvent issuer, and inflation quietly taxes even that one. Priced honestly, capital protection is a bond you chose not to buy directly, with fees attached for the packaging.",
+  "usage": "Practitioners evaluate a protected note by pricing the do-it-yourself version, a term deposit plus a small option position, and comparing the two at maturity.",
+  "see": [
+   "Structured product",
+   "Counterparty risk",
+   "Fee opacity",
+   "Bond"
+  ]
+ },
+ "Knock-in / knock-out": {
+  "long": "Knock-in and knock-out are barrier features: an option or product that activates only if price touches a level (knock-in), or terminates permanently if it does (knock-out). Barriers make products cheaper than their vanilla equivalents for a simple reason: the buyer is receiving less, because some paths that would have paid now pay nothing.\n\nThey are everywhere in structured retail products: turbos and mini-futures with knock-out levels that close the position automatically, reverse convertibles whose protection knocks away if the underlying falls through a barrier. The barrier converts a smooth payoff into a cliff, where a single touch, however brief, however fleeting the spike, changes the outcome discontinuously.\n\nWhere people get fooled: mentally treating a barrier like a stop loss. A knocked-out product stays dead when price recovers a minute later, and barriers cluster exactly where volatility does, round numbers and recent lows, so brief spikes find them disproportionately often. The cheapness of barrier products is precisely the price of those paths.",
+  "usage": "Traders in barrier products map every barrier against recent volatility before entry, asking not whether the level looks distant but how often brief spikes travel that far.",
+  "see": [
+   "Structured product",
+   "Warrant",
+   "Capital protection",
+   "Gap risk",
+   "Option"
+  ]
+ },
+ "Counterparty risk": {
+  "long": "Counterparty risk is the risk that the other side of your contract cannot pay when it owes you. It is invisible in normal times, when every product performs identically while everyone is solvent, and it becomes the only thing that matters on the day a counterparty fails.\n\nMarket structure exists largely to manage it. Exchange-traded futures interpose a clearing house: it becomes the buyer to every seller, collects margin daily from both sides, and mutualises default through a guarantee fund. Over-the-counter products, forwards, swaps, CFDs and structured notes, leave the risk bilateral: a profitable position is a claim on one specific firm, secured only as well as the paperwork says. Lehman's failure in 2008 turned exactly such claims into bankruptcy paperwork.\n\nWhere people get fooled: comparing products on payoff and price while ignoring who owes the money. Two instruments with identical market exposure can differ entirely in what happens when you are right during a crisis, which is the one time being right is worth the most.",
+  "usage": "Due diligence on any over-the-counter product starts with the counterparty's credit standing and the treatment of client claims in an insolvency, before any discussion of payoff.",
+  "see": [
+   "Clearing house",
+   "Broker insolvency",
+   "Forward",
+   "Structured product",
+   "Segregated client money"
+  ]
+ },
+ "Notional vs premium": {
+  "long": "Notional and premium are two different measures of a position's size, and confusing them misprices risk in both directions. Notional is the full exposure a contract represents: one MNQ at $2 per point with the index around 23,500 is roughly $47,000 of notional. Premium is what an option buyer pays outright, and it is the most that buyer can lose.\n\nA futures position is exposure to the whole notional. The deposit posted is a returnable performance bond, not the amount at risk, and losses run with the full position size. A bought option costs its premium, caps the loss there, and pays for that cap continuously through time decay, with expiring worthless always on the table.\n\nWhere people get fooled: the sentence about only putting up five hundred dollars, which means opposite things in the two worlds. For the option buyer it is the entire risk; for the futures trader it is a deposit against a position roughly ninety times larger. Statements about what a trade needs are meaningless until you know which number, notional or premium, is doing the talking.",
+  "usage": "When someone quotes a position size, practitioners immediately establish whether the number is notional or premium; every risk conversation depends on which it is.",
+  "see": [
+   "Notional value",
+   "Premium",
+   "Option",
+   "Multiplier",
+   "Leverage"
+  ]
+ },
+ "Margin lending": {
+  "long": "Margin lending is borrowing against a portfolio to buy more of it: a genuine loan, with interest charged, secured by the shares themselves. This is a different animal from futures margin, which is a returnable performance bond, not a loan and not a cost. In margin lending you owe money; in futures you have deposited it.\n\nThe lender sets a maximum loan-to-value ratio, and when falling prices push the loan above it, a margin call demands cash or forces sales to restore the ratio. The mechanism is procyclical by design: the loan amplifies gains on the way up and compels selling on the way down, at prices and times the borrower does not choose. Australian investors met this at scale in 2008, when margin calls forced sales near the lows.\n\nWhere people get fooled: modelling the leverage but not the calls. A leveraged portfolio that would have recovered in time gets liquidated at the bottom because the loan's timetable, not the investor's, decides when selling happens. Interest also runs continuously, so flat markets quietly lose money too.",
+  "usage": "Users of margin loans model the portfolio value at which calls trigger and keep that number visible, because the loan covenant rather than the market view is the binding constraint.",
+  "see": [
+   "Leverage",
+   "Margin call",
+   "Margin",
+   "Leverage vs margin",
+   "Initial vs maintenance margin"
+  ]
+ }
+}

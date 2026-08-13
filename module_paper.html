@@ -1,0 +1,563 @@
+<script>
+/* ====================================================================
+   PAPER TAB - local trade simulator and record.
+   No broker connection, no account linking, no credentials of any kind.
+   Simulation and record-keeping only. One optional, user-initiated
+   Binance spot-price GET for instruments ending in USDT; everything
+   else is offline. State lives under localStorage "tape.paper.v1"
+   with an in-memory fallback when storage is unavailable.
+   ==================================================================== */
+(function(){
+"use strict";
+
+var KEY="tape.paper.v1";
+var SKEY="tape.strats.v1";
+var CAPTION="Paper results overstate live results: fills are kinder, and nothing here bleeds conviction like real money.";
+
+/* ---------- helpers ---------- */
+function $(id){return document.getElementById(id);}
+function escLocal(x){return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+var esc=(window.TAPE_NS&&window.TAPE_NS.esc)?window.TAPE_NS.esc:escLocal;
+function num(x,fb){x=parseFloat(x);return isFinite(x)?x:fb;}
+function r2(x){return Math.round(x*100)/100;}
+function r6(x){return Math.round(x*1e6)/1e6;}
+function fmtPts(x){return isFinite(x)?String(r2(x)):"—";}
+function money(x){if(!isFinite(x))return "—";return (x<0?"-$":"$")+Math.abs(x).toFixed(2);}
+function signR(x){if(!isFinite(x))return "—";return (x>=0?"+":"-")+Math.abs(x).toFixed(2)+"R";}
+function today(){return new Date().toISOString().slice(0,10);}
+function uid(){return "p"+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);}
+
+/* ---------- storage: every access try/catch, in-memory fallback ---------- */
+var MEM={};
+function lsGet(k){
+  try{return localStorage.getItem(k);}
+  catch(e){return Object.prototype.hasOwnProperty.call(MEM,k)?MEM[k]:null;}
+}
+function lsSet(k,v){
+  MEM[k]=v;
+  try{localStorage.setItem(k,v);}catch(e){}
+}
+
+/* ---------- state ---------- */
+function defState(){
+  return {startBalance:5000,balance:5000,positions:[],closed:[],
+    settings:{commissionPerSide:0.62,spreadTicks:1,tickSize:0.25,tickValue:0.5}};
+}
+function load(){
+  var d=defState(),raw=lsGet(KEY),o=null;
+  if(!raw)return d;
+  try{o=JSON.parse(raw);}catch(e){return d;}
+  if(!o||typeof o!=="object")return d;
+  var s=(o.settings&&typeof o.settings==="object")?o.settings:{};
+  return {
+    startBalance:num(o.startBalance,d.startBalance),
+    balance:num(o.balance,d.balance),
+    positions:Array.isArray(o.positions)?o.positions:[],
+    closed:Array.isArray(o.closed)?o.closed:[],
+    settings:{
+      commissionPerSide:Math.max(0,num(s.commissionPerSide,0.62)),
+      spreadTicks:Math.max(0,num(s.spreadTicks,1)),
+      tickSize:Math.max(0,num(s.tickSize,0.25)),
+      tickValue:Math.max(0,num(s.tickValue,0.5))
+    }
+  };
+}
+var S=load();
+function save(){lsSet(KEY,JSON.stringify(S));}
+function perPoint(){return S.settings.tickSize>0?S.settings.tickValue/S.settings.tickSize:0;}
+function findPos(id){var i;for(i=0;i<S.positions.length;i++){if(S.positions[i].id===id)return S.positions[i];}return null;}
+
+/* ---------- strategy library link (tape.strats.v1) ---------- */
+function stratNames(){
+  try{
+    var raw=localStorage.getItem(SKEY);if(!raw)return [];
+    var arr=JSON.parse(raw);if(!Array.isArray(arr))return [];
+    var out=[];arr.forEach(function(s){if(s&&s.name)out.push(String(s.name));});
+    return out;
+  }catch(e){return [];}
+}
+function logToStrategy(name,dir,r){
+  try{
+    var raw=localStorage.getItem(SKEY);
+    var arr=raw?JSON.parse(raw):null;
+    if(!Array.isArray(arr))return "Strategy list could not be read, so nothing was logged there.";
+    var s=null,i;
+    for(i=0;i<arr.length;i++){if(arr[i]&&arr[i].name===name){s=arr[i];break;}}
+    if(!s)return "Strategy “"+name+"” is no longer in the list, so nothing was logged there.";
+    if(!Array.isArray(s.trades))s.trades=[];
+    s.trades.push({d:today(),dir:dir,r:r2(r),n:"paper"});
+    localStorage.setItem(SKEY,JSON.stringify(arr));
+    return "Logged "+signR(r)+" to “"+name+"”.";
+  }catch(e){return "Strategy log write failed, so the trade is recorded here only.";}
+}
+
+/* ---------- excursion tracking (MAE / MFE) ---------- */
+function bump(p,v){
+  if(!isFinite(v))return;
+  if(p.maeMark==null||p.mfeMark==null){p.maeMark=v;p.mfeMark=v;return;}
+  if(p.dir==="long"){
+    if(v<p.maeMark)p.maeMark=v;
+    if(v>p.mfeMark)p.mfeMark=v;
+  }else{
+    if(v>p.maeMark)p.maeMark=v;
+    if(v<p.mfeMark)p.mfeMark=v;
+  }
+}
+function advPts(p){if(p.maeMark==null)return 0;return p.dir==="long"?Math.max(0,p.entry-p.maeMark):Math.max(0,p.maeMark-p.entry);}
+function favPts(p){if(p.mfeMark==null)return 0;return p.dir==="long"?Math.max(0,p.mfeMark-p.entry):Math.max(0,p.entry-p.mfeMark);}
+
+/* ---------- markup builders ---------- */
+function fld(id,label,ctrl){return '<div class="pp-f"><label for="'+id+'">'+label+'</label>'+ctrl+'</div>';}
+function stratOptions(){
+  var h='<option value="">— none —</option>';
+  stratNames().forEach(function(n){h+='<option value="'+esc(n)+'">'+esc(n)+'</option>';});
+  return h;
+}
+function shellHTML(){
+  return '<div class="wrap pp-wrap">'+
+    '<h2>Paper</h2>'+
+    '<p class="pp-note">Local trade simulator and record. No broker connection, no account linking — nothing here can touch funds or send an order.</p>'+
+    '<p class="pp-caption">'+CAPTION+'</p>'+
+    '<div id="pp-summary"></div>'+
+    '<div id="pp-form"></div>'+
+    '<div id="pp-msg" class="pp-msg" role="status" aria-live="polite"></div>'+
+    '<div id="pp-open"></div>'+
+    '<div id="pp-closed"></div>'+
+    '<details class="pp-card pp-detail"><summary>Cost model &amp; account settings</summary><div id="pp-settings"></div></details>'+
+    '</div>';
+}
+function formHTML(){
+  return '<div class="pp-card">'+
+    '<h3>Open a position</h3>'+
+    '<div class="pp-grid">'+
+    fld("pp-inst","Instrument",'<input id="pp-inst" type="text" value="MNQ" autocomplete="off">')+
+    fld("pp-dir","Direction",'<select id="pp-dir"><option value="long">Long</option><option value="short">Short</option></select>')+
+    fld("pp-entry","Entry price",'<input id="pp-entry" type="number" step="any" inputmode="decimal">')+
+    fld("pp-stop","Stop price (blank = no stop, tagged)",'<input id="pp-stop" type="number" step="any" inputmode="decimal">')+
+    fld("pp-target","Target (optional)",'<input id="pp-target" type="number" step="any" inputmode="decimal">')+
+    fld("pp-risk","Risk % of balance",'<input id="pp-risk" type="number" step="0.1" min="0" value="1" inputmode="decimal">')+
+    fld("pp-qty","Contracts (used only when no stop)",'<input id="pp-qty" type="number" step="1" min="1" inputmode="numeric">')+
+    fld("pp-strat","Link to strategy",'<select id="pp-strat">'+stratOptions()+'</select>')+
+    '</div>'+
+    '<div class="pp-out pp-num" id="pp-size" aria-live="polite"></div>'+
+    '<div class="pp-acts"><button type="button" class="pp-btn pp-pri" id="pp-open-btn">Open paper position</button>'+
+    '<span class="pp-note">Size is derived from risk and stop distance, never typed. Spread and commission are applied to every fill.</span></div>'+
+    '</div>';
+}
+function summaryHTML(){
+  var wins=0,losses=0,flat=0,netP=0,netR=0,nR=0,rb=0;
+  S.closed.forEach(function(t){
+    netP+=num(t.pnl,0);
+    if(t.pnl>0)wins++;else if(t.pnl<0)losses++;else flat++;
+    if(t.r!=null&&isFinite(t.r)){netR+=t.r;nR++;}
+    if(t.ruleBreaks&&t.ruleBreaks.length)rb++;
+  });
+  S.positions.forEach(function(p){if(p.ruleBreaks&&p.ruleBreaks.length)rb++;});
+  function cell(k,v,sub){return '<div class="pp-cell"><span class="pp-k">'+k+'</span><span class="pp-v pp-num">'+v+'</span>'+(sub?'<span class="pp-sub">'+sub+'</span>':"")+'</div>';}
+  return '<div class="pp-strip">'+
+    cell("Balance",money(S.balance),"started "+money(S.startBalance))+
+    cell("Open",String(S.positions.length),"positions")+
+    cell("Closed",String(S.closed.length),"trades")+
+    cell("Net P&amp;L",money(r2(netP)),"closed, after costs")+
+    cell("Net R",nR?signR(r2(netR)):"—",nR?("over "+nR+" stop-sized trade"+(nR===1?"":"s")):"needs a stop to compute")+
+    cell("W / L",wins+"W / "+losses+"L"+(flat?" / "+flat+" flat":""),"by P&amp;L after costs")+
+    cell("Rule breaks",String(rb),rb?(rb===1?"1 trade tagged: no stop":rb+" trades tagged: no stop"):"none tagged")+
+    '</div>';
+}
+function openHTML(){
+  var h='<div class="pp-card"><h3>Open positions ('+S.positions.length+')</h3>'+
+    '<p class="pp-note">Marks are manual: futures and FX have no free public feed, so type the current price yourself. Instruments ending in USDT get a fetch button for a Binance spot price.</p>';
+  if(!S.positions.length)return h+'<p class="pp-note">Nothing open.</p></div>';
+  S.positions.forEach(function(p){
+    var dist=p.stop==null?null:Math.abs(p.entry-p.stop);
+    var riskD=(dist&&dist>0)?dist*p.pp*p.qty:null;
+    h+='<div class="pp-pos">';
+    h+='<div class="pp-posline"><b class="pp-num">'+esc(p.inst)+'</b>'+
+      '<span class="pp-tag '+(p.dir==="long"?"pp-up":"pp-down")+'">'+p.dir+'</span>'+
+      '<span class="pp-num">×'+p.qty+'</span>'+
+      (p.ruleBreaks&&p.ruleBreaks.length?'<span class="pp-flag">'+esc(p.ruleBreaks.join(", "))+'</span>':"")+
+      (p.strat?'<span class="pp-tag2">'+esc(p.strat)+'</span>':"")+
+      '</div>';
+    h+='<div class="pp-note pp-num">entry '+p.entry+' → fill '+p.fill+' · stop '+(p.stop==null?"—":p.stop)+' · target '+(p.target==null?"—":p.target)+' · '+
+      (riskD==null?"risk unsized (no stop)":"risking "+money(riskD)+" to the stop")+
+      ' · opened '+esc(String(p.openedAt||"").slice(0,10))+'</div>';
+    var live;
+    if(p.mark!=null&&isFinite(p.mark)){
+      var xf=r6(p.dir==="long"?p.mark-p.adj:p.mark+p.adj);
+      var mv=p.dir==="long"?xf-p.fill:p.fill-xf;
+      var pnl=r2(mv*p.qty*p.pp-p.commOpen-p.cps*p.qty);
+      live='mark '+p.mark+' · if closed here (after costs): <b class="'+(pnl>=0?"pp-up":"pp-down")+'">'+money(pnl)+'</b>';
+      if(riskD)live+=' ('+signR(pnl/riskD)+')';
+      live+=' · MAE '+fmtPts(advPts(p))+' pts / MFE '+fmtPts(favPts(p))+' pts';
+    }else{
+      live='No mark yet — type one to see open P&amp;L and excursion.';
+    }
+    h+='<div class="pp-out pp-num">'+live+'</div>';
+    h+='<div class="pp-rowctl">'+
+      '<label class="pp-inline" for="pp-mark-'+p.id+'">Mark</label>'+
+      '<input id="pp-mark-'+p.id+'" data-act="mark" data-id="'+p.id+'" type="number" step="any" inputmode="decimal" value="'+(p.mark==null?"":p.mark)+'">'+
+      (/USDT$/i.test(p.inst)?'<button type="button" class="pp-btn" data-act="fetch" data-id="'+p.id+'">Fetch mark</button>':"")+
+      '<label class="pp-inline" for="pp-exit-'+p.id+'">Exit</label>'+
+      '<input id="pp-exit-'+p.id+'" type="number" step="any" inputmode="decimal">'+
+      '<button type="button" class="pp-btn pp-pri" data-act="close" data-id="'+p.id+'">Close</button>'+
+      '</div>';
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+function closedHTML(){
+  var h='<div class="pp-card"><h3>Closed trades ('+S.closed.length+')</h3>';
+  if(!S.closed.length)return h+'<p class="pp-note">None yet.</p></div>';
+  h+='<div class="pp-scroll"><table class="pp-table"><thead><tr>'+
+    '<th>Closed</th><th>Inst</th><th>Dir</th><th>Qty</th><th>Fills</th><th>P&amp;L</th><th>R</th><th>MAE / MFE</th><th>Comm / spread</th><th>Flags</th><th>Strategy</th>'+
+    '</tr></thead><tbody>';
+  S.closed.slice().reverse().forEach(function(t){
+    var mm=(t.maeR!=null&&t.mfeR!=null&&isFinite(t.maeR)&&isFinite(t.mfeR))
+      ?("-"+t.maeR.toFixed(2)+"R / +"+t.mfeR.toFixed(2)+"R")
+      :(fmtPts(t.maePts)+" / "+fmtPts(t.mfePts)+" pts");
+    h+='<tr>'+
+      '<td class="pp-num">'+esc(String(t.closedAt||"").slice(0,10))+'</td>'+
+      '<td class="pp-num">'+esc(t.inst)+'</td>'+
+      '<td><span class="'+(t.dir==="long"?"pp-up":"pp-down")+'">'+t.dir+'</span></td>'+
+      '<td class="pp-num">'+t.qty+'</td>'+
+      '<td class="pp-num">'+t.entryFill+' → '+t.exitFill+'</td>'+
+      '<td class="pp-num '+(t.pnl>=0?"pp-up":"pp-down")+'">'+money(t.pnl)+'</td>'+
+      '<td class="pp-num">'+(t.r==null?"—":signR(t.r))+'</td>'+
+      '<td class="pp-num">'+mm+'</td>'+
+      '<td class="pp-num">'+money(t.comm)+' / '+money(t.spreadCost)+'</td>'+
+      '<td>'+(t.ruleBreaks&&t.ruleBreaks.length?'<span class="pp-flag">'+esc(t.ruleBreaks.join(", "))+'</span>':"")+'</td>'+
+      '<td>'+(t.strat?esc(t.strat):"")+(t.stratNote?'<div class="pp-note">'+esc(t.stratNote)+'</div>':"")+'</td>'+
+      '</tr>';
+  });
+  return h+'</tbody></table></div></div>';
+}
+function settingsHTML(){
+  var s=S.settings;
+  return '<div class="pp-grid">'+
+    fld("pp-set-comm","Commission per side ($/contract)",'<input id="pp-set-comm" type="number" step="0.01" min="0" value="'+s.commissionPerSide+'">')+
+    fld("pp-set-spread","Spread (ticks)",'<input id="pp-set-spread" type="number" step="1" min="0" value="'+s.spreadTicks+'">')+
+    fld("pp-set-ticksize","Tick size (points)",'<input id="pp-set-ticksize" type="number" step="any" min="0" value="'+s.tickSize+'">')+
+    fld("pp-set-tickvalue","Tick value ($)",'<input id="pp-set-tickvalue" type="number" step="any" min="0" value="'+s.tickValue+'">')+
+    fld("pp-set-startbal","Starting balance ($)",'<input id="pp-set-startbal" type="number" step="any" min="0" value="'+S.startBalance+'">')+
+    '</div>'+
+    '<div class="pp-out pp-num" id="pp-set-out">Per point = tick value ÷ tick size = '+money(perPoint())+' per contract per point.</div>'+
+    '<div class="pp-acts">'+
+    '<button type="button" class="pp-btn" id="pp-set-apply">Apply settings</button>'+
+    '<button type="button" class="pp-btn" id="pp-reset">Reset paper account</button>'+
+    '<span class="pp-note">Costs apply to every simulated fill; open positions keep the costs they were opened with. Changing the starting balance shifts the current balance by the same amount.</span>'+
+    '</div>';
+}
+
+/* ---------- renders ---------- */
+function renderSummary(){var b=$("pp-summary");if(b)b.innerHTML=summaryHTML();}
+function renderClosed(){var b=$("pp-closed");if(b)b.innerHTML=closedHTML();}
+function renderOpen(){
+  var b=$("pp-open");if(!b)return;
+  var keep={};
+  Array.prototype.forEach.call(b.querySelectorAll('input[id^="pp-exit-"]'),function(i2){if(i2.value)keep[i2.id]=i2.value;});
+  b.innerHTML=openHTML();
+  Object.keys(keep).forEach(function(k){var e2=$(k);if(e2)e2.value=keep[k];});
+}
+function renderAll(){
+  var f=$("pp-form");if(f)f.innerHTML=formHTML();
+  var sc=$("pp-settings");if(sc)sc.innerHTML=settingsHTML();
+  renderSummary();renderOpen();renderClosed();sizePreview();
+}
+function refreshStratSelect(){
+  var sel=$("pp-strat");if(!sel)return;
+  var cur=sel.value;
+  sel.innerHTML=stratOptions();
+  sel.value=cur;
+  if(sel.selectedIndex<0)sel.value="";
+}
+
+/* ---------- sizing arithmetic, shown before the trade ---------- */
+function sizePreview(){
+  var out=$("pp-size");if(!out)return;
+  var pp=perPoint();
+  if(pp<=0){out.innerHTML="Set tick size and tick value above zero in settings before sizing can run.";return;}
+  var stopRaw=String($("pp-stop").value).trim();
+  if(stopRaw===""){
+    out.innerHTML="No stop: size cannot be derived from risk. Enter a contracts number to proceed — the position gets tagged <b>no stop</b>.";
+    return;
+  }
+  var entry=parseFloat($("pp-entry").value),stop=parseFloat(stopRaw);
+  if(!isFinite(entry)||!isFinite(stop)){out.innerHTML="Enter an entry and a stop to see the size arithmetic.";return;}
+  var dist=Math.abs(entry-stop);
+  if(dist<=0){out.innerHTML="Stop equals entry — no risk distance to size from.";return;}
+  var risk=Math.max(0,num($("pp-risk").value,1));
+  var budget=S.balance*risk/100,perC=dist*pp,rawN=budget/perC,q=Math.floor(rawN);
+  out.innerHTML="Risk budget "+money(budget)+" ("+risk+"% of "+money(S.balance)+") ÷ ("+fmtPts(dist)+" pts × "+money(pp)+"/pt = "+money(perC)+" per contract) = "+rawN.toFixed(2)+" → <b>"+q+" contract"+(q===1?"":"s")+"</b>"+
+    (q<1?" — too big for the account at this stop and risk.":"");
+}
+
+/* ---------- actions ---------- */
+function openTrade(){
+  var msg=$("pp-msg");
+  function fail(t){msg.innerHTML='<span class="pp-down">'+t+'</span>';}
+  var inst=String($("pp-inst").value||"").trim()||"MNQ";
+  var dir=$("pp-dir").value==="short"?"short":"long";
+  var entry=parseFloat($("pp-entry").value);
+  if(!isFinite(entry)){fail("Enter an entry price.");return;}
+  var stopRaw=String($("pp-stop").value).trim(),stop=null;
+  if(stopRaw!==""){stop=parseFloat(stopRaw);if(!isFinite(stop)){fail("Stop price needs to be a number, or left blank.");return;}}
+  var tRaw=String($("pp-target").value).trim(),target=null;
+  if(tRaw!==""){target=parseFloat(tRaw);if(!isFinite(target)){fail("Target needs to be a number, or left blank.");return;}}
+  var risk=Math.max(0,num($("pp-risk").value,1));
+  var pp=perPoint();
+  if(pp<=0){fail("Tick size and tick value must both be above zero (settings) before a position can be sized.");return;}
+  var qty,rb=[];
+  if(stop!=null){
+    var dist=Math.abs(entry-stop);
+    if(dist<=0){fail("Stop equals entry — no risk distance to size from.");return;}
+    var budget=S.balance*risk/100,perC=dist*pp;
+    qty=Math.floor(budget/perC);
+    if(qty<1){
+      fail("Refused: risk budget "+money(budget)+" ÷ "+money(perC)+" per contract = "+(budget/perC).toFixed(2)+", which rounds to 0 contracts — this trade is too big for the account at that stop and risk. Not opened.");
+      return;
+    }
+  }else{
+    qty=parseInt($("pp-qty").value,10);
+    if(!isFinite(qty)||qty<1){
+      fail("No stop, so size cannot be derived from risk — enter an explicit contracts number to proceed. The position gets tagged: no stop.");
+      return;
+    }
+    rb.push("no stop");
+  }
+  var adj=S.settings.spreadTicks*S.settings.tickSize;
+  var fill=r6(dir==="long"?entry+adj:entry-adj);
+  var commOpen=r2(S.settings.commissionPerSide*qty);
+  S.balance=r2(S.balance-commOpen);
+  var sel=$("pp-strat"),strat=sel?String(sel.value||""):"";
+  S.positions.push({id:uid(),inst:inst,dir:dir,entry:entry,stop:stop,target:target,
+    riskPct:risk,qty:qty,pp:pp,adj:adj,cps:S.settings.commissionPerSide,
+    fill:fill,commOpen:commOpen,mark:null,maeMark:null,mfeMark:null,
+    ruleBreaks:rb,strat:strat,openedAt:new Date().toISOString()});
+  save();
+  $("pp-entry").value="";$("pp-stop").value="";$("pp-target").value="";$("pp-qty").value="";
+  msg.innerHTML="Opened "+dir+" ×"+qty+" "+esc(inst)+" — fill "+fill+" (entry "+entry+(dir==="long"?" + ":" − ")+fmtPts(adj)+" spread, against you) · commission "+money(commOpen)+" charged"+(rb.length?" · tagged: no stop":"")+".";
+  renderOpen();renderSummary();sizePreview();
+}
+function commitMark(id,v){
+  var p=findPos(id);
+  if(!p||!isFinite(v))return;
+  p.mark=v;bump(p,v);save();renderOpen();
+}
+function fetchMark(id){
+  var p=findPos(id);if(!p)return;
+  try{
+    fetch("https://api.binance.com/api/v3/ticker/price?symbol="+encodeURIComponent(String(p.inst).toUpperCase()))
+      .then(function(r){return r.json();})
+      .then(function(j){
+        var v=(j&&j.price!=null)?parseFloat(j.price):null;
+        if(v==null||!isFinite(v))return;
+        var q=findPos(id);if(!q)return;
+        q.mark=v;bump(q,v);save();renderOpen();
+      })
+      .catch(function(){});
+  }catch(e){}
+}
+function closeTrade(id){
+  var msg=$("pp-msg");
+  var p=findPos(id);if(!p)return;
+  var inp=$("pp-exit-"+id);
+  var exit=parseFloat(inp?inp.value:"");
+  if(!isFinite(exit)){msg.innerHTML='<span class="pp-down">Enter an exit price to close '+esc(p.inst)+'.</span>';return;}
+  bump(p,exit);
+  var exitFill=r6(p.dir==="long"?exit-p.adj:exit+p.adj);
+  var commClose=r2(p.cps*p.qty);
+  var mv=p.dir==="long"?exitFill-p.fill:p.fill-exitFill;
+  var gross=mv*p.qty*p.pp;
+  var comm=r2(p.commOpen+commClose);
+  var pnl=r2(gross-comm);
+  S.balance=r2(S.balance+gross-commClose);
+  var dist=p.stop==null?null:Math.abs(p.entry-p.stop);
+  var hasR=(dist!=null&&dist>0);
+  var rVal=hasR?r2(pnl/(p.qty*dist*p.pp)):null;
+  var maeP=advPts(p),mfeP=favPts(p);
+  var rec={id:p.id,inst:p.inst,dir:p.dir,qty:p.qty,entry:p.entry,stop:p.stop,target:p.target,
+    entryFill:p.fill,exit:exit,exitFill:exitFill,pp:p.pp,adj:p.adj,
+    comm:comm,spreadCost:r2(2*p.adj*p.pp*p.qty),pnl:pnl,r:rVal,
+    maePts:r2(maeP),mfePts:r2(mfeP),
+    maeR:hasR?r2(maeP/dist):null,mfeR:hasR?r2(mfeP/dist):null,
+    ruleBreaks:p.ruleBreaks||[],strat:p.strat||"",stratNote:"",
+    openedAt:p.openedAt,closedAt:new Date().toISOString()};
+  if(rec.strat){
+    rec.stratNote=(rVal==null)
+      ?"Not logged to the strategy: no stop on this position, so R could not be computed."
+      :logToStrategy(rec.strat,rec.dir,rVal);
+  }
+  S.closed.push(rec);
+  S.positions=S.positions.filter(function(x){return x.id!==p.id;});
+  save();
+  msg.innerHTML="Closed "+p.dir+" ×"+p.qty+" "+esc(p.inst)+" — exit "+exit+" → fill "+exitFill+" (spread against you) · commissions "+money(comm)+" total · P&amp;L "+money(pnl)+" · "+(rVal==null?"R — (no stop)":signR(rVal))+(rec.stratNote?" · "+esc(rec.stratNote):"")+"";
+  renderOpen();renderClosed();renderSummary();sizePreview();
+}
+function applySettings(){
+  var s=S.settings;
+  s.commissionPerSide=Math.max(0,num($("pp-set-comm").value,s.commissionPerSide));
+  s.spreadTicks=Math.max(0,num($("pp-set-spread").value,s.spreadTicks));
+  s.tickSize=Math.max(0,num($("pp-set-ticksize").value,s.tickSize));
+  s.tickValue=Math.max(0,num($("pp-set-tickvalue").value,s.tickValue));
+  var nb=Math.max(0,num($("pp-set-startbal").value,S.startBalance));
+  if(nb!==S.startBalance){S.balance=r2(S.balance+(nb-S.startBalance));S.startBalance=nb;}
+  save();
+  var o=$("pp-set-out");
+  if(o)o.innerHTML="Per point = tick value ÷ tick size = "+money(perPoint())+" per contract per point. Applied — new positions use these figures.";
+  renderSummary();sizePreview();
+  $("pp-msg").innerHTML="Settings applied.";
+}
+function resetAccount(){
+  var ok=false;
+  try{ok=window.confirm("Reset the paper account? Open positions and the closed-trade record here are cleared and the balance returns to the starting balance. Trades already logged to strategies stay logged.");}catch(e){ok=false;}
+  if(!ok)return;
+  S.positions=[];S.closed=[];S.balance=S.startBalance;
+  save();renderAll();
+  $("pp-msg").innerHTML="Paper account reset.";
+}
+
+/* ---------- boot: tab, panel, wiring ---------- */
+function boot(){
+  if($("panel-paper"))return;
+  var nav=document.querySelector("nav.tabs");
+  if(!nav){
+    nav=document.createElement("nav");
+    nav.className="tabs";
+    nav.setAttribute("role","tablist");
+    document.body.insertBefore(nav,document.body.firstChild);
+  }
+  var btn=document.createElement("button");
+  btn.id="tab-paper";
+  btn.className="tab";
+  btn.setAttribute("role","tab");
+  btn.setAttribute("aria-selected","false");
+  btn.setAttribute("aria-controls","panel-paper");
+  btn.textContent="Paper";
+  var anchor=null,i;
+  for(i=0;i<nav.children.length;i++){
+    if(nav.children[i].getAttribute("role")!=="tab"){anchor=nav.children[i];break;}
+  }
+  if(anchor)nav.insertBefore(btn,anchor);else nav.appendChild(btn);
+
+  var sec=document.createElement("section");
+  sec.id="panel-paper";
+  sec.setAttribute("role","tabpanel");
+  sec.setAttribute("aria-labelledby","tab-paper");
+  sec.hidden=true;
+  var panels=document.querySelectorAll('[role="tabpanel"]');
+  var last=panels.length?panels[panels.length-1]:null;
+  if(last&&last.parentNode){last.parentNode.insertBefore(sec,last.nextSibling);}
+  else{document.body.appendChild(sec);}
+
+  sec.innerHTML=shellHTML();
+  renderAll();
+
+  /* self-contained tab switch: hide every panel, show this one */
+  btn.addEventListener("click",function(){
+    var ps=document.querySelectorAll('[role="tabpanel"]'),k;
+    for(k=0;k<ps.length;k++)ps[k].hidden=true;
+    sec.hidden=false;
+    var tabs=document.querySelectorAll('[role="tab"]');
+    for(k=0;k<tabs.length;k++)tabs[k].setAttribute("aria-selected",tabs[k]===btn?"true":"false");
+    refreshStratSelect();
+    renderSummary();
+  });
+  /* leaving via any other tab hides this panel (the app router does not know it yet) */
+  document.addEventListener("click",function(e){
+    var t=(e.target&&e.target.closest)?e.target.closest('[role="tab"]'):null;
+    if(t&&t!==btn){sec.hidden=true;btn.setAttribute("aria-selected","false");}
+  });
+
+  /* delegated controls */
+  sec.addEventListener("click",function(e){
+    var el=(e.target&&e.target.closest)?e.target.closest("button"):null;
+    if(!el)return;
+    if(el.id==="pp-open-btn"){openTrade();return;}
+    if(el.id==="pp-set-apply"){applySettings();return;}
+    if(el.id==="pp-reset"){resetAccount();return;}
+    var act=el.getAttribute("data-act")||"",id=el.getAttribute("data-id")||"";
+    if(act==="close"){closeTrade(id);return;}
+    if(act==="fetch"){fetchMark(id);return;}
+  });
+  sec.addEventListener("input",function(e){
+    var id=(e.target&&e.target.id)||"";
+    if(id==="pp-entry"||id==="pp-stop"||id==="pp-risk"||id==="pp-qty")sizePreview();
+  });
+  sec.addEventListener("change",function(e){
+    var t=e.target;
+    if(t&&t.getAttribute&&t.getAttribute("data-act")==="mark"){
+      commitMark(t.getAttribute("data-id"),parseFloat(t.value));
+    }
+  });
+}
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",boot);
+}else{
+  boot();
+}
+})();
+</script>
+<style>
+/* Paper tab - scoped to #panel-paper, app CSS vars only */
+#panel-paper{background:var(--paper);color:var(--ink)}
+#panel-paper .pp-wrap{max-width:1080px;margin:0 auto;padding:18px 20px 60px}
+#panel-paper h2{font-family:var(--disp);font-size:26px;margin:10px 0 4px}
+#panel-paper h3{font-family:var(--disp);font-size:16px;margin:0 0 8px}
+#panel-paper .pp-note{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin:6px 0 0;line-height:1.6;overflow-wrap:anywhere}
+#panel-paper .pp-caption{font-family:var(--mono);font-size:12px;color:var(--signal);border-left:2px solid var(--signal);background:var(--tint);padding:7px 10px;margin:12px 0 0;line-height:1.6}
+#panel-paper .pp-card{border:1px solid var(--rule);background:var(--card);border-radius:2px;padding:14px 14px 16px;margin:16px 0 0}
+#panel-paper .pp-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:16px 0 0}
+#panel-paper .pp-cell{border:1px solid var(--rule);background:var(--card);border-radius:2px;padding:9px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+#panel-paper .pp-k{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+#panel-paper .pp-v{font-size:16px;color:var(--ink);overflow-wrap:anywhere}
+#panel-paper .pp-sub{font-family:var(--mono);font-size:10.5px;color:var(--ink3);overflow-wrap:anywhere}
+#panel-paper .pp-num{font-family:var(--mono)}
+#panel-paper .pp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:6px}
+#panel-paper .pp-f{display:flex;flex-direction:column;gap:4px;min-width:0}
+#panel-paper .pp-f label{font-family:var(--mono);font-size:10.5px;color:var(--ink2)}
+#panel-paper input,#panel-paper select{font-family:var(--mono);font-size:14px;padding:8px 9px;border:1px solid var(--rule2);background:var(--paper);color:var(--ink);border-radius:2px;width:100%;min-width:0}
+#panel-paper input:focus,#panel-paper select:focus{outline:2px solid var(--accent);outline-offset:0}
+#panel-paper .pp-btn{font-family:var(--mono);font-size:12px;padding:8px 12px;border:1px solid var(--rule2);background:var(--card);color:var(--ink);border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .15s ease,border-color .15s ease}
+#panel-paper .pp-btn:hover{background:var(--tint)}
+#panel-paper .pp-pri{border-color:var(--accent);color:var(--accent)}
+#panel-paper .pp-acts{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+#panel-paper .pp-out{font-family:var(--mono);font-size:12.5px;background:var(--tint);color:var(--ink);padding:9px 10px;border-radius:2px;margin-top:10px;line-height:1.7;overflow-wrap:anywhere}
+#panel-paper .pp-msg{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin:10px 0 0;line-height:1.7;overflow-wrap:anywhere}
+#panel-paper .pp-msg:empty{display:none}
+#panel-paper .pp-pos{border:1px solid var(--rule);border-radius:2px;background:var(--paper);padding:10px 11px;margin:10px 0 0}
+#panel-paper .pp-posline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+#panel-paper .pp-posline b{overflow-wrap:anywhere;min-width:0}
+#panel-paper .pp-up{color:var(--up)}
+#panel-paper .pp-down{color:var(--down)}
+#panel-paper .pp-tag{font-family:var(--mono);font-size:10.5px;border:1px solid var(--rule2);padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em}
+#panel-paper .pp-tag.pp-up{border-color:var(--up)}
+#panel-paper .pp-tag.pp-down{border-color:var(--down)}
+#panel-paper .pp-tag2{font-family:var(--mono);font-size:10.5px;color:var(--accent);border:1px solid var(--accent);padding:1px 6px;border-radius:2px;overflow-wrap:anywhere;max-width:100%}
+#panel-paper .pp-flag{font-family:var(--mono);font-size:10.5px;color:var(--signal);border:1px solid var(--signal);padding:1px 6px;border-radius:2px;white-space:nowrap}
+#panel-paper .pp-rowctl{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:10px}
+#panel-paper .pp-rowctl input{width:110px;flex:0 1 auto}
+#panel-paper .pp-inline{font-family:var(--mono);font-size:10.5px;color:var(--ink2);align-self:center}
+#panel-paper .pp-scroll{overflow-x:auto;margin-top:8px;max-width:100%}
+#panel-paper .pp-table{border-collapse:collapse;font-size:12.5px;min-width:820px;width:100%}
+#panel-paper .pp-table th,#panel-paper .pp-table td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+#panel-paper .pp-table th{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+#panel-paper .pp-table td{overflow-wrap:anywhere}
+#panel-paper details.pp-detail summary{font-family:var(--mono);font-size:12px;color:var(--ink2);cursor:pointer;min-height:24px}
+@media (max-width:900px){
+  #panel-paper input,#panel-paper select,#panel-paper .pp-btn{min-height:44px}
+}
+@media (pointer:coarse){
+  #panel-paper input,#panel-paper select,#panel-paper .pp-btn{min-height:44px}
+}
+@media (max-width:400px){
+  #panel-paper .pp-rowctl input{flex:1 1 40%;width:auto}
+  #panel-paper .pp-wrap{padding:14px 12px 48px}
+}
+@media (prefers-reduced-motion:reduce){
+  #panel-paper *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  #panel-paper,#tab-paper{display:none!important}
+}
+</style>
