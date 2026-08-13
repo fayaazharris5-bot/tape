@@ -22,19 +22,6 @@
   "Calmar ratio",
   "Compounding"
  ],
- "ind": [
-  "Lagging vs leading",
-  "Moving average",
-  "RSI",
-  "MACD",
-  "Bollinger Bands",
-  "ATR",
-  "Stochastic",
-  "Fibonacci retracement",
-  "Divergence",
-  "Confluence",
-  "Anchored VWAP"
- ],
  "bt": [
   "Edge",
   "Backtest",
@@ -301,19 +288,6 @@
   "False breakout",
   "Trendline",
   "Pattern subjectivity"
- ],
- "fib": [
-  "Golden ratio",
-  "Fibonacci extension",
-  "Equilibrium / 50% level",
-  "Elliott Wave",
-  "Wave count",
-  "Impulse vs corrective",
-  "ABCD pattern",
-  "Harmonic patterns",
-  "Gartley",
-  "Gann",
-  "Time cycles"
  ],
  "ind2": [
   "Simple moving average",
@@ -585,5 +559,8 @@
   "Post-exit review",
   "Slippage on exit",
   "One trade at a time"
+ ],
+ "ind": [
+  "Anchored VWAP"
  ]
 }
