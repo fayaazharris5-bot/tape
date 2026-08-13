@@ -43,18 +43,32 @@ Python is `py -3` on this machine — plain `python` hits the Store shim and fai
   Deep-linkable via `#strategies&s=<key>`, Escape closes. Logging stays on
   the card so input ids exist exactly once. Test group 22.
 
-## Content status
+## Content status — COMPLETE
 
-`py -3 list_unwritten.py` regenerates `unwritten.json` (terms lacking a long
-body, grouped by section code) and prints the totals. Run it after ANY content
-change — the wave-3 writer briefs read their term lists straight from it.
+**All 995 terms carry a long-form body.** `py -3 list_unwritten.py` prints
+`unwritten 0`. Run it after ANY content change; it regenerates
+`unwritten.json`, which is what writer briefs read their term lists from.
 
-Written this session: crypto+prop (52), macro+econ (49), portfolio/factor/
-participants (42), indicators (11+23), fibonacci/waves/harmonics (11),
-red flags (14), forex (14), trading operations (17), basics+pa (7).
+`py -3 audit_claims.py` re-checks every body actually spliced into
+index.html — the ban regexes, and that each closes with the
+"Where people get fooled:" paragraph. Currently: 994 bodies, 0 ban hits,
+0 structural misses. Exit code is non-zero on any hit, so it works as a
+gate. Run it after content changes alongside the suite.
 
-Remaining sections had writers dispatched; check `unwritten.json` for the
-current truth rather than trusting this list.
+Body count is 994 for 995 terms because **"Chop" exists twice** — once in
+`pa`, once in `slang` — with near-identical definitions, so both cards
+share the one body. This is a pre-existing near-duplicate of the same
+class as the 11 removed in earlier dedupe passes, and it was left alone
+deliberately: deduping changes EXPECT_TERMS, needs see-links re-pointed
+and the ALIAS map extended, and is a curation call for the user. Nothing
+is broken by it — both cards render correctly.
+
+## Next content work
+
+Not more terms. The remaining gaps are:
+- `usage` and `see` are present on everything merged, but older
+  hand-written entries predate that convention — spot-check coverage.
+- Second/third charts (viz2) for the priority structural terms.
 
 ## Writer pipeline — how content gets made
 
@@ -150,10 +164,19 @@ print(len(names))
 
 ## Next queue
 
-1. Merge whatever writer files have landed; re-run list_unwritten.py.
-2. Write any section whose writer died, in-session.
-3. Second/third charts (viz2) for the priority structural terms.
-4. Responsive + offline-from-file check at 360/768/1440 in both schemes.
+1. Second/third charts (viz2) for the priority structural terms.
+2. Decide the "Chop" duplicate (see content status).
+3. Publishing — blocked on the GitHub username.
+
+Done and not worth redoing: responsive check at 360/768/1440 in both
+colour schemes across every tab, with the strategy detail overlay open
+and closed — zero horizontal overflow after fixing two bugs (the
+strategies search row never wrapped, so the sort select's ~200px
+intrinsic width pushed the document to 456px on a phone; and the detail
+overlay needed border-box plus min-width:0, because a flex item defaults
+to min-width:auto and was stretched to its widest child's min-content).
+Offline holds: no external fonts, scripts or images — the only network
+dependency is the Live chart embed, which has a tested offline fallback.
 
 ## Publishing
 
