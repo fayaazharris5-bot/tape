@@ -83,7 +83,12 @@ answer into this file immediately**, then act on it.
   walk-forward results; control-gate failures stay "untested" regardless of
   returns, with the failure recorded in results; fields the engine does not
   produce stay empty.
-  → path confirmed:
+  → path confirmed: **YES** — `C:\Users\fayaa\Downloads\ai trading thing\strategy-lab`
+  exists and carries the markers this file describes: `engine/`, `daily.py`,
+  `config.json`, `NEXT.md`, and `results/PREDICTIONS.md` (alongside
+  `PBO_REPORT.md` and the tier lists). Verified by direct inspection on
+  2026-08-14, not inferred. `sync_strategies.py` is NOT written yet — that
+  is the next step and has not been asked for.
 
 ## Do not build unless asked
 

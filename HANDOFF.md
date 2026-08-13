@@ -1,7 +1,7 @@
 # Tape — session handoff. Read fully, then continue.
 
 Repo: `C:\Users\fayaa\Downloads\tape`.
-**995 terms, 5 tabs, suite green at 252 assertions.**
+**995 terms, 5 tabs, suite green at 261 assertions.**
 
 ```bash
 cd C:\Users\fayaa\Downloads\tape
@@ -68,10 +68,11 @@ is broken by it — both cards render correctly.
 
 ## Next content work
 
-Not more terms. The remaining gaps are:
-- `usage` and `see` are present on everything merged, but older
-  hand-written entries predate that convention — spot-check coverage.
-- Second/third charts (viz2) for the priority structural terms.
+Not more terms. The coverage spot-check that used to sit here is done:
+`audit_coverage.py` reports 0 bodies missing `usage`, 0 missing `see`,
+and 0 terms missing an example, so the older hand-written entries turned
+out to already carry both fields. The only content item left is
+second/third charts (viz2) for the priority structural terms.
 
 ## Writer pipeline — how content gets made
 
