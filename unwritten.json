@@ -71,63 +71,10 @@
   "Model",
   "A+ setup"
  ],
- "psy": [
-  "Outcome bias",
-  "Overconfidence after a win streak",
-  "Analysis paralysis",
-  "Screen time",
-  "Availability heuristic",
-  "Base rate neglect",
-  "Narrative fallacy",
-  "Herding",
-  "Illusion of control",
-  "Dunning-Kruger in trading",
-  "Fear of missing out",
-  "Regret aversion",
-  "Mental accounting",
-  "Boredom trading",
-  "Identity and trading",
-  "Isolation",
-  "Expectation setting",
-  "Detachment from money",
-  "The first big win problem"
- ],
  "slang": [
-  "Bull / bullish",
-  "Bear / bearish",
-  "Dip",
-  "Bull trap",
-  "Dead cat bounce",
-  "Capitulation",
-  "Blow-off top",
-  "Short squeeze",
-  "Whale",
-  "Pump and dump",
-  "Rug pull",
-  "Rekt",
-  "Bagholder",
-  "HODL",
-  "Diamond / paper hands",
   "ATH / ATL",
   "Alpha / beta",
-  "Cope",
-  "Diamond hands / paper hands",
-  "Catching a falling knife",
-  "Stop hunt",
-  "Revenge on the market",
-  "Buy the dip",
-  "To the moon",
-  "Alpha decay in public",
-  "Backtest hero",
-  "Blown up",
-  "Chop",
-  "Fade",
-  "Printing",
-  "Melt-up",
-  "Exit liquidity",
-  "Degen",
-  "Send it",
-  "Sim / paper"
+  "Cope"
  ],
  "exec": [
   "Colocation",
@@ -471,8 +418,5 @@
   "Post-exit review",
   "Slippage on exit",
   "One trade at a time"
- ],
- "pa": [
-  "Chop"
  ]
 }

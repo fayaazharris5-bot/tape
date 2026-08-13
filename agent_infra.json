@@ -1,0 +1,589 @@
+{
+ "API": {
+  "long": "An API (application programming interface) is the set of calls a broker or data vendor exposes so software can act without a human clicking — place an order, pull a quote, fetch historical bars, check a balance. Each call has a defined request format and response format, usually JSON over HTTPS today, though older systems still use FIX or proprietary formats.\n\nFor retail automation this is the entry point: everything downstream — a bot, a scanner, a backtester pulling live data — goes through it. Brokers publish separate endpoints for paper and live trading precisely because a bug in the request or the response handling reaches a real account the moment code is pointed at the live URL.\n\nThe contract is only as good as its documentation and its rate limits. Fields get renamed between versions, timestamps arrive in inconsistent timezones, and error codes don't always distinguish \"rejected\" from \"pending\" from \"no response yet.\"\n\nWhere people get fooled: assuming the API behaves exactly as documented under load or during an outage. What matters is not the happy path — it's what the code does when a call times out, returns malformed data, or partially fills, and whether that gets logged and stopped rather than silently retried into a mess.",
+  "usage": "The interface a bot calls to place orders or pull data; test every call against the paper endpoint before pointing it at a live account.",
+  "see": [
+   "REST vs WebSocket",
+   "Rate limit",
+   "FIX protocol",
+   "Latency to broker",
+   "Logging"
+  ]
+ },
+ "REST vs WebSocket": {
+  "long": "REST is request-response: the client asks a specific question — what's the current quote for X — and the server answers once. A WebSocket is a persistent connection the server pushes updates through as they happen, without the client re-asking.\n\nFor quotes and order-book data that changes every second, REST means constant polling — hundreds of requests a minute, most returning nothing new, eating into the rate limit. A WebSocket avoids that by streaming only the changes, which is why every serious market-data feed offers one.\n\nThe trade-off is complexity. A WebSocket connection can drop silently — no error, just no more messages — and code has to notice the gap and reconnect, replaying anything missed. REST calls fail loudly and are trivial to retry; that simplicity is real value for anything that doesn't need sub-second updates.\n\nWhere people get fooled: treating a WebSocket as more reliable because it feels \"live.\" A silently dead socket nobody is checking produces stale prices dressed up as current ones — worse than a REST call that errors out and stops the bot.",
+  "usage": "REST suits occasional lookups; a WebSocket suits anything reacting to price in real time, provided the code detects a dropped connection.",
+  "see": [
+   "API",
+   "Heartbeat",
+   "Data feed",
+   "Rate limit"
+  ]
+ },
+ "Rate limit": {
+  "long": "A rate limit is the maximum number of API calls a vendor allows in a given window — commonly requests per second or per minute — enforced to protect the vendor's infrastructure from any one client overloading it.\n\nExceeding it gets requests throttled or rejected, sometimes with a temporary ban on the API key. Vendors document the limit, but shared infrastructure means the practical ceiling can sit lower during busy periods than the published figure suggests.\n\nA bot polling too aggressively, or retrying failed calls in a tight loop without backoff, is the common way to hit it — and the failure compounds, because a rejected order-status check can leave the bot blind to a fill it already made.\n\nWhere people get fooled: writing a retry loop that fires immediately on failure. That's the exact pattern that turns a brief hiccup into a rate-limit ban, at the worst possible moment — mid-position, with no visibility into what the account actually holds.",
+  "usage": "The ceiling a vendor sets on calls per minute; build backoff into retries rather than hammering the endpoint after a failure.",
+  "see": [
+   "API",
+   "REST vs WebSocket",
+   "Kill switch",
+   "Idempotency"
+  ]
+ },
+ "FIX protocol": {
+  "long": "FIX (Financial Information eXchange) is a messaging standard built for institutional trading — orders, executions, market data — over dedicated connections rather than a general-purpose web API. It predates REST by decades and still links brokers, exchanges and prime brokers to each other.\n\nMessages are tag-value pairs — a fixed numeric tag for \"symbol,\" another for \"price\" — rather than JSON, fast to parse but unreadable without a specification in hand. Institutions run persistent FIX sessions with sequence numbers, so a dropped message is detected and can be replayed rather than silently lost.\n\nRetail platforms mostly hide FIX behind a simpler REST or WebSocket layer; direct FIX access is generally reserved for firms with the volume to justify the connectivity and compliance overhead of running it directly.\n\nWhere people get fooled: assuming FIX access itself confers an edge. It's plumbing for reliable, fast message delivery, not a source of better prices or information — an order sent over FIX and one sent over a retail API reach the exchange on the same economic terms.",
+  "usage": "The messaging standard institutions use to talk to exchanges; retail platforms wrap it, they rarely expose it directly.",
+  "see": [
+   "API",
+   "Latency",
+   "Colocation",
+   "Execution algorithm"
+  ]
+ },
+ "Data feed": {
+  "long": "A data feed is the stream of prices, volumes and order-book updates a platform or vendor supplies — delayed, end-of-day, or real time — covering whichever instruments the vendor licenses from the exchange.\n\nExchanges charge for real-time data separately from delayed data, and vendors pass that cost through or bundle it into a subscription; a free feed is very often fifteen-to-twenty minutes delayed even when the interface makes no mention of it.\n\nFeed quality varies beyond latency: some feeds consolidate multiple venues into one price, others report only their own venue, and gaps or bad ticks show up more often on cheaper feeds during volatile opens.\n\nWhere people get fooled: backtesting against one feed and trading against another. Different vendors' historical bars disagree on the open, high and close often enough that a strategy tuned to one dataset's quirks can behave differently the moment it's pointed at a different feed in production.",
+  "usage": "The source of prices a platform supplies; check whether it's real time or delayed before trusting a signal built on it.",
+  "see": [
+   "Bad tick",
+   "Data quality",
+   "Latency",
+   "Backfill",
+   "Corporate action adjustment"
+  ]
+ },
+ "Backfill": {
+  "long": "Backfill is the process of populating historical data going backwards from today — pulling years of past bars into a database so a strategy has something to test against, or filling a gap left by an outage.\n\nVendors typically cap how far back a given resolution is available; minute bars might go back a few years, daily bars decades, because storing and serving fine-grained history at scale costs the vendor more than most subscribers will pay for.\n\nBackfilled data is reconstructed after the fact, and reconstruction methods differ — how a vendor handles a stock that delisted, or a split that happened mid-history — which is exactly where survivorship bias and adjustment errors creep in.\n\nWhere people get fooled: assuming a backfilled dataset is a faithful record of what was actually knowable at the time. Restated financials, corrected bad ticks and revised corporate-action data all get folded in retroactively, which is not what a live strategy would have seen on the day.",
+  "usage": "Historical data pulled in after the fact; check how far back it goes and how the vendor handled delistings before relying on it.",
+  "see": [
+   "Survivorship-free dataset",
+   "Point-in-time data",
+   "Corporate action adjustment",
+   "Data quality"
+  ]
+ },
+ "VPS": {
+  "long": "A VPS (virtual private server) is a remote machine, rented by the hour or month, that runs a bot continuously without depending on a home internet connection or a laptop staying powered on and awake.\n\nThe main reason to use one for retail automation is uptime and proximity: a VPS hosted near the broker's servers cuts round-trip latency versus a home connection, and it keeps running through a power cut, a reboot, or a laptop lid closing.\n\nIt is not a source of edge — colocation at the exchange itself is a different and far more expensive thing, reserved for firms competing on microseconds. A retail VPS mainly buys reliability, not a speed advantage over other retail participants.\n\nWhere people get fooled: treating the VPS as a substitute for monitoring. A bot running unattended on a rented server still needs alerting on disconnects and errors; \"always on\" and \"always watched\" are not the same property, and the failures that matter happen exactly when nobody is looking.",
+  "usage": "A rented always-on server for running a bot continuously; it buys uptime, not a speed edge over other retail traders.",
+  "see": [
+   "Colocation",
+   "Latency to broker",
+   "Monitoring and alerting",
+   "Heartbeat",
+   "Kill switch"
+  ]
+ },
+ "Heartbeat": {
+  "long": "A heartbeat is a small periodic message — a ping, a timestamp write, a \"still alive\" signal — that a running system sends so something else can confirm it hasn't silently died or hung.\n\nIn a trading bot it typically pairs with monitoring: the bot writes a heartbeat every few seconds, and a separate watcher alerts if that heartbeat stops arriving, because a frozen process produces no error message at all — it just stops doing anything, including managing open risk.\n\nThe same idea applies to a broker connection: FIX sessions and some WebSocket feeds send their own heartbeats so either side can detect a dead link within seconds rather than discovering it minutes later when an order never confirms.\n\nWhere people get fooled: building the heartbeat but not the alert that watches it. A heartbeat nobody is checking is just a log entry — the value is entirely in the monitoring layer that notices when it stops.",
+  "usage": "A periodic still-alive signal from a running bot; useful only once a monitor is actually watching for it to stop arriving.",
+  "see": [
+   "Monitoring and alerting",
+   "Kill switch",
+   "State machine",
+   "REST vs WebSocket"
+  ]
+ },
+ "Monitoring and alerting": {
+  "long": "Monitoring is the ongoing check of a running system's state — is the bot connected, is the heartbeat arriving, does the position it thinks it holds match what the broker reports. Alerting is the notification that fires when one of those checks fails.\n\nFor an unattended strategy the two together are the difference between a disconnect costing five minutes and costing a full session: an alert that reaches a phone means a human can intervene, or the kill switch can fire, before an unmanaged position sits open through a gap.\n\nEffective alerting is narrow and specific — \"position mismatch detected,\" \"no heartbeat for ninety seconds\" — rather than a flood of low-value notifications that get ignored after the first week, which is how real alerts end up missed.\n\nWhere people get fooled: equating logging with monitoring. A log file that records a failure after the fact is forensics, not protection — it explains what went wrong once the damage is done, a different job from stopping it happening.",
+  "usage": "The layer that watches a running bot and notifies a human when something breaks; distinct from logging, which only records it afterwards.",
+  "see": [
+   "Logging",
+   "Heartbeat",
+   "Kill switch",
+   "Reconciliation",
+   "State machine"
+  ]
+ },
+ "Time synchronisation": {
+  "long": "Time synchronisation is keeping a system's clock accurate against a reliable external reference, typically NTP servers, so timestamps on orders, fills and log entries are correct to within a small tolerance.\n\nIt matters more than it sounds: exchanges reject or flag orders whose client timestamp drifts too far from server time, and a bot comparing \"now\" to a scheduled event — an open, a news release, a session boundary — acts on the wrong side of that boundary if its clock is off by even a few seconds.\n\nCloud VPS instances usually sync automatically, but a badly configured local machine, a VM that's been asleep, or a container with a frozen clock can drift by minutes without any visible symptom until a timestamped comparison fails.\n\nWhere people get fooled: assuming the operating system's clock is accurate by default. Drift is invisible until it causes a rejected order or a mistimed entry, at which point the timestamp in the log looks entirely plausible even though it was wrong.",
+  "usage": "Keeping a bot's clock accurate against a reliable time source; drift causes timing errors that look plausible in the log but aren't.",
+  "see": [
+   "Logging",
+   "Session",
+   "Monitoring and alerting",
+   "State machine"
+  ]
+ },
+ "Database vs flat files": {
+  "long": "A flat file is a plain file on disk — CSV, JSON, a text log — read and written directly by a script. A database, such as SQLite or PostgreSQL, adds structure: indexed lookups, concurrent access from multiple processes, and constraints that reject malformed writes.\n\nFor a small backtest running on a laptop, flat files are simpler and entirely adequate — there's no concurrency to manage and the whole dataset fits comfortably in memory. As data grows, or several processes need to read and write the same state at once — a bot and a monitoring dashboard, say — a database avoids the file-locking and partial-write problems flat files are prone to.\n\nThe choice is an engineering one, not a strategy one — it affects the reliability and speed of the tooling, not the returns of anything running on top of it.\n\nWhere people get fooled: a flat file written and read concurrently without any locking, which can produce a partial or corrupted read at exactly the moment the bot needs an accurate position count.",
+  "usage": "Plain files suit a single-process backtest; a database earns its complexity once several processes read and write the same state concurrently.",
+  "see": [
+   "State machine",
+   "Reconciliation",
+   "Logging",
+   "Idempotency"
+  ]
+ },
+ "Survivorship-free dataset": {
+  "long": "A survivorship-free dataset includes instruments that delisted, went bankrupt, or were removed from an index — not just the ones still trading today. It's the property that survivorship bias is a failure to have.\n\nBuilding one takes deliberate effort: a vendor has to keep records of delisted tickers and splice them into the historical universe as of the dates they were actually tradeable, rather than quietly dropping them once they stop existing.\n\nMost free and many paid retail data sources are not survivorship-free by default — they apply today's constituent list backwards, which erases every company that failed along the way and biases any historical test toward the survivors.\n\nWhere people get fooled: assuming a long history of data is the same thing as an unbiased one. Twenty years of prices for today's index members is twenty years of hindsight, not twenty years of what was actually investable at each point in time.",
+  "usage": "A dataset that keeps delisted and failed instruments in the historical record rather than quietly dropping them; check for this before trusting a long backtest.",
+  "see": [
+   "Survivorship bias",
+   "Point-in-time data",
+   "Universe",
+   "Data quality"
+  ]
+ },
+ "Corporate action adjustment": {
+  "long": "A corporate action — a split, a dividend, a spin-off, a rights issue — changes the number of shares outstanding or the cash entitlement attached to them, and a price series has to be adjusted for it or the chart shows a jump or drop that has nothing to do with trading.\n\nThe adjustment itself is arithmetic: a 2-for-1 split halves the historical price and doubles the historical share count so the chart reads continuously; a dividend adjustment subtracts the payout from prior prices so total-return comparisons stay fair.\n\nVendors adjust differently — some cover splits only, some cover dividends too, some apply the adjustment at the ex-date and some at the pay date — and mixing an adjusted feed with an unadjusted one in the same backtest silently corrupts signals around every action date.\n\nWhere people get fooled: an indicator, a moving average or a support level that looks like it \"broke\" on a chart, when an unadjusted split actually created a price gap the market never traded through.",
+  "usage": "The arithmetic that removes split and dividend distortions from a price series; confirm which method a vendor uses before trusting signals near an action date.",
+  "see": [
+   "Corporate action",
+   "Adjusted price",
+   "Data quality",
+   "Backfill"
+  ]
+ },
+ "Dry run mode": {
+  "long": "Dry run mode is a bot configuration that executes the full decision logic — reading data, generating signals, sizing positions — but stops short of sending the resulting order to the broker, logging what it would have done instead.\n\nIt sits between backtesting and paper trading: unlike a backtest, it runs on live, current data in real time, which surfaces timing and data-feed issues a backtest can't; unlike paper trading, no simulated fill is recorded, so it can't validate fill quality or slippage.\n\nThe main use is catching bugs in the live data path and the order-construction logic before either is trusted with an account — a bug that only shows up when live data arrives in a slightly different shape than backtest data.\n\nWhere people get fooled: treating a clean dry run as proof the strategy is ready. It only tests that the code runs without crashing on live data — it says nothing about whether the fills it would have gotten, and the costs attached to them, make the strategy viable.",
+  "usage": "A mode where the bot decides and logs but never sends the order; useful for catching code bugs, not for judging whether the strategy works.",
+  "see": [
+   "Paper trading a bot",
+   "Replay testing",
+   "Fail-safe default",
+   "Kill switch"
+  ]
+ },
+ "Chart timeframe alignment": {
+  "long": "Chart timeframe alignment is making sure every indicator, signal and comparison in a system references bars measured on a consistent clock — a five-minute bar closing at 10:05 actually containing the trades from 10:00 to 10:05, not some other window shifted by the vendor's timezone handling or session definition.\n\nMisalignment creeps in when combining data from different sources: one feed might build daily bars on exchange local time, another on UTC, and a strategy comparing \"today's high\" across the two is silently comparing two different 24-hour windows.\n\nIt also matters across timeframes within one feed — a strategy reading both five-minute and daily bars needs the daily bar to actually be closed, not a running total, before the daily signal is valid, or it's leaking information from a bar that hasn't finished forming.\n\nWhere people get fooled: a backtest that quietly uses a higher-timeframe bar before that bar has actually closed, a specific form of look-ahead bias that timeframe misalignment makes easy to introduce by accident.",
+  "usage": "Confirming every timeframe in a system shares the same clock and session definition; misalignment is a common, quiet source of look-ahead bias.",
+  "see": [
+   "Timezone alignment",
+   "Bar close vs intrabar signal",
+   "Look-ahead bias",
+   "Data quality"
+  ]
+ },
+ "Bar close vs intrabar signal": {
+  "long": "A signal generated on bar close uses only data from a bar that has finished forming — open, high, low and close are all final and won't change. An intrabar signal reacts to price while the current bar is still forming, using a high, low or close that can still move before the bar ends.\n\nBar-close signals are simpler to backtest honestly, because the same rule that generated the historical signal is exactly what a live bot sees — there's no ambiguity about what was knowable at that instant.\n\nIntrabar signals can react faster, which matters for some strategies, but a backtest of one has to simulate the bar forming tick by tick or it silently uses information — the eventual high, say — before it existed, a direct route to look-ahead bias if the engine isn't built for it.\n\nWhere people get fooled: a backtest built on daily OHLC bars that fires a signal off the day's high or low, unaware that in live trading that high or low isn't known until the day is over — the backtest is trading on the future without anyone intending it to.",
+  "usage": "Whether a rule fires only after a bar finishes forming or reacts mid-bar; a backtest has to model this correctly or it quietly uses information from the future.",
+  "see": [
+   "Look-ahead bias",
+   "Chart timeframe alignment",
+   "Vectorised vs event-driven",
+   "OHLCV"
+  ]
+ },
+ "Replay testing": {
+  "long": "Replay testing runs a bot's actual live-trading code against recorded historical data played back tick by tick or bar by bar, in the same sequence the code would experience in production, rather than through a separate backtest engine.\n\nThe point is to test the real code path — the same functions that will place a live order, not a simplified vectorised approximation of it — catching bugs in order construction, state handling and error recovery that a fast vectorised backtest skips over entirely.\n\nIt's slower than a standard backtest by design, because it's exercising the event-driven machinery a live bot actually runs on, including whatever latency or retry logic sits in the order path.\n\nWhere people get fooled: assuming replay testing validates the strategy's edge. It validates that the code behaves correctly under realistic conditions — a strategy with no edge replays just as cleanly as one that has an edge, and the two questions stay separate.",
+  "usage": "Running the live bot's actual code against historical data in sequence; it tests the code for bugs, it does not test whether the strategy has an edge.",
+  "see": [
+   "Vectorised vs event-driven",
+   "Dry run mode",
+   "Paper trading a bot",
+   "State machine"
+  ]
+ },
+ "Screener": {
+  "long": "A screener filters a universe of instruments down to a shortlist matching specified criteria — price above a moving average, volume above average, market cap within a range — run once or on a schedule against current data.\n\nIt's a discovery tool, not a signal generator: it narrows attention to candidates worth a closer look, which is different from a fully specified rule that decides when to enter and exit.\n\nScreener results depend entirely on the criteria chosen, and criteria chosen after looking at which stocks moved is the same selection-after-the-fact problem that undermines any pattern found by eyeballing a chart — the screen has to be specified before checking what it would have caught historically, or it's data snooping with extra steps.\n\nWhere people get fooled: running a screener on today's data, noticing it would have caught last month's big movers, and treating that as evidence the screen works — that's testing on the data used to build the criteria, not an out-of-sample result.",
+  "usage": "A filter that narrows a universe to candidates matching set criteria; it surfaces things to look at, it doesn't validate that looking at them pays off.",
+  "see": [
+   "Data snooping",
+   "Fully specified rule",
+   "Universe",
+   "Watchlist discipline"
+  ]
+ },
+ "Watchlist discipline": {
+  "long": "Watchlist discipline is keeping the list of instruments actually being monitored fixed and criteria-based, rather than growing it ad hoc whenever something moves and shrinking it whenever interest fades.\n\nA watchlist built and pruned on impulse tends to fill with whatever has recently been volatile or in the news — the set of instruments where recent price action is least informative about what happens next, because it's already been acted on by everyone else watching the same headline.\n\nThe discipline part is procedural: define inclusion criteria in advance, review the list on a schedule rather than continuously, and resist adding a name mid-session because it happens to be moving right now.\n\nWhere people get fooled: a watchlist that's effectively a running tally of things already noticed moving, which guarantees late entries — by the time something is watchlist-worthy on vibes alone, the move that made it noticeable has usually already happened.",
+  "usage": "Keeping the list of tracked instruments fixed to pre-set criteria rather than growing it whenever something moves; a reactive watchlist tends to add names after the move that made them interesting.",
+  "see": [
+   "Screener",
+   "Boredom trading",
+   "FOMO",
+   "Trading plan"
+  ]
+ },
+ "Discretionary vs systematic": {
+  "long": "Discretionary trading leaves entry, exit and sizing decisions to human judgement in the moment, informed by rules but not fully bound by them. Systematic trading specifies every decision as a rule in advance, so the same inputs always produce the same output whether executed by hand or by code.\n\nThe distinction is about decision process, not whether a computer is involved — a human can execute a fully systematic rule set by hand, and a bot can be built to defer to a human override, which makes it discretionary in practice even though code is running it.\n\nSystematic rules are what can actually be backtested honestly, because a backtest can only replay a decision process that's fully specified — there's no way to replay \"and then I felt uneasy about the setup and skipped it,\" which is real information a discretionary trader uses but a backtest can't capture or credit.\n\nWhere people get fooled: backtesting a systematic version of a discretionary process and treating the result as validation of the discretionary trading actually done. The backtest only proves the rule set performs a certain way — the human's deviations from it, in either direction, stay untested.",
+  "usage": "The line between rules applied in the moment and rules fully specified in advance; only the latter can be backtested honestly.",
+  "see": [
+   "Fully specified rule",
+   "Backtest",
+   "Systematic vs discretionary",
+   "Trading plan"
+  ]
+ },
+ "Fully specified rule": {
+  "long": "A fully specified rule defines every input to a trading decision precisely enough that two people, or a person and a machine, applying it to the same data reach the same conclusion every time. \"Buy when the 20-day average crosses above the 50-day average\" is fully specified; \"buy on strength\" is not.\n\nFull specification is the prerequisite for an honest backtest: a backtest engine can only replay a rule that resolves unambiguously against historical data, and if the code resolves an ambiguity the same way every time while a human would have resolved it differently case by case, the backtest is testing something other than what was actually intended.\n\nIt also matters for review after the fact — a fully specified rule can be checked against the resulting trade log and confirmed to have been followed, whereas a vague rule offers nothing to check compliance against.\n\nWhere people get fooled: believing a rule is fully specified because it sounds precise, when a term inside it — \"strong volume,\" \"clear trend\" — still hides a judgement call. The test is whether two independent readers implementing it in code would produce identical signals.",
+  "usage": "A rule precise enough that two independent implementations produce identical signals; the bar a rule needs to clear before it's backtestable.",
+  "see": [
+   "Systematic vs discretionary",
+   "Backtest",
+   "Trading plan",
+   "Definition of done"
+  ]
+ },
+ "Signal vs execution": {
+  "long": "The signal is the decision of what to do — buy, sell, hold, at what size. Execution is the separate mechanical process of getting that decision filled in the market — choosing an order type, routing it, managing partial fills.\n\nSeparating the two matters because they fail differently and are improved differently: a bad signal loses money even with perfect execution, while a good signal can still lose money to poor execution — chasing price with market orders, working the wrong size at the wrong time of day, ignoring the spread.\n\nIn a backtest, the signal and an assumed execution model are bundled together, and it's usually the execution assumptions — same-bar versus next-bar fills, an assumed spread, no market impact — that account for most of the gap between backtested and live results, not the signal logic itself.\n\nWhere people get fooled: attributing live underperformance entirely to the signal decaying, when the actual cause is an execution assumption in the backtest that was never realistic — a fill price the strategy could never have gotten.",
+  "usage": "The split between deciding what to do and getting it filled; most of the gap between backtested and live results lives in the second half.",
+  "see": [
+   "Same-bar vs next-bar fill",
+   "Execution algorithm",
+   "Slippage model",
+   "Backtest",
+   "Cost model"
+  ]
+ },
+ "State machine": {
+  "long": "A state machine is a way of structuring a bot's logic around a fixed set of named states — flat, entering, in position, exiting, error — with explicit rules for which transitions between states are allowed and what triggers each one.\n\nThe value for a trading bot is that it makes illegal situations structurally impossible rather than merely unlikely: a bot can't send a second entry order while already in the \"in position\" state if the code only allows entry orders from the \"flat\" state, regardless of what bug elsewhere might otherwise have caused it.\n\nIt also makes recovery after a crash or disconnect tractable — on restart, the bot can query the broker for the actual account state, compare it to the last known state, and resolve any mismatch through reconciliation rather than guessing.\n\nWhere people get fooled: writing bot logic as a pile of conditional checks without an explicit state model, which works fine until an unexpected sequence of events — a partial fill during a disconnect — puts the bot into a condition none of the conditionals anticipated.",
+  "usage": "A structure that names a bot's possible states and the allowed transitions between them, so illegal order sequences become structurally impossible.",
+  "see": [
+   "Reconciliation",
+   "Idempotency",
+   "Fail-safe default",
+   "Kill switch"
+  ]
+ },
+ "Reconciliation": {
+  "long": "Reconciliation is comparing what a bot believes its position and account state to be against what the broker's records actually show, and resolving any mismatch before continuing to trade.\n\nMismatches happen for mundane reasons — a fill confirmation arrives late, a connection drops mid-order, a manual trade gets placed on the same account outside the bot — and any of them leaves the bot's internal state wrong unless something checks.\n\nGood practice runs reconciliation on a schedule, every few minutes or on every restart, rather than only when something looks wrong, because the bot's own logic is exactly what's unreliable once its state tracking has already drifted — it can't be trusted to notice the drift on its own.\n\nWhere people get fooled: assuming a bot that hasn't thrown an error has an accurate view of its position. Silent state drift is the more dangerous failure mode than a loud crash, because the bot keeps trading confidently on a wrong picture of what it holds.",
+  "usage": "Checking a bot's internal view of its position against the broker's actual records on a schedule, not only when something looks wrong.",
+  "see": [
+   "State machine",
+   "Idempotency",
+   "Monitoring and alerting",
+   "Kill switch"
+  ]
+ },
+ "Kill switch": {
+  "long": "A kill switch is a mechanism, manual or automatic, that immediately stops a bot from sending new orders and, in its fuller form, flattens open positions, when a defined condition is breached: a daily loss limit, a position-size ceiling, a data feed going stale, an unexplained balance change.\n\nIt exists because automation fails in ways a human wouldn't: a bot with a bug doesn't get nervous and stop, it keeps executing the buggy logic at machine speed until something external intervenes. Knight Capital lost roughly $440 million in 2012 in about 45 minutes when a deployment error left old test code live, sending a flood of unintended orders with no automatic circuit breaker catching it in time — the canonical case for why the switch has to be automatic, not just available.\n\nA kill switch needs testing the same way the strategy is — triggered deliberately in a safe environment to confirm it actually halts new orders and doesn't itself hang or error under the exact stressed conditions it exists to handle.\n\nWhere people get fooled: building a kill switch that requires a human to notice the problem and press a button. The value is in the automatic trigger; a manual-only switch is only as fast as whoever happens to be watching.",
+  "usage": "An automatic halt triggered by a defined condition — a loss limit, a stale feed — that stops new orders without waiting for a human to notice.",
+  "see": [
+   "Fail-safe default",
+   "Daily loss limit",
+   "Monitoring and alerting",
+   "Position limit"
+  ]
+ },
+ "Idempotency": {
+  "long": "An operation is idempotent if performing it twice has the same effect as performing it once. In order management this usually means: if a \"place order\" request is sent twice because of a network retry, the system recognises the duplicate and doesn't place the order a second time.\n\nIt matters because retries are unavoidable in a system talking to a network — a request can time out after the order was actually placed, leaving the caller unsure whether it succeeded, and the naive response of simply sending it again doubles the position if the first attempt went through.\n\nThe usual mechanism is a client-generated unique ID attached to each order request, which the broker's system checks against orders already processed, rejecting or ignoring an exact duplicate rather than executing it twice.\n\nWhere people get fooled: assuming a timeout means the order failed. A timeout means the response was lost, not the order — the order may well have gone through, and retrying without an idempotency key is how a single intended trade becomes two.",
+  "usage": "Making a duplicate request from a retry produce the same result as a single request, so a network timeout can't double a position.",
+  "see": [
+   "Reconciliation",
+   "State machine",
+   "Rate limit",
+   "API"
+  ]
+ },
+ "Paper trading a bot": {
+  "long": "Paper trading a bot runs its full live logic against a broker's simulated order environment — real-time data, an account with fake money, orders that fill against the actual current market — rather than against historical data or a dry run with no fills at all.\n\nIt's the closest pre-live check to the real thing: unlike a backtest, timing and data-feed issues show up in real time; unlike a dry run, simulated fills let the strategy's actual execution behaviour under current conditions be observed, including how it handles a partial fill or a rejected order.\n\nWhat it can't validate is market impact and some forms of slippage — a paper account's simulated fills generally assume the account's own order doesn't move the market, a reasonable assumption at small size and a wrong one at larger size.\n\nWhere people get fooled: treating a clean multi-week paper run as proof the strategy works. It tests that the bot behaves correctly against live conditions — it doesn't add statistical evidence beyond what the backtest already showed, because paper fills over a few weeks are a small, non-independent sample layered on the same market the backtest already covered.",
+  "usage": "Running a bot's live logic against simulated fills on real-time data; it validates the code's behaviour, not the strategy's statistical edge.",
+  "see": [
+   "Dry run mode",
+   "Forward test",
+   "Paper-to-live gap",
+   "Slippage model"
+  ]
+ },
+ "Machine learning on price": {
+  "long": "Machine learning on price means training a model — a regression, a tree ensemble, a neural network — on historical price-derived features such as returns, volatility and technical indicators, to predict some future outcome, typically the next period's direction or return.\n\nThe technique is not the problem; the information content is. Every input such a model can see — open, high, low, close, volume and anything derived from them — is exactly the same information a simple moving-average crossover can see, just recombined in a more flexible way that can fit far more shapes, including noise.\n\nThat flexibility is the risk: with enough parameters, a model can fit historical noise so precisely that in-sample performance looks excellent while carrying no out-of-sample information at all, and the flexibility makes overfitting easier to achieve and harder to detect than with a simple rule.\n\nWhere people get fooled: treating a sophisticated method as evidence of a real signal. A complex model trained on the most heavily mined dataset in finance, with vastly more researcher degrees of freedom than a simple rule, needs a correspondingly higher bar of out-of-sample and walk-forward evidence before it earns any trust — not less.",
+  "usage": "Training a model on price-derived features; the flexibility that lets it fit real patterns also lets it fit noise, so the evidence bar should rise, not fall.",
+  "see": [
+   "Overfitting",
+   "Feature engineering",
+   "Degrees of freedom",
+   "Out-of-sample",
+   "Walk-forward"
+  ]
+ },
+ "Logging": {
+  "long": "Logging is the practice of recording what a running system did and why — every signal generated, every order sent, every fill received, every error — as a timestamped, append-only record kept separately from the system's live decision-making state.\n\nFor a trading bot, logs are the only way to reconstruct what actually happened after the fact: whether a loss came from the strategy losing on a correct decision, or from a bug that sent the wrong order, is unanswerable without a log detailed enough to show which.\n\nUseful logs record inputs as well as outputs — the data a decision was based on, not just the decision itself — because a decision that looks wrong in isolation is often revealed as correct, or as a data problem, once the input that produced it is visible.\n\nWhere people get fooled: logging only errors and skipping normal operation, on the assumption that clean runs need no record. The moment something does go wrong, the useful diagnostic information is the sequence of normal-looking events immediately before it, which an errors-only log has already discarded.",
+  "usage": "A timestamped, append-only record of what a bot did and why; the only way to reconstruct whether a loss came from the strategy or from a bug.",
+  "see": [
+   "Monitoring and alerting",
+   "Reconciliation",
+   "Trade log fields",
+   "State machine"
+  ]
+ },
+ "Latency to broker": {
+  "long": "Latency to broker is the round-trip time between a bot sending an order and receiving confirmation — a function of physical distance to the broker's servers, network quality, and the broker's own processing time.\n\nFor most retail strategies operating on minute-or-slower timeframes, a difference of tens or even hundreds of milliseconds changes little economically — these strategies aren't competing for queue position at the microsecond level, and treating latency as the binding constraint on their performance mistakes a different game for the one actually being played.\n\nLatency does matter at the margin for anything sensitive to fill timing around fast-moving moments — a stop order during a volatile release, a market order the instant a signal fires — where a slower connection can mean a materially worse fill than a faster one on the same signal.\n\nWhere people get fooled: chasing latency improvements, a better VPS location, a faster connection, as if they were a source of edge for a retail strategy, when the latency competition that actually pays off happens at a scale and cost structurally unavailable at retail — colocation and dedicated fibre, not a well-placed VPS.",
+  "usage": "The round-trip time to an order's confirmation; it rarely matters at retail trading speeds and isn't a source of edge when it's improved.",
+  "see": [
+   "VPS",
+   "Colocation",
+   "Latency",
+   "Execution algorithm"
+  ]
+ },
+ "Fail-safe default": {
+  "long": "A fail-safe default is the state a system falls back to when something goes wrong and it can't determine the correct action — for a trading bot, that default should be flat and stopped, not \"keep doing whatever it was last doing.\"\n\nThe design principle is to choose defaults that fail toward safety rather than toward continued operation: if the data feed goes stale, the default should be to stop trading, not to keep trading on the last known price as if nothing changed; if a config file fails to load, the default should be to refuse to start, not to run with unset values silently substituted.\n\nThis is the same logic behind Knight Capital's 2012 loss — the system kept operating under a failure condition instead of defaulting to a safe stop, and the absence of that default is what let a deployment bug run unchecked for the better part of an hour.\n\nWhere people get fooled: designing error handling that catches an exception and continues, reasoning that \"the bot shouldn't crash.\" For a system managing real risk, continuing to run in an unknown state is usually more dangerous than stopping — a stopped bot loses no more money; a bot that carries on regardless can.",
+  "usage": "The state a system falls back to when it can't determine the correct action; for a trading bot that default should be flat and stopped, not still running.",
+  "see": [
+   "Kill switch",
+   "State machine",
+   "Monitoring and alerting",
+   "Reconciliation"
+  ]
+ },
+ "OHLCV": {
+  "long": "OHLCV is the standard summary of price activity over a fixed interval — open, high, low, close and volume — the five numbers that turn a stream of individual trades into a single bar on a chart.\n\nOpen and close are the first and last traded prices in the interval; high and low are the extremes reached during it; volume is the total quantity traded. Every candlestick, every moving average, every indicator built on \"price\" is in practice built on some combination of these five numbers, not on the raw trade-by-trade tape.\n\nCompressing a session into five numbers necessarily discards information — the order in which the high and low occurred, how volume was distributed through the interval, whether the close was a single trade or an average of several — which is exactly what tick data and order-flow tools try to recover.\n\nWhere people get fooled: treating OHLCV as ground truth rather than a summary. Two bars with identical OHLCV values can represent completely different underlying trading — a slow grind to the high versus a sharp spike and reversal — and any strategy built purely on OHLCV cannot distinguish between them.",
+  "usage": "The five numbers — open, high, low, close, volume — that summarise a bar; nearly every indicator is built from some combination of them.",
+  "see": [
+   "Tick data",
+   "Candlestick",
+   "Order flow",
+   "Data quality"
+  ]
+ },
+ "Tick data": {
+  "long": "Tick data is the record of individual trades — every transaction, with its own price, size and timestamp — rather than the aggregated OHLCV summary of a bar. It is the most granular price record a market produces.\n\nThe volume of it is large: a liquid instrument can generate thousands of ticks a day, which is why most retail platforms and datasets default to bar data and offer tick data only as a separate, often paid, product.\n\nTick data is what order-flow tools such as time and sales, footprint charts and delta are actually built from — they reconstruct detail that OHLCV bars discard, at the cost of far more storage and processing.\n\nWhere people get fooled: assuming access to tick data itself confers an edge over bar-based analysis. The extra detail can support better execution research and order-flow reading, but it is not, on its own, a source of predictive signal — the same base-rate scrutiny applies to a pattern found in tick data as to one found on a daily chart.",
+  "usage": "The record of individual trades rather than aggregated bars; more granular, not automatically more predictive.",
+  "see": [
+   "OHLCV",
+   "Order flow",
+   "Time and sales",
+   "Footprint chart",
+   "Data quality"
+  ]
+ },
+ "Intrabar ambiguity": {
+  "long": "Intrabar ambiguity is the information a single OHLC bar can't resolve: given only the open, high, low and close, there's no way to know whether the high or the low happened first — a strategy checking whether a stop or a target was hit first inside one bar genuinely cannot answer that from the bar alone.\n\nIt matters most for backtests that place a stop and a target in the same bar: if the bar's range spans both levels, the backtest has to assume an order — high-then-low, or low-then-high — and that assumption directly determines whether the trade is recorded as a win or a loss.\n\nThe honest fix is resolving it with finer data, checking what happened inside that bar using minute or tick data, rather than picking whichever assumption makes the strategy look better, which is an easy and common way results get quietly inflated.\n\nWhere people get fooled: not realising the assumption is being made at all. A backtest engine has to default to something, and if that default isn't understood, a strategy's reported outcomes can shift meaningfully depending on an assumption nobody consciously chose.",
+  "usage": "The information a single OHLC bar can't resolve, such as whether the high or low happened first; a backtest has to assume an order, and that assumption affects results.",
+  "see": [
+   "Bar close vs intrabar signal",
+   "Backtest",
+   "OHLCV",
+   "Cost model"
+  ]
+ },
+ "Adjusted price": {
+  "long": "An adjusted price is a historical price recalculated to account for a split, dividend or other corporate action, so a chart or return calculation reads continuously instead of showing a jump on the action date.\n\nTwo adjustment conventions are common: split-adjusted only, which corrects share-count changes but not dividend payouts, and total-return adjusted, which also folds dividends back in — the two produce meaningfully different long-run return figures for dividend-paying stocks, and comparing a strategy against the wrong one overstates or understates the real gap to a buy-and-hold benchmark.\n\nThe unadjusted price is still the one that was actually quoted on the day, which matters for anything checking what a live order would have executed at — adjustment is a historical-analysis convenience, not what a trader saw in real time.\n\nWhere people get fooled: comparing a strategy's returns against an unadjusted buy-and-hold benchmark, or mixing adjusted and unadjusted series in the same calculation, either of which manufactures a performance gap that has nothing to do with the strategy itself.",
+  "usage": "A historical price recalculated for splits and dividends so a chart reads continuously; confirm which adjustment convention a vendor uses before comparing returns.",
+  "see": [
+   "Corporate action adjustment",
+   "Corporate action",
+   "Total return",
+   "Benchmark"
+  ]
+ },
+ "Corporate action": {
+  "long": "A corporate action is any event initiated by a company that changes the terms of its shares — a split, a dividend, a spin-off, a rights issue, a merger — as distinct from ordinary trading, which just changes the price.\n\nActions fall broadly into two kinds: those that change the number of shares or their terms without changing a holder's proportional stake, such as a split, and those that distribute value out of the company, such as a dividend or spin-off, which do change what a holder actually receives.\n\nEach type requires the price series to be adjusted differently, which is why corporate-action handling is one of the more error-prone parts of building or buying a historical dataset — get the adjustment wrong on any one action and every price before that date is wrong by a consistent factor.\n\nWhere people get fooled: assuming a vendor's dataset has processed every corporate action correctly by default. Smaller or foreign-listed companies, and less common actions like spin-offs, are exactly where vendor coverage gaps and adjustment errors concentrate.",
+  "usage": "A company-initiated event — split, dividend, spin-off — that changes share terms and requires the price history to be adjusted around it.",
+  "see": [
+   "Corporate action adjustment",
+   "Adjusted price",
+   "Data quality",
+   "Stock split"
+  ]
+ },
+ "Data quality": {
+  "long": "Data quality covers the accuracy and completeness of a dataset — whether prices are correct, whether bars are missing, whether corporate actions were applied correctly, whether timestamps are consistent — as distinct from the strategy logic run on top of it.\n\nBad data doesn't announce itself: a missing bar can silently shift every subsequent bar's index in a backtest engine that isn't timestamp-aware, and a single bad tick can trigger a stop that would never have been hit on the real market.\n\nChecking for it is mechanical and worth doing before any signal work: scan for OHLC values that violate basic constraints — a low above the close, a negative price, a volume of zero on a session that clearly traded — scan for gaps in the expected bar sequence, and cross-check a sample against a second source.\n\nWhere people get fooled: assuming a paid data subscription is automatically clean. Price is not a reliable proxy for accuracy — every vendor, free or paid, has documented data errors, and catching them before they corrupt a backtest sits with whoever runs the test.",
+  "usage": "The accuracy and completeness of a dataset, checked mechanically before any signal work begins; a paid subscription doesn't guarantee it.",
+  "see": [
+   "Bad tick",
+   "OHLCV",
+   "Look-ahead bias",
+   "Survivorship-free dataset"
+  ]
+ },
+ "Bad tick": {
+  "long": "A bad tick is a single erroneous data point — a price wildly outside the real market range, often from a mis-keyed order, a feed glitch, or a decimal-point error — recorded in a data feed alongside genuine trades.\n\nOn a chart it shows as an obvious spike, but inside an automated system it isn't obvious at all: a stop-loss check comparing price to a threshold, or an indicator calculation, treats a bad tick exactly like a real one unless the code specifically filters for it.\n\nExchanges sometimes bust, or cancel, a bad trade after the fact, but the correction doesn't always propagate cleanly to every downstream data vendor, so a bad tick can persist in a historical dataset even after the exchange itself has voided it.\n\nWhere people get fooled: a backtest that shows one enormous single-bar win or loss, which reads like an interesting edge case in the strategy but is very often just a bad tick that a real order would never have traded at.",
+  "usage": "A single erroneous price in a feed; it looks obvious on a chart but is invisible to code unless specifically filtered for.",
+  "see": [
+   "Data quality",
+   "OHLCV",
+   "Data feed",
+   "Backtest"
+  ]
+ },
+ "Timezone alignment": {
+  "long": "Timezone alignment is ensuring every timestamp in a system — data feed, session boundaries, scheduled tasks — refers to the same reference clock, because a bar timestamped in exchange local time and one timestamped in UTC describe genuinely different windows even if the numeric time looks similar.\n\nIt's a frequent source of subtle bugs specifically because the error is silent: a daily bar built on the wrong timezone still produces a plausible-looking OHLC value, it's just measuring the wrong 24 hours, and nothing in the output flags that anything is off.\n\nThe problem compounds across markets and daylight-saving changes — a session boundary correct in southern-hemisphere winter can be an hour wrong after a daylight-saving shift on either side of the world if the code hard-codes an offset rather than using a timezone-aware library.\n\nWhere people get fooled: comparing an Australian trader's local session times to US market data without converting both to a common reference, particularly across the AEST/AWST split within Australia itself and US daylight-saving transitions that don't align with Australia's.",
+  "usage": "Making sure every timestamp in a system shares the same reference clock; a frequent, silent source of misaligned bars and mistimed signals.",
+  "see": [
+   "Session",
+   "Chart timeframe alignment",
+   "AEST / AWST",
+   "Trading US hours from Perth"
+  ]
+ },
+ "Alternative data": {
+  "long": "Alternative data is any dataset used for trading research that isn't price, volume or standard fundamentals — satellite imagery of car parks, credit card transaction aggregates, web-traffic estimates, shipping data, social-media sentiment.\n\nThe appeal is information that isn't already fully reflected in price the way historical OHLCV is, since price data has been studied and traded on by essentially every serious participant for decades, while some alternative datasets are newer and less picked over.\n\nThe practical barriers are real: institutional-grade alternative data is expensive, often licensed exclusively or semi-exclusively to funds that can pay for an edge before it's arbitraged away, and retail-accessible versions tend to be the same data with a lag or a coarser resolution, which erodes the freshness that made it valuable.\n\nWhere people get fooled: assuming any dataset labelled \"alternative\" is inherently more informative than price. A noisy, poorly sourced alternative dataset with no clear economic rationale linking it to future returns is just as capable of producing an overfit pattern as price data — the label doesn't grant immunity from the same scrutiny.",
+  "usage": "Any research dataset that isn't price, volume or standard fundamentals; institutional-grade versions are expensive, and the label doesn't exempt it from the same scrutiny as price data.",
+  "see": [
+   "Feature engineering",
+   "Edge",
+   "Data quality",
+   "Economic rationale"
+  ]
+ },
+ "Feature engineering": {
+  "long": "Feature engineering is transforming raw data into the inputs a model or rule actually uses — turning a raw price series into a moving average, a volatility measure, a momentum ratio, a normalised range — the design step before any model training or rule-testing begins.\n\nOn price data specifically, the space of possible features is enormous but the underlying information is thin: every feature derivable from OHLCV is a recombination of the same five numbers, so building a hundred different features from one price series multiplies the number of things that can be tested, not the amount of genuine information available to find.\n\nThat multiplication is exactly what inflates false-positive risk — testing a hundred engineered features against the same return series is a hundred implicit trials, and without correcting for that, a stricter significance bar, out-of-sample confirmation, some will look significant by chance alone.\n\nWhere people get fooled: treating an elaborate feature-engineering pipeline as sophistication that should be trusted more, when the more features built from the same thin dataset, the higher the bar needs to be before any single one is believed.",
+  "usage": "Turning raw data into model or rule inputs; on price data the underlying information is thin, so more engineered features multiply trials, not insight.",
+  "see": [
+   "Data snooping",
+   "Overfitting",
+   "Degrees of freedom",
+   "Machine learning on price"
+  ]
+ },
+ "Universe": {
+  "long": "A universe is the defined set of instruments a strategy or backtest considers — every ASX-listed stock above a market-cap threshold, say, or a fixed list of major forex pairs — as opposed to trading whatever happens to catch attention.\n\nDefining the universe in advance, and holding it fixed for the test period, matters because a universe chosen after seeing which instruments performed well is selection bias by another name — \"the strategy works across large-cap tech stocks\" means something different if that list was decided on after checking which ones went up.\n\nA universe should also reflect what was actually available to trade at each point in time, which ties directly to survivorship: a universe built from today's index membership applied to the past silently excludes every constituent removed or delisted along the way.\n\nWhere people get fooled: quietly narrowing the universe mid-research to instruments the strategy already performs well on, then reporting the result as if the universe had been fixed from the start.",
+  "usage": "The instrument set a strategy or backtest considers, fixed and defined before results are checked, not narrowed afterward to whatever performed well.",
+  "see": [
+   "Survivorship-free dataset",
+   "Selection bias",
+   "Point-in-time data",
+   "Data snooping"
+  ]
+ },
+ "Round turn": {
+  "long": "A round turn is one complete trade — an entry and its matching exit — and \"cost per round turn\" is the standard unit for pricing trading costs, because a position opened but never closed hasn't actually cost anything to trade yet.\n\nFor a futures contract, brokers commonly quote a single all-in commission per round turn, say $2.50, rather than charging separately for the entry and the exit; for shares, the round-turn cost is simply the buy commission plus the sell commission plus half the bid-ask spread on each side.\n\nWorked example: an Australian broker charging $10 flat brokerage each way costs $20 per round turn regardless of position size, which on a $2,000 position is a 1% round-trip cost before the trade has moved at all — a hurdle the position's expected edge has to clear just to break even.\n\nWhere people get fooled: quoting a strategy's edge per trade without ever converting it to a round-turn cost comparison. A strategy that nets 0.3% per trade before costs is unprofitable the moment round-turn costs exceed that figure, however good the entries look in isolation.",
+  "usage": "One complete entry-and-exit trade, and the standard unit trading costs are priced against.",
+  "see": [
+   "Cost model",
+   "Turnover",
+   "Cost drag",
+   "Slippage"
+  ]
+ },
+ "Cost drag": {
+  "long": "Cost drag is the cumulative reduction in returns caused by trading costs — commissions, spread, slippage, financing — compounding over many trades, as distinct from the cost of any single trade viewed on its own.\n\nBecause costs are paid on both entry and exit of every trade, a strategy's cost drag scales with trade frequency: doubling the number of trades roughly doubles the total cost paid over a given period, even if each individual trade's cost looks small in isolation.\n\nWorked example: a strategy trading 200 round turns a year at $20 cost each pays $4,000 a year in costs; on a $50,000 account that's an 8% annual drag the strategy's gross returns have to overcome before anything is left over — easy to understate when looking only at per-trade figures.\n\nWhere people get fooled: evaluating a backtest's gross returns and only subtracting costs as an afterthought, rather than building the cost model into the return series from the start. A high-turnover strategy that looks strong gross of costs can be flat or negative once cost drag is applied honestly.",
+  "usage": "The cumulative reduction in returns from costs compounding over many trades; it scales with trade frequency, not with any single trade's size.",
+  "see": [
+   "Turnover",
+   "Cost model",
+   "Round turn",
+   "Slippage model"
+  ]
+ },
+ "Turnover": {
+  "long": "Turnover measures how much trading activity a strategy generates relative to its capital — commonly the value of positions traded over a period divided by average capital, or more simply trades per period.\n\nIt's the single number that best predicts how much cost drag a strategy will carry, because cost is paid per trade while return is earned on the position — high turnover means paying the cost repeatedly to capture the same underlying market move that a lower-turnover approach might capture with one trade.\n\nA strategy rebalancing monthly with modest position changes might turn over its capital a few times a year; an intraday strategy can turn over many times a day — the cost base the two need to overcome to be viable differs by orders of magnitude as a direct result.\n\nWhere people get fooled: comparing two strategies' gross returns without adjusting for the turnover difference between them. The higher-turnover one needs a proportionally larger gross edge just to end up in the same place after costs, and gross returns alone hide that entirely.",
+  "usage": "How much trading activity a strategy generates relative to its capital; the strongest single predictor of how much cost drag it will carry.",
+  "see": [
+   "Cost drag",
+   "Round turn",
+   "Cost model",
+   "Trade frequency"
+  ]
+ },
+ "Financing / carry cost": {
+  "long": "Financing cost, also called carry cost, is what it costs to hold a leveraged or borrowed position open over time — interest charged on the borrowed portion of a margin position, or the funding rate on a CFD or futures-like instrument, applied daily or per funding period.\n\nIt's separate from commission and spread, which are paid once per trade regardless of holding period; financing cost instead scales with time held, so it barely matters for a position held minutes and can dominate for one held months.\n\nWorked example: a CFD position financed at a rate equivalent to 6% annually costs roughly 0.016% of position value per day — trivial for a day trade, but on a position held for six months that's close to 3% of position value gone to financing alone, before any other cost.\n\nWhere people get fooled: comparing a leveraged short-term strategy's returns to a leveraged long-hold one without accounting for how differently financing cost accumulates between the two — the same leverage ratio can be nearly free on one time horizon and a serious drag on another.",
+  "usage": "The ongoing cost of holding a leveraged or borrowed position open; it scales with holding period rather than with the number of trades.",
+  "see": [
+   "Cost drag",
+   "Leverage",
+   "Round turn",
+   "Cost model"
+  ]
+ },
+ "Brutal cost model": {
+  "long": "A brutal cost model is a deliberately pessimistic set of cost assumptions applied to a backtest — wider spreads, worse slippage, higher commissions than realistically expected — used specifically to stress-test whether a strategy's edge survives a harsher-than-likely cost environment.\n\nThe logic is asymmetric: understating costs in a backtest produces an inflated result that fails live, which is expensive to discover after the fact; overstating costs produces an understated result that, if the strategy still clears it, gives real confidence the edge isn't balanced on a knife-edge of optimistic assumptions.\n\nApplying one is mechanical: double the assumed spread, add a fixed slippage tick to every fill, round commissions up rather than down, then check whether the strategy's edge and expectancy still hold against real benchmarks under those harsher terms.\n\nWhere people get fooled: treating a strategy that only survives under generous cost assumptions as viable, on the reasoning that costs might not be that bad. Live costs are, if anything, usually worse than a backtest assumed, not better — a strategy that needs an optimistic cost model to look good is already failing the honest test.",
+  "usage": "A deliberately pessimistic cost assumption applied to a backtest to check whether the edge survives worse-than-expected costs, not just the expected ones.",
+  "see": [
+   "Cost model",
+   "Slippage model",
+   "Cost sensitivity",
+   "Cost drag"
+  ]
+ },
+ "CGT": {
+  "long": "CGT, capital gains tax, is the tax on the profit made when a capital asset — shares, an ETF unit, crypto — is disposed of for more than its cost base. It's triggered by the disposal event, a sale or sometimes a swap, not by the gain existing on paper while the asset is still held.\n\nIn Australia, an individual who holds an asset for more than twelve months before disposing of it is generally eligible for the CGT discount, which reduces the taxable portion of the gain — a mechanic that rewards holding period specifically, separate from any trading strategy's own merits.\n\nLosses can offset gains within the same tax treatment, and net losses generally carry forward to offset future gains, part of why accurate record keeping of every disposal matters well beyond the year the trade happened.\n\nWhere people get fooled: assuming CGT treatment applies without checking the trader-versus-investor distinction, which the ATO assesses on criteria like frequency, volume and organisation of activity and which changes how gains are taxed. This is general mechanics, not advice for a specific position — an accountant who knows the full picture beats a forum thread every time.",
+  "usage": "The tax on profit from disposing of a capital asset, triggered by the disposal itself; general mechanics only, an accountant should confirm how it applies to a specific situation.",
+  "see": [
+   "Trader vs investor status",
+   "Cost basis",
+   "Record keeping",
+   "Realisation event"
+  ]
+ },
+ "Trader vs investor status": {
+  "long": "Whether someone is classified as a \"trader\" or an \"investor\" for Australian tax purposes changes how their trading activity is taxed — investors generally use the CGT regime, with the twelve-month discount available, while those classified as carrying on a business of trading have gains and losses treated as ordinary income and deductions instead.\n\nThe ATO doesn't let a taxpayer simply elect a status; it's assessed against criteria including the volume and frequency of transactions, the degree of organisation and record keeping, the amount of capital involved, and whether the activity has the character of a business rather than occasional investment.\n\nThe distinction has consequences beyond the tax rate: business-classified trading losses can potentially offset other income in ways capital losses can't, but it also removes access to the CGT discount on gains, so the classification is not simply better or worse in one direction.\n\nWhere people get fooled: assuming the classification is a free choice made at tax time based on whichever treatment looks more favourable that year. It's a factual determination based on actual conduct, and getting it wrong on a return is a compliance risk — this is a case for an accountant who can assess actual conduct, not a general answer.",
+  "usage": "The ATO classification, based on actual conduct, that determines whether trading is taxed under the CGT regime or as ordinary business income.",
+  "see": [
+   "CGT",
+   "Record keeping",
+   "Cost basis",
+   "Regulation"
+  ]
+ },
+ "Wash sale": {
+  "long": "A wash sale is selling an asset at a loss and then buying back a substantially identical position within a short window, done specifically to realise a deductible loss for tax purposes while keeping the same market exposure — tax authorities in both the US and Australia have rules targeting exactly this pattern.\n\nIn the US, the wash-sale rule disallows the loss deduction if a substantially identical security is repurchased within 30 days before or after the sale; the disallowed loss instead gets added to the cost base of the new position rather than simply vanishing.\n\nAustralia doesn't have an identical statutory rule but the ATO applies general anti-avoidance provisions to the same pattern — a loss sold and promptly rebought with no genuine change in economic position can be challenged and denied on substance grounds even without a dedicated wash-sale statute.\n\nWhere people get fooled: assuming that because Australia lacks a wash-sale rule with the same name as the US one, the same behaviour is automatically safe there. The mechanism differs, the scrutiny doesn't — this is general mechanics, and anyone considering a loss-harvesting trade near year-end should get specific advice rather than rely on a rule of thumb.",
+  "usage": "Selling at a loss and promptly rebuying a near-identical position to claim the loss for tax purposes; both the US and Australia scrutinise the pattern.",
+  "see": [
+   "CGT",
+   "Cost basis",
+   "Record keeping",
+   "Regulation"
+  ]
+ },
+ "Record keeping": {
+  "long": "Record keeping, for tax purposes, means retaining the documentation of every disposal — date, quantity, price, fees, and the corresponding acquisition details — sufficient to reconstruct the cost base and gain or loss on each transaction if asked.\n\nFor an active account this can mean hundreds or thousands of individual transactions a year, and reconstructing them from memory or from a brokerage statement alone months later is far harder than logging them as they happen; most exchanges and brokers provide exportable transaction histories for this reason.\n\nThe ATO requires records to be kept for five years from the relevant tax return's lodgement, and for crypto specifically, transfers between a taxpayer's own wallets, DeFi interactions and airdrops all generate events that need the same level of documentation as an exchange trade.\n\nWhere people get fooled: assuming a broker or exchange's own records are a permanent, sufficient substitute for personal record keeping. Platforms shut down, change data formats, or don't retain history as long as tax authorities require — the obligation sits with the taxpayer, not the platform.",
+  "usage": "Retaining the documentation of every disposal needed to reconstruct cost base and gain or loss; the ATO requires five years, and the obligation sits with the taxpayer, not the platform.",
+  "see": [
+   "CGT",
+   "Cost basis",
+   "FIFO vs specific identification",
+   "Broker insolvency"
+  ]
+ },
+ "Broker insolvency": {
+  "long": "Broker insolvency is the risk that the entity holding an account's cash or securities fails financially, and the client's assets are caught up in the resulting administration process rather than being immediately and fully returned.\n\nThe protection against this in well-regulated jurisdictions is segregated client money — a legal requirement that client funds be held separately from the broker's own operating capital, so a broker's insolvency doesn't automatically mean client funds are lost alongside it, though segregation rules and how strictly they're enforced vary by jurisdiction and instrument type.\n\nWhere segregation applies and is properly administered, client assets are generally returned in the administration process, though this can take time; compensation schemes in some jurisdictions provide a further backstop up to a capped amount if segregated assets are found to be short.\n\nWhere people get fooled: assuming all brokers and all products carry the same protection. CFD and some derivative positions, offshore or unregulated brokers, and crypto exchanges holding customer assets often sit outside the segregation and compensation frameworks that apply to standard cash equities accounts at a regulated domestic broker.",
+  "usage": "The risk that a broker's failure ties up client assets in administration; segregated client money and compensation schemes are the mitigations, and coverage varies by product and jurisdiction.",
+  "see": [
+   "Segregated client money",
+   "Compensation scheme",
+   "Regulation",
+   "Counterparty risk"
+  ]
+ },
+ "Regulation": {
+  "long": "Regulation, in this context, is the body of rules a jurisdiction's financial authority imposes on brokers, exchanges and market participants — licensing requirements, client-money segregation, leverage caps, disclosure obligations, conduct rules — enforced by a regulator such as ASIC in Australia or the SEC and CFTC in the US.\n\nRegulation shapes what retail traders can actually access: leverage caps on CFDs, restrictions on marketing certain products to retail clients, and licensing requirements for anyone providing financial advice or operating a trading platform all exist because of specific regulatory decisions, not universal market structure.\n\nRegulatory regimes differ meaningfully between jurisdictions — a product or leverage level freely available to a US or offshore account may be capped or banned for an Australian retail client, and vice versa — which matters when comparing strategies or platforms discussed by traders elsewhere.\n\nWhere people get fooled: assuming a platform is regulated because it operates from a country with a recognisable regulator, without checking whether the specific entity a client's account sits with actually holds that licence, or whether it's a related offshore entity outside the same protections.",
+  "usage": "The licensing, conduct and disclosure rules a jurisdiction's regulator imposes on brokers and platforms; coverage and leverage caps differ meaningfully between jurisdictions.",
+  "see": [
+   "ASIC",
+   "AFSL",
+   "SEC / CFTC",
+   "Broker insolvency"
+  ]
+ },
+ "Cost basis": {
+  "long": "Cost basis is the amount originally paid to acquire an asset — the purchase price plus any directly attributable costs such as brokerage — used to calculate the taxable gain or loss when the asset is eventually disposed of.\n\nEstablishing it accurately matters because every dollar of cost basis reduces the taxable gain by that dollar; understating cost basis through poor records overstates the taxable gain and the tax owed on it, while overstating it is a compliance risk in the other direction.\n\nCost basis gets complicated by partial disposals, reinvested distributions, and multiple purchases of the same asset at different prices over time — exactly what the choice between FIFO and specific identification is used to resolve.\n\nWhere people get fooled: forgetting that brokerage and other transaction costs on the purchase are part of the cost basis, not a separate deduction, and that failing to include them overstates the taxable gain on every eventual sale.",
+  "usage": "The amount originally paid to acquire an asset, including transaction costs, used to calculate taxable gain or loss on disposal.",
+  "see": [
+   "FIFO vs specific identification",
+   "CGT",
+   "Record keeping",
+   "Realisation event"
+  ]
+ },
+ "FIFO vs specific identification": {
+  "long": "When multiple parcels of the same asset were bought at different times and prices, and only part of the holding is sold, the cost basis used for that sale depends on which parcel is deemed sold — FIFO, first-in first-out, always treats the earliest-acquired parcel as sold first; specific identification lets the holder choose which parcel, provided the records support the choice.\n\nThe method chosen changes the taxable gain on the sale, sometimes substantially: selling the earliest, cheapest parcel under FIFO during a rising market realises a larger gain than specific identification would if a more recently bought, higher-cost parcel were nominated instead.\n\nSpecific identification requires demonstrating which parcel was sold — adequate records tying the sale to a particular purchase — so it's only available to someone whose record keeping actually supports the claim; without that, FIFO is generally the default a tax authority will apply.\n\nWhere people get fooled: assuming the more favourable method is automatically available. The method choice depends entirely on record quality kept at the time of each purchase, not on a preference expressed at tax time after the fact — a specific parcel election is worth confirming with an accountant before relying on it.",
+  "usage": "The two ways of matching a partial sale to a specific purchased parcel when several were bought at different prices; availability depends on records kept at purchase time.",
+  "see": [
+   "Cost basis",
+   "Record keeping",
+   "CGT",
+   "Realisation event"
+  ]
+ },
+ "Realisation event": {
+  "long": "A realisation event is the point at which a gain or loss on an asset becomes taxable — typically a disposal: a sale, a swap for a different asset, a gift, or in some jurisdictions a transfer out of the tax system entirely. Simply holding an asset that has risen or fallen in value is not, on its own, a realisation event.\n\nWhat counts as a realisation event is broader than \"sold for cash\" — swapping one cryptocurrency for another, for instance, is generally treated as a disposal of the first asset even though no fiat currency changed hands, because the holder's position in that specific asset ended.\n\nRecognising every realisation event matters most in activity types where it's easy to miss one: DeFi transactions, token swaps, and even some staking or liquidity-pool interactions can constitute a disposal under general principles even without an obvious \"sale\" step in the interface.\n\nWhere people get fooled: assuming that because no cash was withdrawn, nothing taxable happened. A swap, a spend, or a transfer can all be realisation events depending on the jurisdiction's rules, and the general position is worth confirming for anything beyond a straightforward buy-and-sell.",
+  "usage": "The point at which a gain or loss becomes taxable, usually a disposal; simply holding an asset that has moved in value is not itself a realisation event.",
+  "see": [
+   "CGT",
+   "Cost basis",
+   "Record keeping",
+   "Trader vs investor status"
+  ]
+ },
+ "Deductible expenses": {
+  "long": "Deductible expenses are costs incurred in earning taxable trading or investment income that can be subtracted from that income, or for a capital asset added to cost base, rather than paid entirely out of after-tax money — the specific categories and how they're treated depend on jurisdiction and on trader-versus-investor classification.\n\nFor someone classified as carrying on a trading business, a broader range of costs — data subscriptions, platform fees, a portion of home-office costs, education directly related to the activity — can potentially be deductible against ordinary income; for an investor under the CGT regime, the scope is narrower and some costs instead adjust the cost base rather than being deducted outright.\n\nBrokerage and transaction fees are the clearest case and are almost universally either deductible or added to cost base depending on classification; more discretionary claims — equipment, a portion of internet costs, courses — sit in greyer territory that depends heavily on the specific facts.\n\nWhere people get fooled: assuming any expense loosely connected to trading is automatically deductible. Deductibility rules are specific and classification-dependent, and this is exactly the kind of judgement call worth taking to an accountant rather than inferring from a general principle.",
+  "usage": "Costs incurred in earning trading income that reduce taxable income or adjust cost base; what qualifies depends on jurisdiction and trader-versus-investor classification.",
+  "see": [
+   "Trader vs investor status",
+   "CGT",
+   "Record keeping",
+   "Cost basis"
+  ]
+ },
+ "Foreign income": {
+  "long": "Foreign income, for an Australian tax resident, is income and gains sourced from outside Australia — dividends from a US-listed stock, gains on a foreign exchange account, interest from an offshore platform — and it's generally still taxable in Australia even though it was earned abroad, subject to any relevant double-taxation treaty.\n\nA common practical issue is foreign withholding tax: many countries, the US included, withhold tax at source on dividends paid to foreign holders before the funds ever reach an Australian account, and a tax treaty, or a form filed with the broker such as a W-8BEN for US securities, can reduce that withholding rate rather than eliminate it outright.\n\nWhere foreign tax has already been withheld, a foreign income tax offset can generally be claimed in Australia to avoid the same income being taxed twice, though calculating that offset correctly depends on the specific treaty and income type involved.\n\nWhere people get fooled: assuming tax withheld at source overseas is the end of the obligation. It's usually a prepayment against Australian tax owed on the same income, not a substitute for declaring it — treaty and offset mechanics are worth confirming with an accountant rather than assumed.",
+  "usage": "Income and gains sourced outside Australia, generally still taxable for an Australian resident subject to any double-taxation treaty; withholding at source is a prepayment, not a substitute for declaring it.",
+  "see": [
+   "CGT",
+   "Trader vs investor status",
+   "Record keeping",
+   "Regulation"
+  ]
+ }
+}

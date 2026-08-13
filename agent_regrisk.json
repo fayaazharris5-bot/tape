@@ -1,0 +1,527 @@
+{
+ "ASIC": {
+  "long": "ASIC — the Australian Securities and Investments Commission — is the regulator overseeing companies, financial markets and financial services in Australia, including brokers and CFD providers. It licenses firms through the AFSL regime, supervises conduct, and can intervene directly in how a product is sold.\n\nIts clearest recent exercise of that power was the 2021 CFD product intervention order, which capped leverage available to retail clients — roughly 30:1 on major currency pairs down to 2:1 on crypto-assets, tiered by asset class — and restricted certain account features that had amplified retail losses. The order applies to firms operating in Australia regardless of where the parent company is based.\n\nASIC's remit is conduct and disclosure, not investment outcomes. It does not vet whether a strategy works, guarantee a broker's solvency, or compensate traders for ordinary market losses. Its tools are licensing, enforcement action, and product intervention.\n\nWhere people get fooled: an ASIC-regulated broker is read as a promise of profit or of getting funds back if the firm fails. Segregation and licensing reduce certain risks; they do not remove market risk.",
+  "usage": "Referenced when checking whether an Australian-facing broker or CFD provider is licensed and subject to the retail leverage caps, rather than operating offshore outside that regime.",
+  "see": [
+   "AFSL",
+   "Retail leverage cap",
+   "Regulation",
+   "Compensation scheme"
+  ]
+ },
+ "AFSL": {
+  "long": "An AFSL — Australian Financial Services Licence — is the licence ASIC issues to a firm before it can legally deal in financial products, provide financial advice, or operate a trading platform for Australian clients. Holding one means the firm has met minimum standards on competence, financial resources and dispute handling.\n\nA firm can also operate under someone else's licence as an authorised representative, a weaker position — the authorising licensee carries the compliance obligations, and the arrangement can be terminated. Checking a firm's AFSL status, and whether it holds the licence itself or borrows one, is a matter of public record on ASIC's register.\n\nAn AFSL is a prerequisite for legitimate operation, not a quality rating. Two AFSL holders can have very different fee structures, execution quality and financial stability while both being fully licensed.\n\nWhere people get fooled: an AFSL number quoted on a website is treated as a blanket endorsement. It confirms the firm cleared a regulatory bar to operate — it says nothing about whether its pricing, spreads or execution are competitive, or whether the firm will still exist in five years.",
+  "usage": "Checked on ASIC's licence register before opening an account with an Australian-facing broker or platform, to confirm it is licensed to deal rather than operating outside the regime.",
+  "see": [
+   "ASIC",
+   "Broker",
+   "Regulation",
+   "Australian brokerage"
+  ]
+ },
+ "SEC / CFTC": {
+  "long": "The SEC (Securities and Exchange Commission) and CFTC (Commodity Futures Trading Commission) are the two primary US market regulators, with jurisdiction split by product rather than unified into one body. The SEC oversees securities — shares, bonds, most ETFs, options on securities. The CFTC oversees futures, most swaps, and commodity and currency derivatives.\n\nThe split matters practically: a product can sit in one regime or the other depending on its structure, which affects margin rules, reporting requirements and which body a complaint goes to. Both agencies bring enforcement actions for manipulation, fraud and insider trading, and both maintain public records of those actions.\n\nNeither regulator pre-approves trading strategies or vets whether a product will be profitable. Their role is market integrity, disclosure and conduct — not investment advice or performance guarantees.\n\nWhere people get fooled: 'SEC-registered' or 'CFTC-regulated' gets used as a stamp of trustworthiness in marketing. It confirms the entity sits within a supervised regime with reporting and conduct obligations — it does not confirm the product is suitable, low-risk, or likely to make money.",
+  "usage": "Used to identify which US regulator has jurisdiction over a given product or firm, since securities and derivatives fall under different rulebooks.",
+  "see": [
+   "Pattern day trader rule",
+   "Regulation",
+   "Market manipulation",
+   "Insider trading"
+  ]
+ },
+ "Pattern day trader rule": {
+  "long": "The pattern day trader rule is a FINRA requirement applying to margin accounts at US brokers: an account that executes four or more day trades (opening and closing the same position within one session) within five business days is flagged as a pattern day trader, and must maintain a minimum equity of $25,000 to keep day trading on margin.\n\nFall below that threshold and the account is restricted — trading is limited until equity is restored, regardless of how the trader got there. The rule counts trade activity, not account size at the point of judgement, so it can catch an account by surprise mid-week.\n\nIt applies specifically to margin accounts; cash accounts are not subject to the same day-trade count, though they carry their own settlement-timing constraints on reusing funds. It is a US brokerage rule, not a global standard — other jurisdictions have different or no equivalent threshold.\n\nWhere people get fooled: the $25,000 figure is assumed to be a soft guideline a broker might negotiate. It is a regulatory minimum enforced by the platform's own systems; brokers restrict accounts automatically rather than exercising discretion.",
+  "usage": "Relevant to anyone day trading US equities on margin with a US broker, since it sets the account size below which frequent day trading gets restricted.",
+  "see": [
+   "SEC / CFTC",
+   "Day trading margin",
+   "Margin",
+   "Retail leverage cap"
+  ]
+ },
+ "Retail leverage cap": {
+  "long": "A retail leverage cap is a regulatory limit on how much borrowed exposure a broker can offer a retail client on leveraged products such as CFDs and margin FX, as distinct from professional or wholesale clients who can access higher limits under separate criteria.\n\nASIC's 2021 CFD product intervention order is a documented example: it tiered maximum leverage by asset class — roughly 30:1 on major currency pairs, stepping down through indices and commodities to around 2:1 on crypto-assets — on the basis that retail accounts were losing money disproportionately at higher leverage. Comparable caps exist under other regulators, with different ratios.\n\nThe cap changes how much capital is required to hold a given notional position; it does not change the underlying volatility of the instrument. A capped account can still be wiped out by an adverse move — the cap just slows how quickly leverage alone can do it.\n\nWhere people get fooled: a lower leverage cap is read as the regulator having made the product safe. It reduces one specific way accounts blow up quickly; it does nothing about spread cost, gap risk, or the underlying instrument's volatility.",
+  "usage": "Relevant when comparing what leverage a regulated broker can legally offer a retail client against what an unregulated or offshore provider advertises.",
+  "see": [
+   "ASIC",
+   "Leverage",
+   "CFD",
+   "Margin"
+  ]
+ },
+ "Segregated client money": {
+  "long": "Segregated client money is a rule requiring a broker to hold client funds in an account separate from its own operating capital, so the firm cannot use client deposits to fund its business or pay its own creditors. It is a standard licensing condition in most regulated jurisdictions.\n\nThe mechanism protects against one specific failure mode: a broker drawing on client balances to cover its own losses or expenses. It does this by keeping the money legally and operationally distinct, typically with a third-party custodian or bank.\n\nSegregation does not protect against every way a broker can fail. If the broker becomes insolvent through bad business decisions, poor risk management on its own book, or fraud elsewhere, recovering segregated funds can still be slow, partial, or contested — segregation is a rule about where money sits, not an insurance guarantee.\n\nWhere people get fooled: 'segregated client funds' is marketed as equivalent to a promise the money is safe. It substantially reduces one failure mode; it is not deposit insurance, and it does not make broker insolvency risk zero.",
+  "usage": "Checked as one factor — not the only one — when assessing how exposed client funds are if a broker becomes insolvent.",
+  "see": [
+   "Broker insolvency",
+   "Compensation scheme",
+   "Custody",
+   "Platform risk"
+  ]
+ },
+ "Best execution": {
+  "long": "Best execution is a regulatory obligation requiring a broker to take reasonable steps to get the best available terms for a client's order, considering price, cost, speed, likelihood of execution and settlement, rather than routing an order wherever is most convenient for the broker.\n\nIn practice it does not mean every single order gets the mathematically best possible fill. It means the broker must have a policy for how orders are routed, apply it consistently, and be able to show that policy was followed if challenged. The obligation is process-based, not an outcome guarantee for any individual trade.\n\nThe rule interacts with things like payment for order flow, where a broker is paid by a market maker to route orders there — allowed in some jurisdictions under disclosure and best-execution constraints, restricted in others, because the incentive runs against the client's interest.\n\nWhere people get fooled: a slow or worse-than-expected fill is assumed to prove a best-execution breach. It can just as easily reflect normal market conditions at that moment — best execution is a standard of process, not a promise that every fill is optimal.",
+  "usage": "Cited when questioning why an order filled at a particular price or venue, and whether the broker's routing policy explains it.",
+  "see": [
+   "Broker",
+   "Price improvement",
+   "Payment for order flow",
+   "Market manipulation"
+  ]
+ },
+ "Market manipulation": {
+  "long": "Market manipulation covers a set of prohibited conduct aimed at creating a false or misleading impression of price, supply or demand, rather than trading on a genuine view. It is illegal in essentially every regulated market, though the specific offences and enforcement intensity vary by jurisdiction.\n\nRecognised forms include spoofing (placing orders with no intent to fill them, to move the visible book), wash trading (trading with oneself or a coordinated party to fake volume), and pump-and-dump schemes (talking up a thinly traded asset while offloading a position into the resulting demand). Regulators such as the SEC, CFTC and ASIC actively pursue these, and enforcement actions are public record.\n\nManipulation is distinct from aggressive but legitimate trading — a large genuine order that moves price is not manipulation; the same order placed to be cancelled before execution, purely to influence others, is.\n\nWhere people get fooled: retail traders sometimes describe ordinary price action against their position as manipulation. Most of what looks like a level being 'hunted' is liquidity and order flow behaving normally around a price everyone else can also see.",
+  "usage": "Distinguished from ordinary aggressive trading or stop-hunting complaints, since manipulation refers specifically to conduct intended to create a false market impression.",
+  "see": [
+   "Spoofing",
+   "Pump and dump",
+   "Wash trading",
+   "Regulation"
+  ]
+ },
+ "Insider trading": {
+  "long": "Insider trading is trading a security while in possession of material, non-public information about that security, or passing that information to someone else who trades on it. Materiality means information a reasonable investor would consider important to a decision to buy or sell; non-public means it has not been released to the market generally.\n\nIt is a criminal and civil offence in essentially every developed market, prosecuted by securities regulators such as the SEC or ASIC. The offence attaches to the information asymmetry and the trade, not to whether the trade made money — an unprofitable trade made on inside information is still insider trading.\n\nThe rule exists because markets rely on prices reflecting information available to all participants; trading on a private edge from privileged access undermines that and disadvantages everyone without it.\n\nWhere people get fooled: the line is assumed to be about being 'in the know' generally, or trading on a strong hunch. The actual test is narrower and more specific — material, non-public, and a source with a duty of confidentiality — not simply having good information ahead of the crowd.",
+  "usage": "Relevant to understanding why certain information — from employees, advisers or others with privileged access — cannot legally be traded on before it is public.",
+  "see": [
+   "Market manipulation",
+   "Regulation",
+   "Halt on news"
+  ]
+ },
+ "T+1 settlement": {
+  "long": "T+1 settlement means a trade finalises — cash and securities actually change hands — one business day after the trade date, rather than on the trade date itself. Most markets historically settled on a delay, commonly T+2 or T+3, to give clearing systems time to process the transfer.\n\nThe delay creates a window between agreeing a trade and it actually settling, during which a counterparty could in principle fail before completing their side — counterparty risk that grows with the length of the settlement cycle. Shortening the cycle to T+1 reduces that window. US equities moved from T+2 to T+1 in 2024, a documented, industry-wide change rather than a broker-specific one.\n\nSettlement cycles differ by market and instrument, and a shorter cycle changes operational requirements — funding and share delivery have to happen faster, which affects things like FX conversion timing for cross-border trades.\n\nWhere people get fooled: settlement date is confused with trade date for tax and record-keeping purposes. When an order fills is usually the trade date that matters for CGT and record-keeping — settlement is the back-office mechanics completing behind it.",
+  "usage": "Relevant to understanding the gap between when a trade executes and when the cash and shares actually move, and why that gap has been shrinking in major markets.",
+  "see": [
+   "Settlement",
+   "Counterparty risk",
+   "Regulation"
+  ]
+ },
+ "KYC / AML": {
+  "long": "KYC (Know Your Customer) and AML (Anti-Money Laundering) are the identity-verification and monitoring obligations regulated brokers, exchanges and payment providers must apply to their clients. KYC covers verifying who a customer actually is at onboarding — identity documents, proof of address, source-of-funds checks above certain thresholds. AML covers ongoing monitoring for transaction patterns consistent with money laundering or terrorism financing, with a duty to report suspicious activity.\n\nThese obligations sit on the firm, not the client, but the client experiences them as account-opening friction and occasional requests to explain a large or unusual deposit or withdrawal. Failing to comply exposes the firm to serious regulatory penalties, which is why the checks are non-negotiable rather than a customer-service option.\n\nOffshore or unregulated platforms that skip meaningful KYC/AML are a signal, not a convenience — the same absence of checks that made onboarding fast also means no regulator is watching that operator's conduct.\n\nWhere people get fooled: minimal KYC is read as the platform being more trustworthy or trader-friendly because it 'just lets you trade.' It more often means the platform sits outside a regulatory regime that would otherwise constrain it.",
+  "usage": "Encountered as identity-verification and source-of-funds checks when opening an account or making a large deposit or withdrawal with a regulated provider.",
+  "see": [
+   "Regulation",
+   "Broker",
+   "Custody",
+   "Compensation scheme"
+  ]
+ },
+ "Compensation scheme": {
+  "long": "A compensation scheme is a fund, industry-backed or government-backed, that reimburses clients up to a set cap if a licensed financial firm fails and cannot return client money it was holding — typically triggered by insolvency or fraud, not by ordinary trading losses. Coverage, caps and eligible product types vary sharply by jurisdiction, and many jurisdictions have no broad equivalent at all.\n\nWhere a scheme exists, it usually covers a specific, narrow scenario: the firm collapsed and client money that should have been segregated cannot be fully returned. It does not cover a client losing money on a trade that went against them, and it does not extend to firms operating outside that jurisdiction's licensing regime.\n\nOffshore brokers, in particular, commonly sit entirely outside any compensation scheme — a client dealing with one has no domestic safety net if the firm fails, regardless of how segregation or licensing is marketed on its website.\n\nWhere people get fooled: 'your funds are protected' in broker marketing is assumed to mean market losses are covered. A compensation scheme, where one applies at all, addresses firm failure — it has nothing to do with a losing trade.",
+  "usage": "Checked to see whether, and up to what cap, a jurisdiction's compensation scheme would apply if a broker became insolvent — separate from ordinary trading risk.",
+  "see": [
+   "Broker insolvency",
+   "Segregated client money",
+   "Platform risk",
+   "Regulation"
+  ]
+ },
+ "ASX": {
+  "long": "The ASX (Australian Securities Exchange) is Australia's primary securities exchange, the venue where most Australian-listed shares, ETFs and exchange-traded derivatives are traded, and the operator of the clearing and settlement infrastructure (CHESS) underneath those trades.\n\nIt is a single, centralised market — unlike the fragmented US equity landscape with multiple competing exchanges and dark pools, most ASX order flow for a given stock sits in one visible order book. Trading runs a standard local session on business days, with a pre-market auction, continuous trading, and a closing auction.\n\nCompanies list on the ASX under its listing rules, which set disclosure obligations including continuous disclosure of material information — the basis on which trading halts get called around news.\n\nWhere people get fooled: the ASX is assumed to behave like the US market in miniature — same session structure, same liquidity depth, same stock count. Its narrower stock universe and lower average liquidity outside the largest names change how execution, spreads and slippage behave relative to a large-cap US name.",
+  "usage": "Referenced as the exchange and clearing venue for Australian-listed shares and ETFs, distinct from US or other international markets.",
+  "see": [
+   "ASX 200",
+   "CHESS / HIN",
+   "Australian brokerage",
+   "Settlement"
+  ]
+ },
+ "ASX 200": {
+  "long": "The ASX 200 (S&P/ASX 200) is the benchmark index of the 200 largest companies listed on the ASX by market capitalisation, weighted by float-adjusted market cap. It is the standard reference point for 'the Australian market' in the same way the S&P 500 is for the US.\n\nIts composition is reviewed and rebalanced periodically, so membership changes as companies grow, shrink, list or delist — a stock dropping out of the index can face selling from funds that track it, independent of anything about the company's fundamentals changing that day.\n\nThe index is heavily weighted toward financials and materials — banks and miners — more concentrated by sector than broader US benchmarks, a structural fact worth knowing before treating it as a fully diversified proxy for the Australian economy.\n\nWhere people get fooled: 'beating the ASX 200' is treated as a low bar because it is 'just Australia.' Its sector concentration means it can behave quite differently from a global benchmark, and a strategy that beats it may simply be making a sector bet rather than demonstrating skill.",
+  "usage": "Used as the standard benchmark for Australian equity performance, and as the reference point index funds and ETFs track.",
+  "see": [
+   "ASX",
+   "Benchmark",
+   "Index fund",
+   "Market capitalisation"
+  ]
+ },
+ "CHESS / HIN": {
+  "long": "CHESS (Clearing House Electronic Subregister System) is the ASX's electronic system for clearing, settling and recording ownership of Australian-listed shares. A HIN (Holder Identification Number) is the unique number CHESS assigns to an investor, under which their share holdings are recorded directly on the company's register.\n\nHolding shares under your own HIN means the share registry itself shows you as the legal holder, distinct from holding through a custodial or 'nominee' arrangement, where the broker holds shares in its own name on clients' behalf and tracks individual entitlement internally. Some brokers, particularly newer app-based ones, use custodial models rather than issuing a HIN per client.\n\nThe practical difference shows up if a broker fails: a CHESS-sponsored holding is recorded independently on the company's register, while a custodial holding depends on that broker's internal records and the wind-up process for that entity.\n\nWhere people get fooled: 'I own the shares' is assumed to mean the same thing regardless of broker. Whether a HIN exists in your name or the broker holds shares in a pooled nominee account is a real structural difference, not a technicality.",
+  "usage": "Checked when comparing brokers, to see whether a holding is CHESS-sponsored under an individual HIN or held via a pooled custodial or nominee structure.",
+  "see": [
+   "ASX",
+   "Custody",
+   "Broker insolvency",
+   "Australian brokerage"
+  ]
+ },
+ "Franking credit": {
+  "long": "A franking credit (imputation credit) represents company tax already paid on profits an Australian company distributes as a dividend. Because that tax has been paid at the company level, the credit attached to the dividend can be used by the shareholder to offset their own income tax liability, avoiding the same profit being taxed twice.\n\nA dividend can be fully franked, partially franked, or unfranked, depending on how much company tax has actually been paid against the profits being distributed — not every dividend carries the same credit. For shareholders with a tax rate below the company rate, franking credits in excess of tax owed can, depending on the entity type and current rules, be refunded rather than merely offsetting the bill.\n\nFranking is specific to the Australian imputation system; dividends from foreign-listed companies generally do not carry equivalent Australian franking credits, which changes the after-tax comparison between a domestic and an international holding.\n\nWhere people get fooled: a headline dividend yield is compared straight across an Australian fully franked stock and a US stock without adjusting for franking. The after-tax pictures are not directly comparable without accounting for the credit.",
+  "usage": "Relevant when comparing the after-tax yield of Australian dividend-paying shares against unfranked or foreign dividends; not a substitute for personalised tax advice.",
+  "see": [
+   "Dividend",
+   "Dividend yield",
+   "SMSF",
+   "CGT"
+  ]
+ },
+ "SMSF": {
+  "long": "An SMSF (Self-Managed Super Fund) is a superannuation structure in Australia where the members are also the trustees, giving direct control over investment decisions instead of using a retail or industry super fund. It exists as a legitimate, regulated structure, subject to strict trustee obligations under superannuation law.\n\nRunning one means the trustees are personally responsible for compliance: the sole purpose test, requiring investments to be for retirement benefit rather than current personal benefit, contribution caps, restrictions on related-party and in-house assets, an investment strategy document, and annual audit and reporting requirements. Breaches carry real penalties, including the fund losing its complying status.\n\nAn SMSF is a structure, not a strategy — it does not itself determine what to invest in, and running one comes with ongoing administrative cost and responsibility regardless of how the underlying investments perform.\n\nWhere people get fooled: an SMSF is treated as a way to trade superannuation actively and access the funds flexibly. The sole purpose test and preservation rules still apply in full; this entry describes the structure only, not whether or how to set one up.",
+  "usage": "Described here as a regulated superannuation structure with specific trustee obligations — not guidance on whether to establish one.",
+  "see": [
+   "Franking credit",
+   "CGT",
+   "Regulation",
+   "Diversification"
+  ]
+ },
+ "AEST / AWST": {
+  "long": "AEST (Australian Eastern Standard Time) and AWST (Australian Western Standard Time) are two of Australia's time zones — AWST covering Western Australia, AEST covering the eastern states outside daylight saving. AWST sits two hours behind AEST for most of the year, widening to three hours when the eastern states shift to AEDT (daylight saving) and Western Australia does not.\n\nThat gap is not fixed year-round, which matters for anyone coordinating market sessions or scheduled data releases across zones. A session time quoted in AEST or AEDT needs converting carefully, checking whether daylight saving is currently in effect in the eastern states.\n\nThe same complication compounds when the relevant market is overseas — US and European daylight saving transitions happen on different calendar dates to Australia's, so the effective gap to a US or European session time can shift more than once across the year, briefly desynchronising from the usual offset.\n\nWhere people get fooled: a session time memorised once is assumed to stay fixed. Two separate daylight-saving calendars — Australia's and the offshore market's — mean the actual local time of a fixed market event can move more than once a year.",
+  "usage": "Used when converting a market session or data release time between Western and Eastern Australian time, accounting for daylight saving in the eastern states.",
+  "see": [
+   "Trading US hours from Perth",
+   "Session",
+   "FX session overlap"
+  ]
+ },
+ "Trading US hours from Perth": {
+  "long": "Perth runs on AWST, which does not observe daylight saving, while the US market and its own daylight-saving calendar move independently. The practical result: the US cash equity open, 9:30am US Eastern, lands late evening in Perth, and the exact local time shifts across the year as US daylight saving starts and ends on its own schedule, unmatched by any change on the Perth side.\n\nThis creates a session that runs into the night for a Perth-based trader following the US cash open live, with the close landing even later. Futures and other near-24-hour markets extend the window further, but the US regular session, where the bulk of index and single-stock volume concentrates, sits squarely in Perth's evening-to-early-morning hours for most of the year.\n\nThe timing has consequences beyond convenience: trading a live overnight session against a normal daytime routine affects sleep, and by extension decision quality, in a way that is easy to underweight when only thinking about the market side of the schedule.\n\nWhere people get fooled: the time difference is treated as a fixed number of hours to memorise once. It is not fixed — it moves as US daylight saving shifts through the year, independent of Perth's own clock.",
+  "usage": "Relevant to Perth-based traders planning to follow the US cash session live, given how late it lands locally and how that timing shifts across the year.",
+  "see": [
+   "AEST / AWST",
+   "Session",
+   "Screen time"
+  ]
+ },
+ "Australian brokerage": {
+  "long": "Australian brokerage refers to brokers licensed and operating under Australian regulation, holding or operating under an AFSL, as distinct from offshore or CFD-style providers marketing into Australia from outside the domestic regime. The category spans full-service and discount brokers offering direct ASX access, typically settling through CHESS.\n\nDirect ASX access through a domestic broker generally means CHESS-sponsored holdings under an individual HIN, or a disclosed custodial arrangement, local dispute-resolution avenues, and products falling under ASIC's retail protections, including the leverage caps applying to CFDs and margin products sold domestically.\n\nFees, execution quality and product range still vary widely between Australian brokers — being domestically regulated sets a compliance floor, not a competitive ranking. Some Australian brokers also offer access to international markets, which introduces currency exposure and different settlement and tax treatment than a domestic trade.\n\nWhere people get fooled: 'Australian broker' and 'ASX-listed only' get conflated. Many Australian-regulated brokers also provide access to US and other international markets, which carries its own currency exposure and reporting considerations separate from the broker's domestic regulatory status.",
+  "usage": "Distinguished from offshore or CFD-only providers when comparing custody structure, dispute resolution and regulatory protections for an Australian-based trader.",
+  "see": [
+   "ASX",
+   "CHESS / HIN",
+   "AFSL",
+   "Compensation scheme"
+  ]
+ },
+ "Currency exposure": {
+  "long": "Currency exposure is the risk that comes from holding an asset priced in a currency other than one's own — an Australian investor buying a US-listed stock is exposed to both that stock's price movement and the AUD/USD exchange rate, and the two combine, not simply add, into the final return measured in AUD.\n\nA favourable stock move can be partly or fully offset by an unfavourable currency move, and vice versa — a stock that goes nowhere in USD terms can still show a gain or loss in AUD purely from the exchange rate shifting. This is separate from, and additional to, the risk of the underlying instrument itself.\n\nThe exposure exists whether or not it is deliberately chosen; simply buying an unhedged foreign asset creates it by default. Some investors treat that currency exposure as intentional diversification away from the home currency; others prefer to isolate it with hedging.\n\nWhere people get fooled: returns on an international holding are read straight off the foreign-currency price chart. The return that actually lands in a local account depends on the exchange rate at both purchase and sale, which the foreign-currency chart says nothing about.",
+  "usage": "Relevant whenever holding an asset priced in a foreign currency, since the local-currency return depends on both the asset's price and the exchange rate.",
+  "see": [
+   "Hedged ETF",
+   "Base / quote currency",
+   "Correlation risk"
+  ]
+ },
+ "Hedged ETF": {
+  "long": "A hedged ETF holds foreign assets but adds a currency-hedging overlay, typically using forward contracts, intended to strip out most of the return or loss coming from exchange-rate movement and leave the fund's performance tracking closer to the underlying asset's return in its own currency.\n\nThe hedge is not free or perfect. It carries its own transaction and rollover costs embedded in the fund's expense ratio, and interest-rate differentials between the two currencies can add or subtract from returns independent of the hedge working as intended. A hedged fund can still show tracking error against its stated benchmark.\n\nChoosing hedged versus unhedged is a decision about which exposure to accept, not a decision with a fixed right answer: unhedged adds currency risk, and potential diversification, on top of the asset; hedged removes most of that currency effect but adds hedging cost and its own tracking imperfection.\n\nWhere people get fooled: a hedged ETF is assumed to remove currency risk entirely and for free. Hedging reduces currency exposure at a cost, and imperfectly — it is a trade-off between two different risk profiles, not an elimination of risk.",
+  "usage": "Compared against an unhedged version of the same fund when deciding which currency exposure to accept, given the hedge's own cost and imperfect tracking.",
+  "see": [
+   "Currency exposure",
+   "ETF",
+   "Tracking error",
+   "Expense ratio"
+  ]
+ },
+ "Market risk": {
+  "long": "Market risk, or systematic risk, is exposure to broad price moves that affect an entire asset class or market — a general equity sell-off, a bond market repricing on rate expectations, a currency devaluation — as distinct from risk specific to one company or position, known as idiosyncratic risk.\n\nThe defining feature is that it cannot be diversified away by holding more positions within the same asset class, because the moves affect most of them together. Spreading a portfolio across many stocks reduces company-specific risk but does little against a broad market decline that pulls most stocks down with it.\n\nReducing genuine market risk requires either holding less exposure to the asset class overall, holding assets that respond differently to the same conditions, or hedging the exposure directly — diversification within the same market only addresses the other kind of risk.\n\nWhere people get fooled: a portfolio spread across twenty different stocks is assumed to be well diversified against a downturn. If those twenty stocks are all in the same market and move together in a broad sell-off, the count of positions has done very little against the risk that actually shows up.",
+  "usage": "Distinguished from company-specific risk when explaining why a diversified stock portfolio can still fall sharply in a broad market decline.",
+  "see": [
+   "Diversification",
+   "Correlation to the index",
+   "Volatility",
+   "Concentration risk"
+  ]
+ },
+ "Liquidity risk": {
+  "long": "Liquidity risk is the risk of being unable to exit a position at or near the expected price because there isn't enough trading interest on the other side — the visible order book is thin, the spread is wide, or a large order would have to walk through several price levels to fill.\n\nIt shows up two ways: in normal conditions, as a wider bid-ask spread and higher cost simply to trade the instrument at all; and in stressed conditions, as depth disappearing entirely just when an exit is most needed, because everyone else is trying to sell into the same thin book at once.\n\nInstruments are not equally liquid at all times — a normally liquid stock or currency pair can see liquidity evaporate around news, low-volume sessions, or a broad market panic, which is exactly when the ability to exit matters most.\n\nWhere people get fooled: a position's normal, calm-market liquidity is assumed to hold under stress. Liquidity is not a fixed property of an instrument — it is a market condition that can be present on a normal Tuesday and gone entirely during the event that made an exit necessary.",
+  "usage": "Relevant when sizing a position in a thinly traded instrument, since the ability to exit at the expected price is not guaranteed by that price simply existing on a chart.",
+  "see": [
+   "Liquidity",
+   "Slippage",
+   "Market impact",
+   "Gap and overnight risk"
+  ]
+ },
+ "Gap and overnight risk": {
+  "long": "Gap and overnight risk is the risk that price moves sharply between one session's close and the next open, or across a weekend or holiday when a market is shut, without any opportunity to trade in between. A stop-loss order does not remove this risk: a stop is triggered at a price, but if the market reopens beyond that price, the order fills at the next available price, not the stop level.\n\nThe risk is structural to any market with defined trading hours, and larger for instruments or venues that trade fewer hours, or that reference an underlying event scheduled outside those hours — earnings, central bank decisions, weekend news.\n\nA documented example is the Swiss National Bank's January 2015 removal of the EUR/CHF floor: the pair gapped violently within minutes, and stop-loss orders placed well above the eventual price filled far worse than expected, producing losses that exceeded account balances for some traders and pushing at least one broker into insolvency.\n\nWhere people get fooled: a stop-loss is treated as a promise of the maximum possible loss on a position. It defines the trigger price, not the fill price — the two can diverge sharply exactly when a gap makes the protection matter most.",
+  "usage": "Relevant to any position held through a market close, weekend, or scheduled event, since a stop order does not guarantee execution at the stop price if the market gaps past it.",
+  "see": [
+   "Stop loss",
+   "Liquidity risk",
+   "Session",
+   "Slippage"
+  ]
+ },
+ "Correlation risk": {
+  "long": "Correlation risk is the risk that positions assumed to move somewhat independently — the basis for expecting diversification to reduce portfolio swings — instead move together, especially during market stress, undermining the protection the portfolio was built to have.\n\nCorrelations measured over calm periods are not stable. A well-documented pattern is that correlations across risky assets tend to rise sharply during sell-offs — assets that showed little relationship day to day in normal conditions can fall together when broad risk appetite drops, because the same forced-selling and liquidity dynamics hit many positions at once.\n\nThis matters most for portfolios built specifically to be diversified: the benefit they were designed to deliver is precisely the one most likely to weaken at the moment it's needed, since stress periods are when correlations most often move against the assumption.\n\nWhere people get fooled: a correlation matrix calculated from recent, calm-market data is treated as a stable property of the assets involved. It is a snapshot of a particular regime, and the regime that matters most — genuine market stress — is exactly the one least represented in an ordinary historical sample.",
+  "usage": "Relevant when assessing whether a portfolio's diversification will hold up in a broad sell-off, since correlations between assets are not fixed and tend to shift during stress.",
+  "see": [
+   "Diversification",
+   "Correlation breakdown",
+   "Concentration",
+   "Correlation to the index"
+  ]
+ },
+ "Basis risk": {
+  "long": "Basis risk is the risk that a hedge does not move exactly in line with the position it is meant to offset, because the hedging instrument and the underlying exposure are related but not identical. The gap between the two, the basis, can widen or narrow independently of the direction either one is moving.\n\nA common example is hedging a specific stock or commodity exposure with a broader index or futures contract rather than the exact instrument: the hedge tracks the general direction reasonably well most of the time, but during periods when the specific position diverges from the broader proxy, the hedge can fail to offset the loss it was meant to cover, or lose money at the same time as the position it was hedging.\n\nBasis risk is distinct from simply choosing a bad hedge — it exists even with a sensible, well-chosen hedge, because no proxy instrument perfectly replicates another position's exact drivers.\n\nWhere people get fooled: a hedge is treated as removing risk entirely because the position and the hedge instrument are broadly related. A hedge reduces exposure to the shared component of risk; the basis, the part that doesn't move together, remains, and can matter a great deal in a specific, sharp move.",
+  "usage": "Relevant when a hedge uses a related but non-identical instrument to the actual exposure, since the two can diverge exactly when the hedge is most needed.",
+  "see": [
+   "Hedge",
+   "Basis",
+   "Correlation risk",
+   "Futures"
+  ]
+ },
+ "Model risk": {
+  "long": "Model risk is the risk that a quantitative model — a backtest, a valuation model, a risk estimate — is wrong, badly specified, or applied outside the conditions it was built for, and that the error only becomes visible once real money is committed on its basis.\n\nIt covers several distinct failure modes: overfitting a backtest to historical noise so it doesn't generalise; using assumptions about volatility, correlation or liquidity that quietly stop holding in a new regime; simple coding or data errors that go undetected because the model's output looks plausible; and applying a model correctly built for one context to a different one it was never validated against.\n\nModel risk is highest exactly when reliance on the model is highest and scrutiny is lowest — a model that has performed well for a long stretch tends to get trusted more, not tested more, which is backwards from what its growing importance to the portfolio would justify.\n\nWhere people get fooled: a model's historical track record is treated as proof it is correctly specified. A model can be wrong in a way that hasn't been exposed yet simply because the conditions that would expose it haven't occurred during the sample it was judged on.",
+  "usage": "Relevant to any strategy or risk estimate built on a backtest or quantitative model, since the model's own assumptions are a source of risk separate from the market itself.",
+  "see": [
+   "Overfitting",
+   "Backtest",
+   "Data snooping",
+   "Parameter sensitivity"
+  ]
+ },
+ "Operational risk": {
+  "long": "Operational risk is the risk of loss from failures in processes, systems, or people, rather than from the market moving against a position. It covers a broad category: a broker's platform going down during volatility, a mis-sized order, a broken API connection sending duplicate or missing orders, a data feed error a strategy trusts without checking, or a key process depending on one person who is unavailable when something breaks.\n\nIt is distinct from market risk in that a position can be perfectly reasoned and still lose money, or lose more than it should have, purely because something in the surrounding infrastructure failed at the wrong moment. Exchange outages, broker technology failures and connectivity drops are documented, recurring events across markets, not hypothetical edge cases.\n\nReducing operational risk is mostly about redundancy and process — monitoring and alerting, fail-safe defaults, reconciliation checks, and not having a single point of failure with no fallback.\n\nWhere people get fooled: a loss caused by a platform outage or a broken automated order gets folded into 'the market was against me.' The market may have had nothing to do with it — the failure sat in the infrastructure between the decision and the market.",
+  "usage": "Distinguished from market risk when a loss traces back to a system, platform or process failure rather than the position itself being wrong.",
+  "see": [
+   "Platform risk",
+   "Exchange outage",
+   "Kill switch",
+   "Monitoring and alerting"
+  ]
+ },
+ "Concentration": {
+  "long": "Concentration is the state of having a large share of a portfolio's risk sitting in one position, sector, or group of positions that behave similarly, as opposed to that risk being spread across genuinely different exposures. It describes portfolio structure; it is not automatically a mistake, but it changes what a single bad outcome can do.\n\nConcentration can be obvious, one stock dominating a portfolio, or hidden — several positions that look different on paper, different tickers, different sector labels, but are driven by the same underlying factor, so they move together despite appearing diversified by count alone.\n\nThe practical consequence of concentration is that portfolio-level risk stops being an average of many independent outcomes and starts depending heavily on the outcome of one thing. That can be a deliberate choice tied to conviction, or an unintended result of positions that turned out to be more related than they looked.\n\nWhere people get fooled: counting the number of positions is treated as a proxy for diversification. Ten positions that all move together on the same driver carry the same concentration risk as one position ten times the size — the count alone says nothing.",
+  "usage": "Relevant when assessing whether a portfolio's risk is genuinely spread out, since position count alone does not indicate how independent those positions actually are.",
+  "see": [
+   "Diversification",
+   "Concentration risk",
+   "Correlation risk",
+   "Position size"
+  ]
+ },
+ "Sequence-of-returns risk": {
+  "long": "Sequence-of-returns risk is the risk that the order in which gains and losses occur matters, not just their average, whenever money is being added to or withdrawn from a portfolio over time. Two portfolios can have identical average returns over a period and finish with very different balances, purely because of when the bad years landed relative to when contributions or withdrawals happened.\n\nThe mechanism is compounding interacting with cash-flow timing: a large loss early, before much capital has accumulated, has less absolute impact than the same-sized loss later on a much larger balance, if no further money is added or removed. But the relationship reverses for someone withdrawing steadily — an early bad sequence while regularly withdrawing depletes the capital base faster, leaving less to recover with when returns improve later.\n\nThis is why the same average long-run return can produce very different real outcomes depending on the specific path taken and exactly when contributions or withdrawals coincided with the down years.\n\nWhere people get fooled: a strategy's long-run average annual return is treated as sufficient to project an outcome. The path — specifically which years were down and how that lined up with money moving in or out — can matter as much as the average itself.",
+  "usage": "Relevant when evaluating an outcome for anyone contributing to or withdrawing from a portfolio over time, since the timing of gains and losses matters, not just their average.",
+  "see": [
+   "Compounding",
+   "Drawdown",
+   "Withdrawal policy",
+   "Sequence risk"
+  ]
+ },
+ "Regulatory risk": {
+  "long": "Regulatory risk is the risk that a change in rules — a new leverage cap, a product restriction, a tax change, an exchange rule change — alters the economics or even the legality of a position or strategy after it has already been established, independent of how the underlying market moves.\n\nIt is distinct from market risk because the change comes from outside the market's own price discovery: a position can be correctly reasoned about price and still be affected because a regulator decided a product should be restricted, a jurisdiction changed how gains are taxed, or an exchange altered contract specifications. ASIC's 2021 CFD leverage caps are a documented example of a rule change that directly reduced what retail accounts could access, regardless of any trader's view on the underlying market.\n\nRegulatory risk tends to be episodic and hard to time — rule changes are typically announced with some lead time once decided, but the decision itself is not something a market position can hedge against directly.\n\nWhere people get fooled: regulatory risk is treated as something only relevant to unusual or fringe products. Mainstream, widely used products, including leveraged retail derivatives and certain fund structures, have had material rule changes imposed on them within recent memory.",
+  "usage": "Relevant when a strategy or product's economics depend on rules — leverage limits, tax treatment, product access — that a regulator can and does change.",
+  "see": [
+   "Regulation",
+   "Retail leverage cap",
+   "Compensation scheme",
+   "ASIC"
+  ]
+ },
+ "Platform risk": {
+  "long": "Platform risk is the risk attached to the broker or trading platform itself, separate from the market risk of any position held through it — the platform's technology failing during volatility, its execution being worse than advertised, or the firm becoming insolvent and client access to funds being disrupted or delayed.\n\nIt spans a range of severity: at the milder end, a platform outage during a fast market that prevents managing an open position at the worst possible moment; at the more severe end, the firm itself failing, where recovery of funds depends on segregation, any applicable compensation scheme, and the jurisdiction's insolvency process, all of which vary and none of which are instant.\n\nPlatform risk is often underweighted relative to market risk because it is invisible during normal operation — a platform can work flawlessly for years and still carry meaningful platform risk that simply hasn't been tested by a stress event yet.\n\nWhere people get fooled: platform risk is assumed to be roughly zero for any broker that has 'always worked fine.' Smooth day-to-day operation says little about how the platform or firm behaves during genuine market stress or a solvency event, which is precisely when it matters most.",
+  "usage": "Distinguished from the market risk of a position, since it concerns the broker or platform's own reliability and solvency rather than the trade itself.",
+  "see": [
+   "Broker insolvency",
+   "Segregated client money",
+   "Operational risk",
+   "Compensation scheme"
+  ]
+ },
+ "Key person risk": {
+  "long": "Key person risk is the risk concentrated in dependence on a single individual — a sole trader, a fund's principal manager, the one person who understands how an automated system actually works — such that their absence, error, or departure has an outsized effect that a more distributed structure would not have.\n\nIt shows up in different forms: a fund whose performance is effectively one person's judgement rather than a repeatable process, a trading operation with no documented procedures so anyone other than its builder cannot maintain or safely intervene in it, or a strategy that depends on one person's continued attention with no fallback if they are unavailable exactly when a decision is needed.\n\nThe risk is structural rather than about that person's competence — even a highly skilled individual represents a single point of failure if nothing about the process is written down, shared, or capable of continuing without them.\n\nWhere people get fooled: a fund or system's strong track record is taken as evidence the operation itself is robust. A strong result produced entirely by one person's ongoing judgement says little about what happens to that result the day that person is unavailable, wrong, or gone.",
+  "usage": "Relevant when a fund, trading operation, or automated system's continued function depends heavily on one specific individual rather than a documented, repeatable process.",
+  "see": [
+   "Model risk",
+   "Operational risk",
+   "Reproducibility",
+   "Track record screenshot"
+  ]
+ },
+ "Risk budgeting": {
+  "long": "Risk budgeting is allocating a portfolio by how much risk each position or strategy is permitted to contribute, rather than by how much capital is assigned to each. Two positions can carry the same dollar size and very different risk contributions if one is far more volatile than the other, which is the gap risk budgeting is designed to address.\n\nIn practice it means setting a total risk tolerance for the portfolio, then sizing each position or strategy so its expected contribution to that total risk stays within its allotted share — a volatile instrument gets a smaller position than a stable one for the same risk budget, rather than both getting the same dollar allocation.\n\nThe approach requires an estimate of each position's risk, commonly volatility, sometimes a fuller measure incorporating correlation to the rest of the book, which introduces model risk of its own — the budget is only as good as the risk estimate feeding it.\n\nWhere people get fooled: equal dollar sizing across positions is assumed to mean equal risk. A volatile position and a stable one holding the same dollar amount are not contributing equally to portfolio risk — risk budgeting sizes by the contribution, not the capital outlay.",
+  "usage": "Relevant when comparing capital-based position sizing, equal dollars per trade, against sizing that instead equalises each position's contribution to overall portfolio risk.",
+  "see": [
+   "Risk parity",
+   "Position sizing",
+   "Risk per trade",
+   "Concentration"
+  ]
+ },
+ "Unknown unknowns": {
+  "long": "Unknown unknowns are risks that have not been identified or modelled at all, as distinct from known risks, where the possibility is recognised even if its size or timing is uncertain. A model or plan can carefully account for every risk it has thought to include and still be blindsided by something entirely outside that list.\n\nThe category matters because risk management tools — position sizing, stress testing, scenario analysis — are all built against risks that have been named. They are structurally unable to price or prepare for something nobody thought to specify, which means no amount of rigour applied to the known list closes that gap.\n\nThe practical response is not trying to enumerate the unenumerable, but building in slack: keeping leverage and position sizing conservative enough that an unanticipated shock is survivable rather than fatal, since the specific shock cannot be predicted in advance by definition.\n\nWhere people get fooled: a thorough risk model with many scenarios covered is treated as comprehensive. Comprehensiveness of the known list says nothing about what sits outside it — the entire category exists precisely because it cannot be closed by adding more scenarios to a list.",
+  "usage": "Referenced when explaining why margin of safety and conservative sizing matter even after every identifiable risk has been modelled and accounted for.",
+  "see": [
+   "Tail risk",
+   "Model risk",
+   "Stress testing",
+   "Scenario analysis"
+  ]
+ },
+ "Correlation to the index": {
+  "long": "Correlation to the index measures how closely a stock, strategy, or portfolio's returns move with a broad benchmark — a value near one means it moves almost in lockstep with the index; a value near zero means little relationship; negative correlation means it tends to move opposite the index.\n\nHigh correlation to the index means a position adds little diversification benefit against broad market risk — holding it alongside index exposure is close to holding more of the same exposure, even if the position is labelled differently or sits in a different sector on paper.\n\nCorrelation to the index is not fixed; it can shift over time as a company's business, a strategy's exposures, or market structure changes, and it commonly rises during broad sell-offs even for assets that showed lower correlation in calm periods, the same pattern seen more generally in correlation risk.\n\nWhere people get fooled: a stock with a different sector label or a strategy with a different name is assumed to be diversifying. If its returns move closely with the broad index anyway, the labelling difference is not doing the diversification work it appears to.",
+  "usage": "Checked when assessing whether a position genuinely diversifies against broad market risk, or largely duplicates exposure already held through an index.",
+  "see": [
+   "Market risk",
+   "Beta",
+   "Diversification",
+   "Correlation risk"
+  ]
+ },
+ "Drawdown duration tolerance": {
+  "long": "Drawdown duration tolerance is how long a trader or investor can withstand being in a drawdown, below a prior equity peak, before behavioural pressure, capital needs, or external constraints force a decision, as distinct from drawdown depth, which measures how far below the peak the account has fallen.\n\nA shallow but long drawdown can be harder to sit through than a deep but short one, because duration wears on conviction and patience in a way that a quick, sharp dip does not — time under water is its own variable, not simply a function of how deep the low point was.\n\nDuration tolerance also has hard constraints beyond psychology: a trader who needs to draw an income from the account, or a fund with investors who can redeem, has a duration limit set by those external pressures regardless of how calmly the trader personally might otherwise wait it out.\n\nWhere people get fooled: a strategy is evaluated on maximum drawdown depth alone. A strategy with a smaller peak-to-trough decline that stays underwater for years can be far harder to hold through, and far more likely to be abandoned before it recovers, than one with a deeper but shorter drawdown.",
+  "usage": "Relevant when a strategy's historical time-under-water is compared against how long the trader or investor can actually tolerate holding through a drawdown, not just its depth.",
+  "see": [
+   "Time under water",
+   "Drawdown",
+   "Underwater curve",
+   "Drawdown protocol"
+  ]
+ },
+ "Position ageing": {
+  "long": "Position ageing is the risk that builds simply from holding a position longer than its original thesis anticipated, even if price has not moved much. The conditions that justified the trade — a catalyst, a technical setup, a macro backdrop — can quietly stop applying while the position itself is untouched, leaving the holder exposed on a thesis that no longer describes the current situation.\n\nThe risk is easy to miss because there is no price move forcing a review — a position that just sits there, neither hitting a stop nor a target, does not naturally prompt the same scrutiny as one that is visibly moving. The passage of time alone is doing the damage, quietly, by letting the original reasoning go stale.\n\nGuarding against it means attaching a time dimension to a trade thesis at the outset — what invalidates this beyond price alone, and how long the setup is supposed to remain relevant — rather than only defining invalidation in price terms.\n\nWhere people get fooled: a position with no stop hit is treated as still valid by default. Silence from the price does not mean the thesis is still true; it can just mean nothing has yet forced the question.",
+  "usage": "Relevant to any position held well past its original expected timeframe, where the absence of a stop being hit is mistaken for the thesis still holding.",
+  "see": [
+   "Trade thesis",
+   "Invalidation",
+   "Holding period",
+   "Post-exit review"
+  ]
+ },
+ "Scalping": {
+  "long": "Scalping is a trading style built around very short holding periods, seconds to a few minutes, taking many small, frequent trades rather than fewer, larger ones. The individual edge sought per trade is typically small, so the style depends on high trade frequency and tight cost control to accumulate into a meaningful result.\n\nBecause each trade's target move is small relative to the spread and any commission, scalping is unusually sensitive to cost drag — a cost structure that would be a rounding error on a position held for weeks can consume most or all of the edge on a trade meant to capture a handful of points. It also demands considerable screen time and fast execution, given how briefly each opportunity exists.\n\nThe high trade count does have one structural upside: a large sample of trades accumulates far faster than with a low-frequency style, which means a scalping approach's statistical properties can be assessed with a reasonable sample size much sooner than a strategy that trades a few times a month.\n\nWhere people get fooled: a small per-trade cost is assumed to be negligible because it is small. At scalping frequency, that same small cost is paid on every single trade — it is the frequency, not the size, that determines whether it eats the edge.",
+  "usage": "Described here as a holding-period category defined by trade frequency and cost sensitivity, not as a style with an inherent profitability advantage over others.",
+  "see": [
+   "Day trading",
+   "Cost drag",
+   "Round turn",
+   "High-frequency trading"
+  ]
+ },
+ "Day trading": {
+  "long": "Day trading is a style where positions are opened and closed within the same session, so the account carries no open exposure overnight. Holding periods run from minutes to hours, shorter than swing trading but generally longer and lower-frequency than scalping.\n\nClosing everything by session end removes overnight and weekend gap exposure on those positions, at the cost of needing to be actively present and attentive for the full session rather than checking in periodically. Trade frequency sits between scalping and swing trading, which means the sample of trades needed to assess the approach statistically accumulates faster than position trading but slower than scalping.\n\nIn US markets specifically, frequent day trading on margin triggers the pattern day trader rule, adding a regulatory account-size constraint that does not apply to lower-frequency styles, a structural cost of the style beyond the trading itself.\n\nWhere people get fooled: closing every position by day's end is treated as inherently lower-risk because there's no overnight gap exposure. It removes one specific risk while typically increasing trading frequency and cost load relative to a slower style — a different risk profile, not a strictly safer one.",
+  "usage": "Described here as a holding-period and frequency category with its own cost and regulatory considerations, not presented as safer or more profitable than other styles.",
+  "see": [
+   "Scalping",
+   "Swing trading",
+   "Pattern day trader rule",
+   "Gap and overnight risk"
+  ]
+ },
+ "Swing trading": {
+  "long": "Swing trading holds positions for days to a few weeks, aiming to capture a defined move rather than either the very short intraday fluctuation scalping and day trading target, or the long-run compounding position trading and investing rely on.\n\nHolding overnight and across weekends means swing trades carry gap and overnight risk that day trading avoids by closing out each session — news or a data release outside trading hours can move the position before there is any chance to react. In exchange, the lower trade frequency means less screen time is required and cost drag from spread and commission matters proportionally less per trade than at scalping or day-trading frequency.\n\nBecause trades are less frequent than day trading or scalping, a statistically meaningful sample of swing trades takes longer to accumulate — assessing whether an approach has a real edge, rather than a run of luck, requires more calendar time at this frequency, not less.\n\nWhere people get fooled: a handful of good swing trades over a few weeks is treated as enough evidence the approach works. At swing-trading frequency, that sample size is still small relative to what separates a real edge from a fortunate stretch.",
+  "usage": "Described here as a holding-period category between day trading and position trading, with its own trade-off between overnight risk and lower trading cost load.",
+  "see": [
+   "Day trading",
+   "Position trading",
+   "Gap and overnight risk",
+   "Sample size"
+  ]
+ },
+ "Position trading": {
+  "long": "Position trading holds positions for weeks to months or longer, generally built around a broader thesis, a macro view, a fundamental development, a long-running technical trend, rather than a short-term price pattern. Trade frequency is low, and each position is held through the ordinary day-to-day noise that would trigger an exit at a shorter timeframe.\n\nThe lower frequency cuts cost drag sharply relative to faster styles, since spread and commission are paid rarely rather than on every trade, and it demands far less screen time. The cost is full exposure to overnight, weekend and gap risk for an extended period, and a much slower accumulation of trade sample size — a position trader might complete only a handful of trades in a year, which makes assessing the approach statistically a multi-year exercise rather than a matter of weeks.\n\nHolding through noise on purpose means position trading requires clearly defined invalidation that survives ordinary volatility, since a stop set too tight relative to the intended holding period will exit on noise before the thesis has time to play out.\n\nWhere people get fooled: a position trader's occasional large winner is remembered vividly while the low trade count that produced it is forgotten. A small sample of trades, even with a big win in it, is a thin basis for judging whether an approach has a real edge.",
+  "usage": "Described here as a low-frequency, longer-horizon holding-period category, with cost and sample-size trade-offs distinct from, not superior to, faster styles.",
+  "see": [
+   "Swing trading",
+   "Investing",
+   "Holding period",
+   "Sample size"
+  ]
+ },
+ "Investing": {
+  "long": "Investing, in this glossary's sense, refers to the longest-horizon style, holding periods measured in years, typically built around ownership of an asset for its underlying return, earnings growth, dividends, interest, rather than trading a price movement over a shorter window.\n\nTurnover and cost drag are lowest at this end of the spectrum: with very few transactions over a long period, spread and commission make up a negligible share of the outcome compared with any higher-frequency style, and compounding has the longest runway to operate on returns that are reinvested rather than realised and redeployed repeatedly.\n\nThe trade-off mirrors scalping's from the other direction: a sample of outcomes at investing timescales accumulates extremely slowly — a small number of multi-year holding periods is a thin basis for statistical conclusions about an approach, even though each individual period involves far less trading friction than a fast style would over the same stretch of time.\n\nWhere people get fooled: a long-term investing result is treated as more 'proven' than a faster style simply because it covers more calendar time. Calendar time and trade sample size are different things — a long holding period can still represent very few independent trials.",
+  "usage": "Described here as the longest-horizon, lowest-turnover style category, distinguished by cost load and sample accumulation speed rather than by superior returns.",
+  "see": [
+   "Position trading",
+   "Buy and hold",
+   "CAGR",
+   "Compounding"
+  ]
+ },
+ "Systematic vs discretionary": {
+  "long": "Systematic and discretionary describe how trading decisions get made, not how long positions are held. A systematic approach is fully rule-based: every entry, exit and sizing decision follows a pre-specified rule that could, in principle, be automated or followed identically by someone else. A discretionary approach applies human judgement at the point of decision, informed by rules and experience but not reducible entirely to a fixed set of conditions.\n\nSystematic rules can be backtested precisely, because the same rule applied to historical data produces a reproducible result, but only if the rule is genuinely fully specified; any gap where judgement quietly fills in the blanks breaks that reproducibility and reintroduces discretion under a systematic label. Discretionary approaches are harder to test rigorously for exactly the same reason: the decision process is not fully written down, so the same market conditions might not produce the same decision twice.\n\nNeither is inherently more reliable — a badly specified system and an undisciplined discretionary trader can both fail, and a well-run version of either can work as intended.\n\nWhere people get fooled: a strategy is labelled systematic because it uses indicators or a checklist. If any step still involves a judgement call not written down as an explicit rule, it is discretionary with systematic-looking scaffolding, not a fully specified system.",
+  "usage": "Used to distinguish fully rule-based decision processes from ones that still involve a judgement call, since only the former can be backtested exactly as it will be traded.",
+  "see": [
+   "Fully specified rule",
+   "Backtest",
+   "Trading plan",
+   "Reproducibility"
+  ]
+ },
+ "HFT": {
+  "long": "HFT, high-frequency trading, is trading at extremely short holding periods, fractions of a second to a few seconds, relying on speed advantages: proximity to the exchange (colocation), specialised low-latency infrastructure, and direct market data feeds, to act on tiny, fleeting price discrepancies before slower participants can.\n\nThe edge sought per trade is typically minuscule, so the style depends entirely on very high trade frequency and very low latency to accumulate into a meaningful result — the same trade thesis executed even a few milliseconds slower can be unprofitable, which is why the infrastructure cost, not just the strategy logic, is central to the style.\n\nThe infrastructure requirement — colocation fees, specialised hardware, direct exchange connections — makes HFT structurally unavailable to a retail account trading through a standard broker connection; the latency gap to a colocated firm cannot be closed with a better strategy alone.\n\nWhere people get fooled: retail 'fast' trading on short timeframes gets described informally as HFT. Genuine HFT competes on physical proximity and infrastructure measured in microseconds, a different competitive game entirely from a retail trader clicking fast on a five-minute chart.",
+  "usage": "Described here as an infrastructure-dependent style relying on physical proximity to the exchange and extreme trade frequency, not accessible through a standard retail broker connection.",
+  "see": [
+   "High-frequency trading",
+   "Colocation",
+   "Latency",
+   "Market maker"
+  ]
+ },
+ "Arbitrage": {
+  "long": "Arbitrage is trading a price discrepancy between two related instruments or markets that should, by their construction, trade at a consistent relationship to each other, buying the relatively cheap side and selling the relatively expensive side to capture the gap converging.\n\nThe edge per opportunity is typically small and short-lived, because visible discrepancies attract competition that closes them quickly — arbitrage opportunities are structurally self-limiting in a way most other styles are not. This makes execution speed and transaction cost unusually decisive: an edge that looks real on a chart can be entirely consumed by the cost and delay of actually executing both legs.\n\nMost arbitrage is not risk-free despite the name suggesting otherwise — basis risk between the two instruments, execution risk in getting both legs filled at the intended prices, and the discrepancy widening further before it converges are all real ways an arbitrage trade can lose money.\n\nWhere people get fooled: 'arbitrage' is treated as a synonym for a riskless profit because the textbook definition assumes perfect, instantaneous execution. Real-world arbitrage carries execution risk and basis risk the idealised version leaves out entirely.",
+  "usage": "Described here as a style trading a price relationship between related instruments, with real execution and basis risk despite the term's textbook 'riskless' connotation.",
+  "see": [
+   "Basis risk",
+   "Latency",
+   "Market impact",
+   "Spread"
+  ]
+ },
+ "Mean reversion": {
+  "long": "Mean reversion is a style built on the assumption that price, after moving away from some reference level or average, tends to move back toward it, trading the expectation of a reversal rather than a continuation. Holding periods vary widely depending on the specific implementation, from intraday to multi-week.\n\nThe style's cost and sample profile depends heavily on how it is implemented: a fast, frequent mean-reversion approach faces the same cost-drag sensitivity as any high-frequency style, while a slower version built around a longer-term average has lower turnover but takes longer to accumulate a meaningful trade sample.\n\nThe assumption underneath mean reversion, that a deviation is temporary rather than the start of a sustained new direction, does not hold universally. During a genuine regime or trend change, prices can continue moving away from a prior average for a long stretch rather than reverting, which is the scenario where mean-reversion approaches tend to suffer their worst drawdowns.\n\nWhere people get fooled: a mean-reversion approach's strong run during a range-bound period is extrapolated forward as a general property of the market. The same approach applied once the market shifts into a sustained trend can perform very differently, because the underlying assumption stops matching conditions.",
+  "usage": "Described here as a style resting on a specific assumption about price behaviour, with a cost and sample-accumulation profile that depends on implementation frequency.",
+  "see": [
+   "Trend following",
+   "Regime change",
+   "Overbought / oversold",
+   "Bollinger Bands"
+  ]
+ },
+ "Trend following": {
+  "long": "Trend following is a style that takes positions in the direction of an established price move and holds them for as long as the trend continues, exiting when the trend shows signs of ending rather than at a fixed profit target. Holding periods can range from weeks to many months depending on the implementation.\n\nThe cost and sample profile sits at the lower-frequency end: trades are relatively infrequent, so turnover cost is low relative to faster styles, but a meaningful sample of trades, including the losing ones that make up the majority of entries in many trend-following approaches, takes a long stretch of calendar time to accumulate.\n\nA structural feature of the style is that it accepts many small losses, positions that don't develop into a trend and get cut, in exchange for the possibility of large gains on the trades that do — a payoff shape very different from an approach expecting most trades to win, and one that is easy to misjudge by watching only recent results.\n\nWhere people get fooled: a losing streak is read as evidence the approach has stopped working. A style built around many small losses funding a smaller number of large wins is expected to produce exactly that pattern by design — a losing streak is not automatically a signal of a broken edge.",
+  "usage": "Described here as a style with a payoff shape built on many small losses and occasional large gains, distinct in cost and trade frequency from mean reversion, not presented as superior to it.",
+  "see": [
+   "Mean reversion",
+   "Momentum crash",
+   "Regime change",
+   "Trailing stop"
+  ]
+ },
+ "Prop firm": {
+  "long": "A prop firm, in the retail-facing 'funded trader' sense, sells an evaluation: a trader pays a fee to attempt to pass a set of trading targets on a demo or simulated account, and if successful is offered access to trade a funded account under the firm's rules, typically sharing a percentage of profits generated.\n\nThe business model matters for understanding the incentives involved: evaluation fees are revenue to the firm whether or not any individual attempt succeeds, and firms commonly allow repeated paid attempts after a failure. That structure means the firm's revenue does not depend on traders ultimately passing or trading profitably on a funded account — a point about how the model is built, not a claim about any specific firm's pass rates, which this entry does not state because they are not independently verifiable in the way advertised.\n\nFunded accounts also come with constraints beyond ordinary trading risk, daily loss limits, maximum drawdown rules, and often consistency rules restricting how concentrated profit can be in a single day, which shape trading style as much as the trader's own preferences do.\n\nWhere people get fooled: passing an evaluation is treated as equivalent to being a profitable trader. It demonstrates meeting that firm's specific rule set on that specific attempt, a different and narrower claim than sustained profitability under real capital and unconstrained conditions.",
+  "usage": "Described here as a fee-funded evaluation business model with specific account rules, not a recommendation for or against attempting one.",
+  "see": [
+   "Evaluation",
+   "Consistency rule",
+   "Daily loss limit",
+   "Trailing drawdown"
+  ]
+ },
+ "Daily loss limit": {
+  "long": "A daily loss limit is a rule that stops trading for the day once losses reach a set threshold, whether imposed externally (a prop firm's evaluation and funded-account rules commonly include one) or self-imposed as part of a personal risk plan. Breaching it typically means no further trades until the next session, and in a prop-firm context can mean the account is closed or the evaluation failed outright.\n\nThe mechanism it targets is a specific, well-documented failure pattern: a trader down for the day tries to win it back immediately, often sizing up or abandoning their usual process to do it, which tends to compound the original loss rather than recover it. A hard daily limit removes the option to keep trading through that state by cutting off access before it can play out.\n\nWhere the limit is set relative to a trading style's normal variance matters — a limit set too tight relative to how a given approach's losing days actually look can stop trading out prematurely on ordinary variance rather than a genuine problem day.\n\nWhere people get fooled: a daily loss limit is treated purely as an external constraint imposed by a firm's rules. It functions the same way as a self-imposed circuit breaker against revenge trading, regardless of who set the threshold.",
+  "usage": "Described here as a rule, externally imposed or self-set, that halts trading for the day once a loss threshold is reached, distinct from a per-trade stop loss.",
+  "see": [
+   "Prop firm",
+   "Risk per trade",
+   "Kill switch",
+   "Revenge trading"
+  ]
+ },
+ "Model": {
+  "long": "In trading style terms, a model is a trader's or system's explicitly defined set of rules or criteria for what counts as a valid trade, the playbook that specifies which conditions justify entry, sizing and exit, as opposed to trading each situation on an unstructured, in-the-moment read of the market.\n\nHaving a model does not require the approach to be fully systematic or automated; a discretionary trader can still work from a defined model in the sense of a consistent, written framework applied to each decision, rather than a different ad hoc rationale invented after the fact for every trade.\n\nA model's value depends on how completely it is specified and how consistently it is actually followed — a model with vague or missing criteria collapses back into unstructured discretion under a more organised-sounding label, and a well-specified model that is not actually followed provides no more discipline than having no model at all.\n\nWhere people get fooled: having 'a model' is treated as inherently more rigorous than trading on judgement. A vague or loosely applied model offers little more structure than no model — the rigour comes from how completely specified and consistently followed it is, not from the label.",
+  "usage": "Described here as a defined framework of entry, sizing and exit criteria a trader works from; its usefulness depends on how completely specified and consistently followed it actually is.",
+  "see": [
+   "Systematic vs discretionary",
+   "Fully specified rule",
+   "Trading plan",
+   "Backtest"
+  ]
+ },
+ "A+ setup": {
+  "long": "An A+ setup is informal shorthand for a trade meeting a trader's highest-quality criteria, the clearest, most confluent, most convincing version of whatever pattern or condition they trade. In principle it is a useful filter: not every valid signal is equally strong, and distinguishing the best examples from marginal ones is a reasonable instinct.\n\nThe label only does useful work if the criteria for 'A+' are written down in advance and applied the same way every time, before the outcome is known. Without that, the label tends to attach itself after the fact — a trade that worked gets remembered and described as an A+ setup, while a trade that met identical criteria but lost quietly does not get the same label applied, or gets explained away as not quite meeting the bar after all.\n\nThat pattern is a form of hindsight bias operating through vocabulary: the term feels like it's describing setup quality, but in practice it can end up tracking outcome instead, retroactively.\n\nWhere people get fooled: a string of 'A+ setups' in memory is treated as evidence the criteria reliably identify strong trades in advance. Without a written definition applied consistently before the outcome, the label is doing very little work beyond describing trades that happened to win.",
+  "usage": "Used informally for a trader's highest-conviction setups; only meaningful as a category if its criteria are defined in advance and applied consistently, win or lose.",
+  "see": [
+   "Confluence",
+   "Hindsight bias",
+   "Trading plan",
+   "Journaling the near-misses"
+  ]
+ }
+}
