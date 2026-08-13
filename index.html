@@ -136,6 +136,17 @@ select.btn{padding:8px 8px}
 .note.bad{color:var(--down)}
 .scard{border-top:1px solid var(--rule);padding:16px 0}
 .scard:first-child{border-top:0}
+/* strategy detail overlay */
+.sdetov{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:4vh 16px}
+.sdet{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--shh);max-width:760px;width:100%;margin:0 0 6vh;padding:20px 22px;position:relative}
+.sdet .sclose{position:absolute;top:10px;right:12px}
+.rhist .rrow{display:flex;align-items:center;gap:8px;margin:2px 0;font-size:.85em}
+.rhist .rlab{width:84px;text-align:right;color:var(--ink2);white-space:nowrap}
+.rhist .rbar{height:12px;min-width:2px;border-radius:2px}
+.rhist .rpos{background:var(--up)}
+.rhist .rneg{background:var(--down)}
+.rhist .rzero{background:var(--ink3)}
+.splitgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0}
 .shead{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
 .shead h3{font-family:var(--disp);font-weight:500;font-size:17px;margin:0;letter-spacing:-.01em;flex:1;min-width:180px}
 .by{font-family:var(--mono);font-size:12px;color:var(--ink3);display:block;margin-top:3px;font-weight:400}
@@ -5735,7 +5746,8 @@ function render(){
          (s.source?'<span class="by">'+(s.sourceUrl?'<a href="'+esc(s.sourceUrl)+'" target="_blank" rel="noopener">'+esc(s.source)+' \u2197</a>':esc(s.source))+'</span>':'')+
        '</h3>'+
        '<span class="badge '+ev[2]+'">'+ev[1]+' \u00b7 n='+nOf(s)+'</span>'+
-       '<button class="btn" data-t="'+key+'">'+(isOpen?"Hide":"Rules")+'</button></div>'+
+       '<button class="btn" data-t="'+key+'">'+(isOpen?"Hide":"Rules")+'</button>'+
+       '<button class="btn" data-det="'+key+'">Detail</button></div>'+
        (facts?'<div class="facts">'+facts+'</div>':'')+
        ((s.tags||[]).length?'<div class="tagrow">'+s.tags.map(function(t){return '<span class="tag">#'+esc(t)+'</span>';}).join("")+'</div>':'');
     if(isOpen){
@@ -5758,6 +5770,8 @@ function render(){
 
   Array.prototype.forEach.call(wrap.querySelectorAll("[data-t]"),function(b){
     b.onclick=function(){open[b.dataset.t]=!open[b.dataset.t];render();};});
+  Array.prototype.forEach.call(wrap.querySelectorAll("[data-det]"),function(b){
+    b.onclick=function(){openDet(b.dataset.det);};});
   Array.prototype.forEach.call(wrap.querySelectorAll("[data-term]"),function(b){
     b.onclick=function(){TAPE_NS.goTerm(b.dataset.term);};});
   Array.prototype.forEach.call(wrap.querySelectorAll("[data-addtrade]"),function(b){
@@ -5798,10 +5812,111 @@ function syncHash(){
   if(filt.market!=="all")p.push("mk="+encodeURIComponent(filt.market));
   if(filt.tag!=="all")p.push("tg="+encodeURIComponent(filt.tag));
   if($("ssort").value!=="added")p.push("sort="+$("ssort").value);
+  if(detKey)p.push("s="+encodeURIComponent(detKey));
   history.replaceState(null,"","#"+p.join("&"));
 }
 function find(k){var r=null;cur().forEach(function(s){if(slug(s.name+"|"+s.source)===k)r=s;});return r;}
-var _render=render;render=function(){_render();syncHash();};
+
+/* ---------- detail view ----------
+   Read-only close-up of one strategy: rules, the metrics block, the R
+   distribution and the splits the card has no room for. Logging stays
+   on the card so its input ids exist exactly once. */
+var detKey=null;
+function bucketStats(t){
+  if(!t.length)return null;
+  var tot=0,w=0;
+  t.forEach(function(x){tot+=x.r;if(x.r>0)w++;});
+  return {n:t.length,exp:tot/t.length,wins:w};
+}
+function splitCell(label,t){
+  var b=bucketStats(t);
+  if(!b)return '<div class="out"><b>'+label+'</b><br>none logged</div>';
+  return '<div class="out"><b>'+label+'</b><br>n='+b.n+' &nbsp;·&nbsp; expectancy '+
+         (b.exp>=0?"+":"")+b.exp.toFixed(2)+'R'+
+         (b.n<10?'<br><span class="bad">too few to read</span>':'')+'</div>';
+}
+function rHist(t){
+  var edges=[["≤ −2R",function(r){return r<=-2;}],
+             ["−2 to −1R",function(r){return r>-2&&r<=-1;}],
+             ["−1 to 0R",function(r){return r>-1&&r<0;}],
+             ["0R",function(r){return r===0;}],
+             ["0 to +1R",function(r){return r>0&&r<=1;}],
+             ["+1 to +2R",function(r){return r>1&&r<=2;}],
+             ["> +2R",function(r){return r>2;}]];
+  var counts=edges.map(function(e){return t.filter(function(x){return e[1](x.r);}).length;});
+  var max=Math.max.apply(null,counts)||1;
+  return '<div class="rhist">'+edges.map(function(e,i){
+    var cls=i<3?"rneg":i===3?"rzero":"rpos";
+    return '<div class="rrow"><span class="rlab">'+e[0]+'</span>'+
+           '<span class="rbar '+cls+'" style="width:'+Math.round(counts[i]/max*220)+'px"></span>'+
+           '<span class="rn">'+counts[i]+'</span></div>';
+  }).join("")+'</div>';
+}
+function detHTML(s){
+  var ev=evMeta(s.evidence),st=stats(s),t=s.trades||[];
+  var facts=[["Market",s.market],["Timeframe",s.timeframe],["Session",s.session],["Added",s.added]]
+    .filter(function(f){return f[1];})
+    .map(function(f){return "<span><b>"+f[0]+"</b> "+esc(f[1])+"</span>";}).join("");
+  var rows=[["Bias",s.bias],["Entry",s.entry],["Invalidation",s.invalidation],["Target",s.target],["Risk",s.riskNote],["Results",st?"":s.results],["Notes",s.notes]]
+    .filter(function(r){return r[1];})
+    .map(function(r){return '<div class="srow"><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join("");
+  var h='<button class="btn sclose" data-detclose aria-label="Close detail">×</button>'+
+    '<div class="shead"><h3>'+esc(s.name)+
+    (s.source?'<span class="by">'+esc(s.source)+'</span>':'')+'</h3>'+
+    '<span class="badge '+ev[2]+'">'+ev[1]+' · n='+nOf(s)+'</span></div>'+
+    (facts?'<div class="facts">'+facts+'</div>':'')+
+    ((s.tags||[]).length?'<div class="tagrow">'+s.tags.map(function(x){return '<span class="tag">#'+esc(x)+'</span>';}).join("")+'</div>':'')+
+    '<dl class="sbody">'+(rows||'<div class="srow"><dd>No rules recorded yet.</dd></div>')+'</dl>';
+  if(st){
+    h+='<p class="reltitle">Results — computed from the log, nothing typed in</p>'+
+      '<div class="out">n=<b>'+st.n+'</b> &nbsp;·&nbsp; win rate <b>'+(st.wr*100).toFixed(0)+'%</b> '+
+      '<span class="ci">(95% CI '+(st.ci[0]*100).toFixed(0)+'–'+(st.ci[1]*100).toFixed(0)+'%)</span>'+
+      ' &nbsp;·&nbsp; expectancy <b>'+(st.exp>=0?"+":"")+st.exp.toFixed(2)+'R</b>'+
+      '<br>total <b>'+(st.tot>=0?"+":"")+st.tot.toFixed(1)+'R</b> &nbsp;·&nbsp; max drawdown <b>'+st.dd.toFixed(1)+'R</b>'+
+      ' &nbsp;·&nbsp; profit factor <b>'+(isFinite(st.pf)?st.pf.toFixed(2):"∞")+'</b>'+
+      ' &nbsp;·&nbsp; payoff ratio <b>'+(st.al>0?(st.aw/st.al).toFixed(2):"—")+'</b> (avg win '+st.aw.toFixed(2)+'R / avg loss '+st.al.toFixed(2)+'R)'+
+      (st.n<30?'<br><span class="bad">'+st.n+' trades is a small sample. Treat every number here as provisional.</span>':'')+
+      '</div>'+
+      '<figure style="margin-top:10px">'+svgFor({k:"e",base:0,s:[{v:st.eq,c:st.tot>=0?"u":"d",
+        t:(st.tot>=0?"+":"")+st.tot.toFixed(1)+"R"}]})+
+      '<figcaption>Cumulative R across '+st.n+' logged trades. Dashed line is breakeven.</figcaption></figure>'+
+      '<p class="reltitle">R distribution</p>'+rHist(t)+
+      '<p class="reltitle">Splits</p><div class="splitgrid">'+
+      splitCell("Long",t.filter(function(x){return x.dir==="long";}))+
+      splitCell("Short",t.filter(function(x){return x.dir==="short";}))+
+      splitCell("Paper tab",t.filter(function(x){return x.n==="paper";}))+
+      splitCell("Logged by hand",t.filter(function(x){return x.n!=="paper";}))+
+      '</div>'+
+      '<p class="note">Splits shrink the sample — differences between them are usually noise at these sizes.</p>'+
+      '<table class="stable"><thead><tr><th>Date</th><th>Dir</th><th>Result</th><th>Note</th></tr></thead><tbody>'+
+      t.slice().reverse().map(function(x){
+        return '<tr><td>'+esc(x.d)+'</td><td>'+esc(x.dir)+'</td>'+
+          '<td style="color:'+(x.r>=0?"var(--up)":"var(--down)")+'">'+(x.r>=0?"+":"")+x.r+'R</td>'+
+          '<td>'+esc(x.n)+'</td></tr>';
+      }).join("")+'</tbody></table>';
+  }else{
+    h+='<p class="note">Nothing logged yet. Log trades from the card and this view fills in.</p>';
+  }
+  h+='<p class="note">This view only reads. Logging and editing happen on the card.</p>';
+  return h;
+}
+function renderDet(){
+  var el=document.getElementById("sdetwrap");
+  if(!detKey){if(el)el.remove();return;}
+  var s=find(detKey);
+  if(!s){detKey=null;if(el)el.remove();return;}
+  if(!el){el=document.createElement("div");el.id="sdetwrap";document.getElementById("panel-strats").appendChild(el);}
+  el.innerHTML='<div class="sdetov"><article class="scard sdet">'+detHTML(s)+'</article></div>';
+  el.querySelector("[data-detclose]").onclick=closeDet;
+  el.querySelector(".sdetov").onclick=function(e){if(e.target===this)closeDet();};
+  el.querySelector("[data-detclose]").focus();
+}
+function openDet(k){detKey=k;renderDet();syncHash();}
+function closeDet(){detKey=null;renderDet();syncHash();}
+TAPE_NS.openStratDetail=openDet;
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&detKey)closeDet();});
+
+var _render=render;render=function(){_render();syncHash();if(detKey)renderDet();};
 
 
 /* ---------- boot ---------- */
@@ -5845,6 +5960,7 @@ if(hp.lib){
   if(hp.tg)filt.tag=decodeURIComponent(hp.tg);
   if(hp.sort)$("ssort").value=hp.sort;
   if(hp.q||hp.ev||hp.mk||hp.tg||hp.sort){buildChips();render();}
+  if(hp.s)TAPE_NS.openStratDetail(decodeURIComponent(hp.s));
   if(hp.t)setTimeout(function(){TAPE_NS.goTerm("term-"+hp.t);},60);
 }
 

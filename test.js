@@ -685,6 +685,23 @@ ok(/due for review/.test(d.getElementById("qscore").textContent),
    "the score line reports how many seen terms are due");
 }
 
+console.log("\n22. Strategy detail view");
+{
+d.getElementById("tab-strats").dispatchEvent(new w.Event("click"));
+await wait(60);
+const db=d.querySelector("[data-det]");
+ok(!!db,"every card offers a Detail button");
+db.click(); await wait(30);
+const ov=d.getElementById("sdetwrap");
+ok(!!ov,"the detail overlay opens");
+ok(/computed from the log/i.test(ov.textContent)||/Nothing logged yet/.test(ov.textContent),
+   "results are computed from the log or honestly absent");
+ok(/only reads/.test(ov.textContent),"the view states that logging stays on the card");
+d.dispatchEvent(new w.KeyboardEvent("keydown",{key:"Escape",bubbles:true}));
+await wait(30);
+ok(!d.getElementById("sdetwrap"),"Escape closes the detail view");
+}
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
