@@ -1,0 +1,7 @@
+{
+"Anchored VWAP":{
+"long":"Anchored VWAP is the volume-weighted average price measured from a chosen starting bar — an earnings release, a swing low, a high-volume session — rather than from the day's open. Every share traded since the anchor is averaged, weighted by volume, giving the mean price paid by everyone who transacted since that event.\n\nThat number has genuine meaning. If price sits above the VWAP anchored at an event, the average participant since the event is in profit; below, at a loss. Aggregate profit and loss shapes behaviour — trapped buyers supply resistance as price returns to their break-even — so the anchored line is a mechanically-motivated reference in a way most drawn lines are not.\n\nThe weakness is the anchor choice. Anchored from a different event, the line moves, and the freedom to pick anchors after the fact reintroduces the same flexibility that undermines retracement tools. One trader's meaningful event is another's arbitrary bar.\n\nWhere people get fooled: treating the line as support in itself. It marks where the average participant breaks even, which matters only insofar as those participants act there — thin markets, old anchors and small events produce lines nobody is defending.",
+"usage":"Generally anchored at significant events to track the average price paid since; the mechanism is real, the anchor choice is the discretion.",
+"see":["Volume","Support / resistance","Retail trader","Point of Control"]
+}
+}
