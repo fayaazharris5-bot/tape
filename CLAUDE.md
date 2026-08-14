@@ -11,6 +11,13 @@ cost real time once.
 ## Before and after every change
 
 ```bash
+py -3 check.py                       # runs ALL gates, exits non-zero if any fail
+py -3 check.py --quick               # same without the slow test suite
+```
+
+The gates individually, if you need one on its own:
+
+```bash
 node test.js > out 2>&1; echo $?     # must be 0. Never pipe and trust the pipe.
 py -3 audit_claims.py                # exits non-zero on any banned claim
 py -3 audit_coverage.py              # exits non-zero on missing fields
