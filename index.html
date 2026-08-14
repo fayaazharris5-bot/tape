@@ -11487,9 +11487,16 @@ function openHTML(){
    reads back (one row per completed trade, with a P&L column), so a
    paper record can leave, be kept, and return without a converter.
    Everything is generated in the browser; nothing is uploaded. */
+/* Instrument and strategy names are free text, and a strategy name can
+   arrive from someone else's shared library link. A cell starting with
+   = + - @ tab or CR is executed as a formula by Excel and Sheets, so a
+   name like ="cmd|..." would run on open. Neutralise those by prefixing
+   an apostrophe — but never touch a genuine number, or negative P&L
+   would export as text and the round trip would break. */
 function csvCell(v){
   var s=v==null?"":String(v);
-  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  if(!/^-?\d+(\.\d+)?$/.test(s) && /^[=+\-@\t\r]/.test(s)) s="'"+s;
+  return /[",\n\r]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
 }
 function closedCsv(){
   /* PnL_Gross is BEFORE commission on purpose. The importer's contract is

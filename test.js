@@ -885,6 +885,22 @@ eq(back.stats.n,2,"the importer reads both rows back");
 near(back.stats.net,paperNet,0.01,
   "net survives the round trip exactly — costs are not deducted twice");
 ok(!back.paired,"a row-per-trade export is not mistaken for a fill log");
+
+/* CSV formula injection: instrument and strategy names are free text, and
+   a strategy name can arrive from someone else's shared library link. A
+   cell starting with = + - @ runs as a formula when the file is opened in
+   Excel or Sheets. */
+put("pp-inst","=cmd|' /C calc'!A0");
+doTrade("long","100","99","101");
+const evilCsv=wx.__paperCsv();
+const evilRow=evilCsv.split("\n").filter(function(r){return /cmd/.test(r);})[0];
+ok(!!evilRow,"the formula-shaped instrument reached the export");
+ok(/'=cmd/.test(evilRow),"a formula-shaped cell is prefixed so it cannot execute on open");
+ok(!/(^|,)=cmd/.test(evilRow),"no cell begins with a bare = after neutralising");
+/* numbers must survive untouched, or negative P&L would export as text */
+const evilBack=wx.__parseStatement(evilCsv,"evil.csv");
+eq(evilBack.stats.n,3,"the neutralised row still imports as a trade");
+ok(/,-?\d/.test(evilRow),"numeric cells are left as numbers, not quoted into text");
 }
 
 console.log("\n22b. Strategy templates and the testability hint");
