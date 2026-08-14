@@ -100,6 +100,40 @@ bodies. One of mine was rejected for saying "which way it will go" — the
 banned-prediction guard working correctly. Reword the caption, never the
 guard.
 
+## Strategy templates — structure, never rules
+
+Ten quick-add templates on the Strategies tab. Each prefills **structure**
+(timeframe, tags, sizing convention) and leaves every rule field empty,
+with a **placeholder prompting what that rule must answer to be testable**
+— which timeframe, which close, what single fact would disprove it.
+Placeholders are never stored; only typed text is.
+
+Do not be tempted to "improve" these by filling in the rules. That is
+exactly what got eleven seeded strategies deleted in `00cc3c0`, and test
+group 18 plus group 22b both fail if it happens again. A template that
+contains rules is a strategy the user did not write, filed in their
+library under their name.
+
+A **testability hint** sits under the rule fields. It applies the standard
+the corpus argues throughout — a rule that cannot fail cannot be validated
+— by flagging vague wording by name ("strong", "confirmation"), flagging a
+rule with no price/number/bar event to test against, and confirming when
+one reads as checkable. It judges WORDING only, never the idea or the
+direction, and it warns without ever blocking a save.
+
+## Paper log CSV export
+
+The Paper tab exports closed trades in exactly the dialect the Strategies
+importer reads, so a record round-trips without a converter.
+
+`PnL_Gross` is gross **on purpose**: the importer's contract is that a P&L
+column is gross and a commission column is deducted from it. The first
+version exported the net figure beside a Commission column, so re-import
+subtracted costs twice and $151.04 came back as $146.08. Spread is already
+inside the fill prices and its column name deliberately does not match the
+importer's fee hints. Group 21b asserts the round trip is exact — if you
+change either side of this, that test is the one that will catch you.
+
 ## Getting a bot's results in — the honest integration
 
 There is **no trading bot on this machine**. Searched on 2026-08-14:
