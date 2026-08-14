@@ -11480,9 +11480,55 @@ function openHTML(){
   });
   return h+'</div>';
 }
+/* ---------- CSV export ----------
+   Deliberately written in the shape the app's own statement importer
+   reads back (one row per completed trade, with a P&L column), so a
+   paper record can leave, be kept, and return without a converter.
+   Everything is generated in the browser; nothing is uploaded. */
+function csvCell(v){
+  var s=v==null?"":String(v);
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+function closedCsv(){
+  /* PnL_Gross is BEFORE commission on purpose. The importer's contract is
+     that a P&L column is gross and a commission column gets deducted from
+     it, so exporting the net figure alongside the commission would make a
+     re-import subtract costs twice. The header says gross so a human
+     reading the file is not misled either. Spread is already inside the
+     fill prices and is carried as information only — its column name does
+     not match the importer's fee hints, so it is not deducted again. */
+  var cols=["Closed","Opened","Symbol","Side","Qty","Entry","Exit","PnL_Gross","R",
+            "Commission","SpreadCost","MAE_R","MFE_R","Flags","Strategy"];
+  var rows=[cols.join(",")];
+  S.closed.forEach(function(t){
+    var comm=isFinite(t.comm)?t.comm:0;
+    rows.push([
+      String(t.closedAt||"").slice(0,10), String(t.openedAt||"").slice(0,10),
+      t.inst, t.dir, t.qty, t.entryFill, t.exitFill, r2(t.pnl+comm),
+      (t.r==null?"":t.r), comm, t.spreadCost,
+      (t.maeR==null?"":t.maeR), (t.mfeR==null?"":t.mfeR),
+      (t.ruleBreaks||[]).join(" | "), t.strat||""
+    ].map(csvCell).join(","));
+  });
+  return rows.join("\n");
+}
+function exportClosed(){
+  if(!S.closed.length) return;
+  var blob=new Blob([closedCsv()],{type:"text/csv;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;
+  a.download="tape-paper-"+new Date().toISOString().slice(0,10)+".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},0);
+  msg(S.closed.length+" closed trades exported. The file never left this browser.");
+}
+
 function closedHTML(){
   var h='<div class="pp-card"><h3>Closed trades ('+S.closed.length+')</h3>';
   if(!S.closed.length)return h+'<p class="pp-note">None yet.</p></div>';
+  h+='<div class="pp-acts"><button type="button" class="pp-btn" id="pp-export">Export closed trades (CSV)</button>'+
+     '<span class="pp-note">Same shape the Strategies tab imports, so it reads back without a converter.</span></div>';
   h+='<div class="pp-scroll"><table class="pp-table"><thead><tr>'+
     '<th>Closed</th><th>Inst</th><th>Dir</th><th>Qty</th><th>Fills</th><th>P&amp;L</th><th>R</th><th>MAE / MFE</th><th>Comm / spread</th><th>Flags</th><th>Strategy</th>'+
     '</tr></thead><tbody>';
@@ -11750,6 +11796,7 @@ function boot(){
     if(el.id==="pp-open-btn"){openTrade();return;}
     if(el.id==="pp-set-apply"){applySettings();return;}
     if(el.id==="pp-reset"){resetAccount();return;}
+    if(el.id==="pp-export"){exportClosed();return;}
     var act=el.getAttribute("data-act")||"",id=el.getAttribute("data-id")||"";
     if(act==="close"){closeTrade(id);return;}
     if(act==="fetch"){fetchMark(id);return;}
@@ -11765,6 +11812,8 @@ function boot(){
     }
   });
 }
+
+window.__paperCsv=closedCsv; /* test hook, same pattern as __parseStatement */
 
 if(document.readyState==="loading"){
   document.addEventListener("DOMContentLoaded",boot);

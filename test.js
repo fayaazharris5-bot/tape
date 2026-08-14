@@ -847,6 +847,46 @@ const RT=w.__parseStatement(rowPerTrade,"rows.csv");
 ok(!RT.paired,"a file with a P&L column is never treated as a fill log");
 }
 
+console.log("\n21b. Paper CSV export round-trips through the importer");
+{
+const domX=boot(); await wait(700);
+const wx=domX.window, dx=domX.window.document;
+ok(typeof wx.__paperCsv==="function","the paper CSV builder is exposed for testing");
+/* open and close two trades so there is something to export */
+dx.getElementById("tab-paper").dispatchEvent(new wx.Event("click"));
+await wait(40);
+const put=function(id,v){const e=dx.getElementById(id);e.value=v;
+  e.dispatchEvent(new wx.Event("input",{bubbles:true}));
+  e.dispatchEvent(new wx.Event("change",{bubbles:true}));};
+const doTrade=function(dir,entry,stop,exit){
+  put("pp-entry",entry);put("pp-stop",stop);put("pp-risk","1");
+  const d=dx.getElementById("pp-dir");d.value=dir;
+  d.dispatchEvent(new wx.Event("change",{bubbles:true}));
+  dx.getElementById("pp-open-btn").click();
+  const st=JSON.parse(wx.localStorage.getItem("tape.paper.v1"));
+  put("pp-exit-"+st.positions[0].id,exit);
+  dx.querySelector('#pp-open button[data-act="close"]').click();
+};
+doTrade("long","23450","23440","23470");
+doTrade("short","23500","23510","23480");
+const csv=wx.__paperCsv();
+const head=csv.split("\n")[0];
+eq(csv.split("\n").length-1,2,"every closed trade becomes a row");
+ok(/PnL_Gross/.test(head),"P&L is exported gross and labelled as such");
+ok(/Commission/.test(head),"commission is exported alongside it");
+ok(!!dx.getElementById("pp-export"),"the export button is offered once trades exist");
+/* the point of the format: it must read back through the app's own
+   importer without a converter, and without double-counting costs —
+   the importer treats a P&L column as gross and deducts commission */
+const back=wx.__parseStatement(csv,"roundtrip.csv");
+const paperNet=JSON.parse(wx.localStorage.getItem("tape.paper.v1"))
+  .closed.reduce(function(a,t){return a+t.pnl;},0);
+eq(back.stats.n,2,"the importer reads both rows back");
+near(back.stats.net,paperNet,0.01,
+  "net survives the round trip exactly — costs are not deducted twice");
+ok(!back.paired,"a row-per-trade export is not mistaken for a fill log");
+}
+
 console.log("\n22b. Strategy templates and the testability hint");
 {
 const domT=boot(); await wait(700);
