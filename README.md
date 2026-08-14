@@ -8,10 +8,15 @@ server. Open the file and it works.
 
 ```
 npm i jsdom
-node test.js
+py -3 check.py
 ```
 
-101 assertions across 14 groups. Re-run after every change.
+`check.py` runs every gate — the test suite plus the claims, coverage,
+contrast and sync-bridge audits — and exits non-zero if any fail. Use it
+instead of running them piecemeal; a skipped gate is how a regression ships.
+`--quick` skips the slow suite.
+
+Currently **320 assertions**, 0 failing. Re-run after every change.
 
 ## The config block
 
@@ -52,17 +57,24 @@ the only distribution mechanism that survives someone copying the HTML file.
 
 ## Publishing to GitHub Pages
 
-Replace `USERNAME` with your GitHub username:
+First create an empty repo named `tape` under the account — no README, no
+`.gitignore`, no licence, or the first push will be rejected as a
+non-fast-forward: <https://github.com/new>
+
+Then:
 
 ```bash
-git remote add origin https://github.com/USERNAME/tape.git
+git remote add origin https://github.com/fayaazharris5-bot/tape.git
 git branch -M main
 git push -u origin main
 ```
 
 Then in the repo: **Settings → Pages → Source: `main` / root**.
 
-Live at `https://USERNAME.github.io/tape/` within a minute or two.
+Live at <https://fayaazharris5-bot.github.io/tape/> within a minute or two.
+
+The whole app is one file, so Pages needs no build step and no workflow.
+Every later update is `git push`; Pages redeploys on its own.
 
 ## What this app does not do
 
