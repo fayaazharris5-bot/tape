@@ -145,6 +145,43 @@ excluded from that rule — prefixing a negative P&L would export it as text
 and break the round trip. Both properties are asserted together, so a fix
 to one that breaks the other fails the suite.
 
+## Named systems & frameworks (section `sys`)
+
+Fifteen entries for systems that come with a name attached: Orochi, the
+Turtle system, Connors RSI-2, Darvas box, dual momentum, pairs trading,
+statistical arbitrage, 60/40, the permanent portfolio, All Weather, value
+averaging, Dogs of the Dow, the London breakout, the Wolfe wave and the
+three-drive pattern. Added by `add_systems.py` and `add_systems2.py`,
+both idempotent.
+
+**This is where "add the strategies you find online" goes — never the
+library.** Rule 3 and test group 18 both forbid the library. A named
+system is described here the way Wyckoff and the ICT vocabulary already
+are: named, dated, credited to a documented originator, with what is and
+is not established stated plainly. They are descriptions, never rule sets.
+
+Every claim was researched, not recalled. Orochi in particular is written
+from this project's own record — its five components, four needing tick
+data, and the fifth (VWAP reversion) tested as PR-007 in the companion
+engine and refused by the hard gate once an independent bootstrap was
+corrected to a block bootstrap and the effective sample fell to about
+three. Its no-alpha-decay marketing is named as unfalsifiable, not repeated.
+
+`regen_whitelist.py` replaces the old copy-paste snippet — run it after
+any content change, since writer briefs validate see-links against it.
+
+## Publishing the artifact: the downloads capability
+
+The artifact sandbox blocks page-initiated saves, so the paper CSV export
+is dead in the published viewer unless the `downloads` capability is
+declared — pass `capabilities: {downloads: true}` when publishing, or the
+publish response warns and the button silently does nothing.
+
+The export uses the capability when `window.claude.use` is present and the
+anchor download otherwise, and exactly one must fire. `csv` is in the
+viewer's extended type set and can be refused, so a refusal retries once
+as `.txt`. A declined save says so rather than claiming success.
+
 ## Getting a bot's results in — the honest integration
 
 There is **no trading bot on this machine**. Searched on 2026-08-14:
