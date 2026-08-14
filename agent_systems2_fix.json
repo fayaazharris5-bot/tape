@@ -1,0 +1,13 @@
+{
+ "Dogs of the Dow": {
+  "long": "At the start of each year, buy the ten Dow components with the highest dividend yields, hold them for twelve months, then re-rank and repeat. Michael O'Higgins popularised it in Beating the Dow in 1991.\n\nThe mechanism it leans on is real enough to name. Within a set of large, established companies, a high dividend yield usually means the price has fallen rather than the dividend has risen, so the screen mechanically selects the least-loved members of an index of survivors. That is a value tilt applied to a universe that has already been filtered for size and durability, which limits how badly wrong any one holding can go.\n\nIts virtues are that it is completely mechanical, rebalances once a year so costs stay trivial, and requires no judgement about any company.\n\nWhere people get fooled: the record that sold the book was a backtest, run over a period the author selected, and published after that period had happened. The Dow's own membership is also decided by a committee that removes struggling companies — so the universe is survivorship-filtered by construction, and a strategy that buys the weakest members of a curated list of winners is quietly relying on that curation. Results since publication have been far less striking than the ones that made it famous.",
+  "usage": "Generally run as an annual mechanical value screen on a large-cap index; its universe is curated by committee, which is part of the result.",
+  "see": [
+   "Dividend yield",
+   "Value",
+   "Survivorship bias",
+   "Data snooping",
+   "Rebalancing"
+  ]
+ }
+}

@@ -28,8 +28,11 @@ const FILE=path.join(__dirname,"index.html");
    arbitrage. They are glossary ENTRIES describing frameworks, never rule
    sets, and none of them went anywhere near the strategy library, which
    test group 18 still requires to ship empty. No charts, so EXPECT_CHARTS
-   is unchanged. Intended content change. */
-const EXPECT_TERMS=1002, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
+   is unchanged. Intended content change.
+   1002 -> 1010: a second batch into the same section (add_systems2.py) —
+   60/40, permanent portfolio, All Weather, value averaging, Dogs of the
+   Dow, London breakout, Wolfe wave and the three-drive pattern. */
+const EXPECT_TERMS=1010, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
