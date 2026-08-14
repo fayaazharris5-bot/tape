@@ -154,6 +154,10 @@ select.btn{padding:8px 8px}
 .rhist .rneg{background:var(--down)}
 .rhist .rzero{background:var(--ink3)}
 .splitgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0}
+/* testability hint under the rule fields — advisory, never blocking */
+.tsthint{margin:5px 0 0;font-size:12.5px;line-height:1.45;max-width:62ch}
+.tsthint.tstwarn{color:var(--signal)}
+.tsthint.tstok{color:var(--up)}
 .shead{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
 .shead h3{font-family:var(--disp);font-weight:500;font-size:17px;margin:0;letter-spacing:-.01em;flex:1;min-width:180px}
 .by{font-family:var(--mono);font-size:12px;color:var(--ink3);display:block;margin-top:3px;font-weight:400}
@@ -9177,23 +9181,66 @@ var COND={
    Rules are left blank on purpose: inventing them and attaching a real
    person's name to them would be making things up.
    ===================================================================== */
+/* Each template carries structure (timeframe, tags, sizing convention) and
+   PROMPTS — placeholder text asking the questions a rule has to answer to
+   be testable at all. Placeholders are never saved; only what you type is.
+   The rule fields themselves stay empty, because filling them would be
+   inventing a strategy and putting it in your library under your name. */
+var ASK={
+  bias:"Which direction are you allowed to trade, and what fact decides it?",
+  entry:"Numbered steps. What must happen, on which timeframe, and what exact event puts you in?",
+  invalidation:"What single observable fact means the idea was wrong? Not a feeling — a price or a close.",
+  target:"Where do you exit, and is any of it partial? Decide before the trade, not during it.",
+  riskNote:"Percent of account per trade, and what sets the size."
+};
+function ask(over){
+  var o={},k;
+  for(k in ASK) o[k]=ASK[k];
+  for(k in (over||{})) o[k]=over[k];
+  return o;
+}
 var TPL=[
   {k:"Session play",v:{name:"",timeframe:"5m",session:"",tags:["session"],
-    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account. Stop distance sets the size."}},
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account. Stop distance sets the size."},
+    ph:ask({entry:"Which session window, and what has to happen inside it before you act?"})},
   {k:"Sweep + reclaim",v:{name:"",timeframe:"5m",tags:["liquidity","reversal"],
-    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."}},
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({entry:"Which level counts as swept, and does a close back through it confirm — or a wick?",
+      invalidation:"A close back beyond the swept level is the usual one. State yours."})},
   {k:"Breakout",v:{name:"",timeframe:"15m",tags:["breakout","momentum"],
-    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."}},
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({entry:"What defines the level, and must price CLOSE beyond it or only trade through?",
+      invalidation:"A close back inside the range is the usual one. State yours."})},
   {k:"Mean reversion",v:{name:"",timeframe:"1h",tags:["mean-reversion"],
-    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."}},
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({entry:"Stretched relative to what, measured how? A number, not 'overextended'.",
+      invalidation:"Mean reversion fails in trends — what tells you this is a trend?"})},
+  {k:"Trend pullback",v:{name:"",timeframe:"15m",tags:["trend","pullback"],
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({bias:"How is the trend defined? Fix the swing lookback or the average, and keep it fixed.",
+      entry:"How deep does the pullback have to be, and what ends it?"})},
+  {k:"Range fade",v:{name:"",timeframe:"15m",tags:["range","mean-reversion"],
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({bias:"What makes this a range rather than a pause in a trend?",
+      entry:"How close to the edge, and do you need rejection first?"})},
+  {k:"Opening range",v:{name:"",timeframe:"5m",session:"",tags:["session","breakout"],
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account."},
+    ph:ask({entry:"How many minutes form the range, and what counts as leaving it?"})},
   {k:"News / event",v:{name:"",timeframe:"5m",tags:["news","event"],
-    bias:"",entry:"",invalidation:"",target:"",riskNote:"Reduced size through scheduled releases."}},
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"Reduced size through scheduled releases."},
+    ph:ask({bias:"Markets price the surprise against consensus, not the number. What is your read?",
+      entry:"How long after the release, and what has to settle before you act?"})},
+  {k:"Volatility expansion",v:{name:"",timeframe:"1h",tags:["volatility","breakout"],
+    bias:"",entry:"",invalidation:"",target:"",riskNote:"Size from ATR, not a fixed stop distance."},
+    ph:ask({entry:"Compression measured how — ATR, band width, range? Give the threshold.",
+      target:"Expansion says movement, not direction. What decides which way you take it?"})},
   {k:"ICT / SMC",v:{name:"",timeframe:"5m",tags:["ict","smc","liquidity"],
     bias:"",entry:"",invalidation:"",target:"",riskNote:"1% of account.",
-    notes:"Rules intentionally blank — fill these in from your own source. Nothing was assumed on your behalf."}}
+    notes:"Rules intentionally blank — fill these in from your own source. Nothing was assumed on your behalf."},
+    ph:ask({entry:"Write the mechanical version: which candle, which level, which close. If it cannot be written that way it cannot be tested."})}
 ];
 
-function fill(v){
+function fill(v,ph){
   /* openForm is private to the strategy IIFE, so drive the real "+ Add" button
      rather than reaching for it — same result, no coupling. */
   var add=el("b-add");
@@ -9205,10 +9252,70 @@ function fill(v){
       if(!f)return;
       f.value = k==="tags" ? (v[k]||[]).join(", ") : (v[k]||"");
     });
+    /* prompts, not content: a placeholder is never submitted or stored */
+    Object.keys(ph||{}).forEach(function(k){
+      var f=el("f-"+k);
+      if(f&&"placeholder" in f) f.placeholder=ph[k];
+    });
     var n=el("f-name"); if(n) n.focus();
     if(TAPE_NS.toast) TAPE_NS.toast("Template loaded — rules are blank for you to fill");
   },0);
 }
+
+/* ---------- testability hint ----------
+   The corpus argues throughout that a rule which cannot fail cannot be
+   validated either, and that "buy strength in confirmed conditions" is
+   the shape of every framework that never loses in its own terms. This
+   applies that standard to what you are typing, while you type it.
+
+   It judges WORDING ONLY — whether a reader could check the rule — and
+   never the idea, the direction, or whether the trade is a good one. It
+   warns and never blocks: you can save anything you like. */
+var VAGUE=/\b(confirmed|confirmation|strong|strength|weak|clean|proper|obvious|significant|quality|good|nice|clear|healthy|decent|perfect|ideal|textbook|reacts?|respects?)\b/gi;
+var ANCHOR=/(\d|\bclose[sd]?\b|\bhigh\b|\blow\b|\bopen\b|\btick\b|\bpoint\b|\bpip\b|\batr\b|%)/i;
+
+function testability(text){
+  var t=String(text||"").trim();
+  if(!t) return null;
+  var seen={},vague=[],m;
+  VAGUE.lastIndex=0;
+  while((m=VAGUE.exec(t))){
+    var w=m[0].toLowerCase();
+    if(!seen[w]){seen[w]=1;vague.push(m[0]);}
+  }
+  return {vague:vague,anchored:ANCHOR.test(t),words:t.split(/\s+/).length};
+}
+
+function hintFor(r){
+  if(!r) return null;
+  if(r.vague.length)
+    return {tone:"warn",msg:"Hard to test as written: "+r.vague.slice(0,3).map(function(w){return "“"+w+"”";}).join(", ")+
+      ". Who decides, and how would a reader check it?"};
+  if(!r.anchored)
+    return {tone:"warn",msg:"No price, number or bar event in here yet — without one there is nothing to test against."};
+  return {tone:"ok",msg:"Reads as checkable: someone else could apply this and get the same answer."};
+}
+
+function paintHint(field){
+  var r=hintFor(testability(field.value));
+  var id=field.id+"-tst";
+  var node=el(id);
+  if(!r){ if(node)node.remove(); return; }
+  if(!node){
+    node=document.createElement("p");
+    node.id=id; node.className="tsthint";
+    node.setAttribute("aria-live","polite");
+    field.parentNode.insertBefore(node,field.nextSibling);
+  }
+  node.className="tsthint "+(r.tone==="ok"?"tstok":"tstwarn");
+  node.textContent=r.msg;
+}
+
+document.addEventListener("input",function(e){
+  var t=e.target;
+  if(!t||!t.id)return;
+  if(t.id==="f-entry"||t.id==="f-invalidation"||t.id==="f-target"||t.id==="f-bias") paintHint(t);
+});
 
 function mountQuickAdd(){
   var t=el("stools");
@@ -9219,7 +9326,7 @@ function mountQuickAdd(){
   TPL.forEach(function(tpl){
     var b=document.createElement("button");
     b.type="button";b.className="qbtn";b.textContent=tpl.k;
-    b.onclick=function(){fill(tpl.v);};
+    b.onclick=function(){fill(tpl.v,tpl.ph);};
     row.appendChild(b);
   });
   t.parentNode.insertBefore(row,t.nextSibling);

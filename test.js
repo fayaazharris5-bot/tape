@@ -847,6 +847,44 @@ const RT=w.__parseStatement(rowPerTrade,"rows.csv");
 ok(!RT.paired,"a file with a P&L column is never treated as a fill log");
 }
 
+console.log("\n22b. Strategy templates and the testability hint");
+{
+const domT=boot(); await wait(700);
+const wt=domT.window, dt=domT.window.document;
+dt.getElementById("tab-strats").dispatchEvent(new wt.Event("click"));
+await wait(60);
+const qrow=dt.getElementById("qadd");
+ok(!!qrow,"the quick-add row is mounted");
+const btns=[...qrow.querySelectorAll(".qbtn")];
+ok(btns.length>=10,"there are at least ten templates  (got "+btns.length+")");
+/* the whole point: templates carry structure, never rules */
+btns.find(function(b){return b.textContent==="Breakout";}).click();
+await wait(60);
+const g=function(id){return dt.getElementById(id);};
+ok(["f-bias","f-entry","f-invalidation","f-target"].every(function(id){return g(id)&&g(id).value==="";}),
+   "a template leaves every rule field empty — nothing is invented for you");
+ok(g("f-timeframe").value!=="","structure like timeframe IS prefilled");
+ok(g("f-entry").placeholder.length>20,"rule fields carry a prompt asking what a testable rule needs");
+/* placeholders must never become saved content */
+ok(!/placeholder/i.test(g("f-entry").value),"the prompt is not the value");
+
+/* the hint judges wording, not the idea */
+const fe=g("f-entry");
+const typed=function(v){fe.value=v;fe.dispatchEvent(new wt.Event("input",{bubbles:true}));
+  return dt.getElementById("f-entry-tst");};
+let h=typed("Enter when price breaks out with strong confirmation");
+ok(h&&/Hard to test/.test(h.textContent),"vague wording is flagged");
+ok(/strong/.test(h.textContent),"the flag names the word it objected to");
+h=typed("Enter on the retest of the zone");
+ok(h&&/nothing to test against/.test(h.textContent),"a rule with no number or bar event is flagged");
+h=typed("Enter on the 15m close above the prior day high");
+ok(h&&/checkable/.test(h.textContent),"a specific rule is recognised as checkable");
+fe.value="";fe.dispatchEvent(new wt.Event("input",{bubbles:true}));
+ok(!dt.getElementById("f-entry-tst"),"the hint disappears when the field is emptied");
+/* advisory only — it must never block saving */
+ok(!g("f-entry").hasAttribute("aria-invalid"),"the hint does not mark the field invalid");
+}
+
 console.log("\n23b. SM-2 when everything is already scheduled ahead");
 {
 /* After a heavy study session every term can be scheduled into the future.
