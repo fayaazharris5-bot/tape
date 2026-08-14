@@ -57,6 +57,16 @@ gates. Run them after content changes alongside the suite:
   "Where people get fooled:" paragraph. Currently 994 bodies, 0 hits.
 - `py -3 audit_coverage.py` — field coverage. Currently 0 bodies missing
   `usage`, 0 missing `see`, 0 terms missing an example, 48 sections.
+- `py -3 audit_contrast.py` — WCAG AA on every text token, in all four
+  theme contexts (light base, light explicit, dark media, dark explicit).
+  Currently 0 pairs below AA. It resolves the cascade rather than reading
+  every block, because the stylesheet deliberately overrides an early
+  `:root` with a later visual-pass one — auditing all blocks would flag
+  values that never apply. It also refuses to report at all if a light and
+  a dark context resolve to the same `--paper`, since that means the
+  cascade was mis-read. Verified in both directions: injecting a low
+  contrast colour into the *winning* block exits 1 and names the failing
+  pairs; the same colour in an overridden block correctly changes nothing.
 
 Body count is 994 for 995 terms because **"Chop" exists twice** — once in
 `pa`, once in `slang` — with near-identical definitions, so both cards

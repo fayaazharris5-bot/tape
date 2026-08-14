@@ -14,6 +14,7 @@ cost real time once.
 node test.js > out 2>&1; echo $?     # must be 0. Never pipe and trust the pipe.
 py -3 audit_claims.py                # exits non-zero on any banned claim
 py -3 audit_coverage.py              # exits non-zero on missing fields
+py -3 audit_contrast.py              # exits non-zero if a text token drops below WCAG AA
 ```
 
 `python` is not on PATH on this machine — use `py -3`.
