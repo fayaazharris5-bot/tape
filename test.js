@@ -828,6 +828,36 @@ const RT=w.__parseStatement(rowPerTrade,"rows.csv");
 ok(!RT.paired,"a file with a P&L column is never treated as a fill log");
 }
 
+console.log("\n24. Second charts (viz2) on the structural terms");
+{
+/* viz2 draws the counter-case \u2014 the chart that looks identical until it
+   resolves the other way. It renders in the detail panel only, so the grid
+   chart count must NOT move. */
+const withViz2=(w.D||[]).filter(function(x){return x.viz2&&x.viz2.length;});
+ok(withViz2.length>=9,"the structural terms carry a second chart  (got "+withViz2.length+")");
+eq(d.querySelectorAll("#grid figure svg").length,EXPECT_CHARTS,
+   "viz2 does not add charts to the grid");
+ok(withViz2.every(function(x){return x.viz2.every(function(v){return v.cap&&v.cap.length>20;});}),
+   "every second chart carries a caption explaining what it shows");
+/* every spec must actually render, and render clean */
+let rendered=0, corrupt=0;
+withViz2.forEach(function(x){
+  x.viz2.forEach(function(v){
+    const svg=w.svgFor(v.v||v);
+    if(svg&&/<svg/.test(svg)) rendered++;
+    if(/NaN|undefined/.test(svg||"")) corrupt++;
+  });
+});
+eq(corrupt,0,"no second chart renders NaN or undefined");
+ok(rendered>=withViz2.length,"every second chart produces an svg");
+/* and it reaches the panel */
+const lsTerm=(w.D||[]).find(function(x){return x.t==="Liquidity sweep";});
+d.getElementById("term-"+lsTerm.slug).dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(40);
+ok(d.querySelectorAll("#tpanel .tpfig").length>=2,"the detail panel shows both charts");
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+}
+
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
 process.exit(fail?1:0);
 })();
