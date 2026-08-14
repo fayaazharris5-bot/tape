@@ -11336,9 +11336,12 @@ function findPos(id){var i;for(i=0;i<S.positions.length;i++){if(S.positions[i].i
    appears on a fresh profile. Read the live key first and write back
    to whichever key the list actually came from. */
 function stratRaw(){
-  var raw=localStorage.getItem(SKEY);
+  /* through the module's own wrappers, like every other access here: a
+     browser with storage disabled throws on read, and lsGet degrades to
+     the in-memory copy instead of letting that escape to the caller */
+  var raw=lsGet(SKEY);
   if(raw!=null)return {key:SKEY,raw:raw};
-  raw=localStorage.getItem(SKEY_ALT);
+  raw=lsGet(SKEY_ALT);
   return {key:raw!=null?SKEY_ALT:SKEY,raw:raw};
 }
 function stratNames(){
@@ -11360,7 +11363,7 @@ function logToStrategy(name,dir,r){
     if(!Array.isArray(s.trades))s.trades=[];
     s.trades.push({d:today(),dir:dir,r:r2(r),n:"paper"});
     s.sampleSize=s.trades.length;
-    localStorage.setItem(src.key,JSON.stringify(arr));
+    lsSet(src.key,JSON.stringify(arr));
     try{document.dispatchEvent(new CustomEvent("tape:strats-changed"));}catch(e2){}
     return "Logged "+signR(r)+" to “"+name+"”.";
   }catch(e){return "Strategy log write failed, so the trade is recorded here only.";}
