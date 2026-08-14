@@ -827,12 +827,51 @@ const FI=w.__parseStatement(fifo,"fifo.csv");
 near(FI.trades[0].entry,20000,0.01,"the oldest lot is the one closed");
 near(FI.stats.net,100,0.01,"FIFO gives +100 here; average cost would give 0");
 
+/* a row with no side cannot be paired — guessing would mis-pair everything
+   after it, so it is skipped rather than assumed to be a buy */
+const blankSide=
+ "timestamp,symbol,side,amount,price\n"+
+ "2026-08-01T10:00:00Z,NQ,buy,1,20000\n"+
+ "2026-08-01T10:30:00Z,NQ,,1,20050\n"+
+ "2026-08-01T11:00:00Z,NQ,sell,1,20100\n";
+const BS=w.__parseStatement(blankSide,"blank.csv");
+eq(BS.stats.n,1,"a row with a blank side does not create or corrupt a pairing");
+near(BS.stats.net,100,0.01,"the blank row is ignored, not treated as a fill");
+ok(BS.skipped>=1,"the unusable row is reported as skipped");
+
 /* a row-per-trade file must not be re-read as fills */
 const rowPerTrade=
  "Symbol,Side,Qty,Entry,Exit,PnL\n"+
  "MNQ,Buy,1,100,110,10\n";
 const RT=w.__parseStatement(rowPerTrade,"rows.csv");
 ok(!RT.paired,"a file with a P&L column is never treated as a fill log");
+}
+
+console.log("\n23b. SM-2 when everything is already scheduled ahead");
+{
+/* After a heavy study session every term can be scheduled into the future.
+   The quiz must still produce a question — reviewing early, soonest-due
+   first — rather than claiming there is nothing to ask. Records are
+   written before the quiz tab is ever opened so the module loads them
+   fresh rather than from its cache. */
+const domQ=boot(); await wait(700);
+const wq=domQ.window, dq=wq.document;
+const far=new Date(Date.now()+90*864e5).toISOString().slice(0,10);
+const recs={};
+(wq.D||[]).forEach(function(x){
+  const k=x.t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  recs[k]={n:3,w:0,ef:2.5,reps:3,iv:90,due:far};
+});
+wq.localStorage.setItem("tg.quiz.v1",JSON.stringify(recs));
+dq.getElementById("tab-quiz").dispatchEvent(new wq.Event("click"));
+await wait(80);
+ok(!!dq.querySelector("#qbody .qopt"),
+   "a question still renders when every term is scheduled ahead");
+ok(!/Not enough terms/.test(dq.getElementById("qbody").textContent),
+   "the quiz does not claim it has nothing to ask");
+ok(/0 due for review/.test(dq.getElementById("qscore").textContent),
+   "the score line reports honestly that nothing is actually due");
+eq(dq.querySelectorAll("#qbody .qopt").length,4,"four options are still offered");
 }
 
 console.log("\n24. Second charts (viz2) on the structural terms");

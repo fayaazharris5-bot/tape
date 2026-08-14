@@ -10297,7 +10297,10 @@ function pairFills(rows,map){
   var books={}, trades=[], skipped=0;
   rows.forEach(function(r){
     var sym = map.symbol!==undefined ? String(r[map.symbol]||"").trim() : "";
-    var sideRaw = String(r[map.side]||"").toLowerCase();
+    var sideRaw = String(r[map.side]||"").trim().toLowerCase();
+    /* A blank side would silently become a buy and mis-pair everything
+       after it. A row that does not say which way it went is not a fill. */
+    if(!sideRaw){ skipped++; return; }
     var dir = /sell|short|s\b/.test(sideRaw) ? "short" : "long";
     var qty = Math.abs(num(r[map.qty]));
     var px  = num(r[priceIdx]);
