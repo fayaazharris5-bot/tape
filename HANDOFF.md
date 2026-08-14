@@ -240,9 +240,16 @@ Re-measure before claiming any of this changed:
   192 ms to load complete; 10,653 DOM nodes. GitHub Pages gzips, so the
   transfer figure is the one that matters. No optimisation needed.
 - Accessibility: 2,401 buttons all have accessible names, 21 form fields
-  all labelled, 72 chart SVGs all labelled, one h1, `lang` set, and
-  heading order is continuous (the read-this-first page jumped H1→H3
-  until its headings were promoted to h2).
+  all labelled, every chart SVG labelled, one h1, `lang` set, and heading
+  order is continuous (the read-this-first page jumped H1→H3 until its
+  headings were promoted to h2).
+- Colour contrast: **zero text tokens below WCAG AA in either theme**,
+  measured not assumed. Dark always passed. Light failed only on
+  `--signal` at 3.54:1 — used for small text in the forward-tested badge,
+  the proxy warning, the section chip and the 9.5px chart labels — and was
+  darkened `#B87613 → #96600F` (5.02:1 on paper, 5.28:1 on card). If you
+  touch the palette, re-measure: the light `--signal` has no headroom to
+  give back.
 - Both modals (term panel, strategy detail) carry role=dialog,
   aria-modal, an accessible name, a focus trap, focus restore and a body
   scroll lock. The scroll lock adds and removes in balanced pairs — the
