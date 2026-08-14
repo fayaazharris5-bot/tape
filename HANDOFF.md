@@ -292,9 +292,21 @@ print(len(names))
 2. GitHub publishing — blocked on the username.
 3. The user's own strategy rules — blocked, and must be verbatim.
 
-Counter-case charts are done (17 terms). If more are wanted, the obvious
-remaining candidates are Stop hunt, Retest and Trendline, none of which
-currently carry a chart.
+Counter-case charts are done (17 terms). The three candidates this note used
+to name — Stop hunt, Retest and Trendline — **all now carry both a chart and a
+viz2 counter-case**; verified 2026-08-14, so don't re-add them. 86 terms have a
+chart, 22 carry a viz2. There is no remaining chart backlog.
+
+`sync_strategies.py` (the Strategy Lab bridge) is now a gate: `test_sync.py`
+pins its honesty invariants and `check.py` runs it. The test builds its own
+synthetic results.db, so it passes with no Lab on the machine. It was
+mutation-tested, not just run — forcing the control gate open and injecting a
+fabricated entry rule each turn it red. What it pins: rule fields the engine
+cannot produce stay empty, sampleSize is exactly oos_n_trades, evidence is
+never "backtested" without clearing the full gate (three separate cases,
+including the tempting one — spectacular returns that LOST to the random
+control), win rate never appears without expectancy, expectancy is never
+relabelled R, and a schema change refuses rather than guesses.
 
 ## Quality baseline — measured, not assumed
 
