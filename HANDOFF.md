@@ -68,11 +68,27 @@ is broken by it — both cards render correctly.
 
 ## Next content work
 
-Not more terms. The coverage spot-check that used to sit here is done:
-`audit_coverage.py` reports 0 bodies missing `usage`, 0 missing `see`,
-and 0 terms missing an example, so the older hand-written entries turned
-out to already carry both fields. The only content item left is
-second/third charts (viz2) for the priority structural terms.
+Not more terms, and not more charts on the structural set — both are done.
+`audit_coverage.py` reports 0 bodies missing `usage`, 0 missing `see`, and
+0 terms missing an example.
+
+**Counter-case charts.** 17 terms carry a `viz2` second chart, and the
+principle is deliberate: each entry's prose already argues the pattern is
+ambiguous live and obvious only in hindsight, so showing only the version
+that worked teaches it as a signal. The second chart is always the case
+that looks identical and resolves the other way. Added by `add_viz2.py`
+(existing charts) and `add_charts.py` (terms that had none). Both are
+idempotent and reuse the one engine — never write a second renderer.
+
+`viz2` renders in the detail panel only, so it never changes the grid
+chart count. A new `v:` does — that is why EXPECT_CHARTS moved 72 -> 75
+when BOS, CHoCH and False breakout were charted, commented at the
+constant in test.js.
+
+If you extend this: captions go through the same honesty filters as
+bodies. One of mine was rejected for saying "which way it will go" — the
+banned-prediction guard working correctly. Reword the caption, never the
+guard.
 
 ## Getting a bot's results in — the honest integration
 
@@ -199,9 +215,13 @@ print(len(names))
 
 ## Next queue
 
-1. Second/third charts (viz2) for the priority structural terms.
-2. Decide the "Chop" duplicate (see content status).
-3. Publishing — blocked on the GitHub username.
+1. Decide the "Chop" duplicate (see content status).
+2. GitHub publishing — blocked on the username.
+3. The user's own strategy rules — blocked, and must be verbatim.
+
+Counter-case charts are done (17 terms). If more are wanted, the obvious
+remaining candidates are Stop hunt, Retest and Trendline, none of which
+currently carry a chart.
 
 ## Quality baseline — measured, not assumed
 
