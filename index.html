@@ -11620,16 +11620,67 @@ function closedCsv(){
   });
   return rows.join("\n");
 }
+/* Two environments, two mechanisms. Opened normally (local file, a static
+   host, GitHub Pages) an anchor download works. Inside the published
+   artifact viewer it does not — the sandbox blocks page-initiated saves
+   entirely, so the button would appear to work and do nothing. There the
+   viewer mediates saves through the downloads capability instead.
+   Capability first when present, anchor otherwise, and say plainly when a
+   save was declined rather than leaving the button looking broken. */
+/* The module has no msg() helper — elsewhere `msg` is a local holding the
+   element. Calling msg() here threw, which silently swallowed the export
+   confirmation AND tripped the promise catch into firing the anchor save
+   as well as the capability one. */
+function ppMsg(text){
+  var el=$("pp-msg");
+  if(el) el.textContent=text;
+}
+/* Returns whether the save was actually attempted. Object URLs are not
+   universally available — some embedded webviews withhold them — and a
+   throw here would otherwise leave the button looking like it did
+   nothing at all. */
+function anchorSave(name,text){
+  try{
+    if(typeof URL==="undefined"||typeof URL.createObjectURL!=="function") return false;
+    var blob=new Blob([text],{type:"text/csv;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){try{URL.revokeObjectURL(url);}catch(e){}},0);
+    return true;
+  }catch(e){ return false; }
+}
+function localSave(stem,text,done){
+  if(anchorSave(stem+".csv",text)) done();
+  else ppMsg("This browser will not let the page save a file. Copy the trades from the table instead.");
+}
 function exportClosed(){
   if(!S.closed.length) return;
-  var blob=new Blob([closedCsv()],{type:"text/csv;charset=utf-8"});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement("a");
-  a.href=url;
-  a.download="tape-paper-"+new Date().toISOString().slice(0,10)+".csv";
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(function(){URL.revokeObjectURL(url);},0);
-  msg(S.closed.length+" closed trades exported. The file never left this browser.");
+  var text=closedCsv();
+  var stem="tape-paper-"+new Date().toISOString().slice(0,10);
+  var done=function(){ppMsg(S.closed.length+" closed trades exported. The file never left this browser.");};
+
+  var host=(typeof window!=="undefined")?window.claude:null;
+  if(!host||typeof host.use!=="function"){ localSave(stem,text,done); return; }
+
+  host.use("downloads").then(function(dl){
+    if(!dl){ localSave(stem,text,done); return; }
+    return dl.save({filename:stem+".csv",data:text}).then(done,function(err){
+      var code=err&&err.code;
+      /* csv sits in the viewer's extended type set and may not be enabled;
+         the same text as .txt still opens in any spreadsheet */
+      if(code==="extension_not_enabled"||code==="rejected_extension"){
+        return dl.save({filename:stem+".csv.txt",data:text}).then(done,function(e2){
+          ppMsg(e2&&e2.code==="declined"?"Export cancelled — nothing was saved."
+            :"This viewer would not accept the file. Open the app directly to export.");
+        });
+      }
+      if(code==="declined"){ ppMsg("Export cancelled — nothing was saved."); return; }
+      if(code==="rate_limited"){ ppMsg("A save prompt is already open. Finish that one first."); return; }
+      ppMsg("This viewer would not accept the file. Open the app directly to export.");
+    });
+  }).catch(function(){ localSave(stem,text,done); });
 }
 
 function closedHTML(){

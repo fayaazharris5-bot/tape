@@ -52,6 +52,13 @@ function boot(url,opts){
       if(typeof w.TextEncoder==="undefined") w.TextEncoder=TextEncoder;
       if(typeof w.TextDecoder==="undefined") w.TextDecoder=TextDecoder;
       if(typeof w.CompressionStream==="undefined"&&typeof CompressionStream!=="undefined") w.CompressionStream=CompressionStream;
+      /* jsdom implements no object URLs, so the CSV export's anchor path
+         cannot run without this. Same reason as the polyfills above:
+         supply what the environment lacks rather than pinning a version. */
+      if(w.URL&&typeof w.URL.createObjectURL!=="function"){
+        w.URL.createObjectURL=function(){return "blob:test";};
+        w.URL.revokeObjectURL=function(){};
+      }
       if(typeof w.DecompressionStream==="undefined"&&typeof DecompressionStream!=="undefined") w.DecompressionStream=DecompressionStream;
       Object.defineProperty(w.navigator,"clipboard",{value:{writeText:t=>{dom.__copied=t;return Promise.resolve();}},configurable:true});
       if(opts.offline){
@@ -914,6 +921,57 @@ eq(back.stats.n,2,"the importer reads both rows back");
 near(back.stats.net,paperNet,0.01,
   "net survives the round trip exactly — costs are not deducted twice");
 ok(!back.paired,"a row-per-trade export is not mistaken for a fill log");
+
+/* Two environments. Opened normally an anchor download works; inside the
+   published artifact viewer the sandbox blocks page-initiated saves, so
+   the viewer mediates them through the downloads capability. Exactly one
+   mechanism must fire — firing both would attempt a blocked download
+   alongside the real save. */
+{
+let anchors=0;
+const realClick=wx.HTMLAnchorElement.prototype.click;
+wx.HTMLAnchorElement.prototype.click=function(){anchors++;};
+const saves=[];
+wx.claude={use:function(n){return Promise.resolve(n==="downloads"?{
+  save:function(r){saves.push(r.filename);return Promise.resolve({status:"saved"});}}:null);}};
+dx.getElementById("pp-export").click();
+await wait(120);
+eq(saves.length,1,"the capability save is used when the viewer provides one");
+eq(anchors,0,"the anchor download does NOT also fire alongside it");
+ok(/exported/.test(dx.getElementById("pp-msg").textContent),
+   "the export reports success — a missing msg helper used to throw here");
+
+/* csv is in the viewer's extended type set and can be refused; the same
+   text as .txt still opens in a spreadsheet */
+saves.length=0;
+let first=true;
+wx.claude={use:function(n){return Promise.resolve(n==="downloads"?{
+  save:function(r){saves.push(r.filename);
+    if(first){first=false;return Promise.reject({code:"extension_not_enabled",message:"no csv"});}
+    return Promise.resolve({status:"saved"});}}:null);}};
+dx.getElementById("pp-export").click();
+await wait(150);
+eq(saves.length,2,"a refused extension is retried once");
+ok(/\.txt$/.test(saves[1]),"the retry uses a base-set extension");
+
+/* declined is the viewer saying no — never silently treated as success */
+saves.length=0;
+wx.claude={use:function(n){return Promise.resolve(n==="downloads"?{
+  save:function(r){saves.push(r.filename);
+    return Promise.reject({code:"declined",message:"no"});}}:null);}};
+dx.getElementById("pp-export").click();
+await wait(150);
+ok(/cancelled/i.test(dx.getElementById("pp-msg").textContent),
+   "a declined save says so instead of claiming the file was exported");
+
+/* no capability at all: the anchor is the mechanism */
+delete wx.claude;
+anchors=0;
+dx.getElementById("pp-export").click();
+await wait(60);
+eq(anchors,1,"without a capability the anchor download is used");
+wx.HTMLAnchorElement.prototype.click=realClick;
+}
 
 /* CSV formula injection: instrument and strategy names are free text, and
    a strategy name can arrive from someone else's shared library link. A
