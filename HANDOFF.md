@@ -122,6 +122,14 @@ Tape already does two ways, both record-keeping only:
    trades were reconstructed and on what basis. Test group 23.
 2. **Strategy Lab bridge** — `sync_strategies.py`, then the Import button.
 
+Verified end to end in a real browser, not just at the parser: a real
+`File` through the actual file input renders a report with net $910 from
+a four-fill ccxt log (a long round trip at +470 and a short at +440),
+disclosing that trades were reconstructed FIFO oldest-first, that
+positions still open at the end of the file are skipped, and that nothing
+was uploaded — with the win rate shown beside expectancy and a
+small-sample warning, as the honesty rules require.
+
 What must NOT be built, per non-negotiables 8 and 9: order placement,
 credentials of any kind, mirroring, copy-trading, or signal generation.
 A bot that *executes* is out of scope; a bot's *record* is exactly what
