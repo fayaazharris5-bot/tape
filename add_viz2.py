@@ -75,6 +75,34 @@ VIZ2 = {
  "A 50% fall needs a 100% rise to return to the same place. The two legs look the same "
  "size on the chart and are not the same size in percent."),
 
+"Accumulation": (
+ '{k:"c",d:[[100,102,98,99],[99,101,97,100],[100,102,98,99],[99,101,97.5,98],'
+ '[98,100,97,99],[99,100,96,97],[97,98,93,94],[94,95,91,92]],'
+ 'zn:[{p0:97,p1:102,t:"range",c:"a"}]}',
+ "The same sideways range on unremarkable volume, resolved downward. Accumulation and "
+ "a market simply going nowhere look the same while they are happening."),
+
+"Distribution": (
+ '{k:"c",d:[[100,103,99,102],[102,104,100,101],[101,104,100,103],[103,104,101,102],'
+ '[102,104,101,103],[103,107,102,106],[106,110,105,109],[109,113,108,112]],'
+ 'zn:[{p0:99,p1:104,t:"range",c:"a"}]}',
+ "A range that stopped making higher highs, and then made them anyway. Distribution "
+ "gets called confidently after the decline and argued about during it."),
+
+"Consolidation": (
+ '{k:"c",d:[[100,101,99,100],[100,101,99.2,99.5],[99.5,100.5,99,100],[100,100.8,99.1,99.4],'
+ '[99.4,100.2,98.9,99.8],[99.8,100,97,97.5],[97.5,98,95,95.5],[95.5,96,93,94]],'
+ 'zn:[{p0:98.9,p1:101,t:"the coil",c:"a"}]}',
+ "The same coil, released downward. A consolidation says pressure is building, not "
+ "the direction of the release."),
+
+"Pullback": (
+ '{k:"c",d:[[96,99,95,98],[98,101,97,100],[100,103,99,102],[102,104,101,103],'
+ '[103,104,100,101],[101,102,98,99],[99,100,95,96],[96,97,92,93]],'
+ 'hl:[{p:100,t:"prior support",c:"a"}]}',
+ "The same shallow dip inside the same uptrend — this one kept going. Every reversal "
+ "starts out looking like a pullback."),
+
 "Premium / discount": (
  '{k:"c",d:[[96,99,95,98],[98,101,97.5,100],[100,103,99,102],[102,105,101,104],'
  '[104,107,103,106],[106,109,105,108],[108,111,107,110],[110,113,109,112]],'
