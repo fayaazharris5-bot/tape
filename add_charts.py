@@ -45,6 +45,42 @@ CHARTS = {
  "The same first close below the same low — and the uptrend carried on. At some "
  "timeframe a strong trend produces these continuously."),
 
+"Stop hunt": (
+ '{k:"c",d:[[104,105,102,103],[103,104,101,102],[102,103,100.2,101],[101,102,100.1,100.5],'
+ '[100.5,101,97,100.8],[100.8,103,100,102.5],[102.5,105,102,104],[104,107,103,106]],'
+ 'hl:[{p:100.1,t:"obvious low",c:"a",la:true,below:true}]}',
+ "A wick through an obvious low and a close back above it. Stops sit under obvious lows "
+ "because that is where everyone was taught to put them.",
+ '{k:"c",d:[[104,105,102,103],[103,104,101,102],[102,103,100.2,101],[101,102,100.1,100.5],'
+ '[100.5,101,97,97.5],[97.5,98,95,95.5],[95.5,96,93,94],[94,95,91,92]],'
+ 'hl:[{p:100.1,t:"obvious low",c:"a",la:true,below:true}]}',
+ "The same low, taken by the same wick, with no recovery. Calling it a hunt afterwards "
+ "explains the first chart and not this one."),
+
+"Retest": (
+ '{k:"c",d:[[98,100,97,99],[99,101,98,100],[100,104,99.5,103],[103,104,101.5,102],'
+ '[102,103,101.8,102.5],[102.5,105,102,104],[104,107,103,106],[106,109,105,108]],'
+ 'hl:[{p:102,t:"broken level",c:"a"}]}',
+ "The level that capped price becomes the level price leans on. The retest is where "
+ "that either turns out to be true or does not.",
+ '{k:"c",d:[[98,100,97,99],[99,101,98,100],[100,104,99.5,103],[103,104,101.5,102],'
+ '[102,103,99,99.5],[99.5,100,96,97],[97,98,94,95],[95,96,92,93]],'
+ 'hl:[{p:102,t:"broken level",c:"a"}]}',
+ "The same break and the same return — and the level gave way. A retest is a question, "
+ "not a confirmation."),
+
+"Trendline": (
+ '{k:"c",d:[[96,99,95,98],[98,101,97,100],[100,102,99,101],[101,102,98.5,100],'
+ '[100,103,99.5,102],[102,104,101,103],[103,104,101.5,102],[102,105,102,104]],'
+ 'pl:[{pts:[[0,95],[7,102.5]],c:"a",t:"trendline"}]}',
+ "Three touches make a line — and on this chart it is one of several lines you could "
+ "have drawn through those lows.",
+ '{k:"c",d:[[96,99,95,98],[98,101,97,100],[100,102,99,101],[101,102,98.5,100],'
+ '[100,103,99.5,102],[102,104,99,100],[100,104,99.5,103],[103,106,102,105]],'
+ 'pl:[{pts:[[0,95],[7,102.5]],c:"a",t:"trendline"}]}',
+ "The same line, broken, with the advance carrying on. Move the anchor one bar and the "
+ "break disappears — the line is a choice, not a feature of the market."),
+
 "False breakout": (
  '{k:"c",d:[[98,100,97,99],[99,101,98,100],[100,102,99,101],[101,103,100,102],'
  '[102,105,101.5,103],[103,104.2,100,100.5],[100.5,101,97,98],[98,99,95,96]],'

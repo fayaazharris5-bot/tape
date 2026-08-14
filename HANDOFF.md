@@ -189,6 +189,16 @@ Sonnet writers work fine for this and cost less.
   fragment leaves index.html byte-identical. Verified, not assumed.
 - Agents will report "another process is modifying index.html" — that is the
   merge-and-commit pipeline, i.e. you. No writer ever touches index.html.
+- **Measuring layout in the Browser pane: finish the animations first.**
+  The pane does not always composite frames, so a CSS animation sits at
+  `currentTime: 0` with `playState: "running"` forever. With
+  `animation-fill-mode: both` that pins the element at its `from` keyframe.
+  The term panel's slide-in starts at `translateX(28px)`, which makes it
+  look like the panel hangs 28px off a 360px viewport and clips its own
+  close button. It does not — that is the measurement, not the layout.
+  Before reading any rect, run
+  `document.querySelectorAll('*').forEach(e=>e.getAnimations&&e.getAnimations().forEach(a=>a.finish()))`.
+  Cost an investigation once; nearly cost a "fix" to code that was correct.
 
 ## whitelist regeneration (after any content/dedupe change)
 
