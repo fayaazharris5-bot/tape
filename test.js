@@ -21,7 +21,15 @@ const FILE=path.join(__dirname,"index.html");
    counter-case second chart (which renders in the detail panel only and
    does not). Intended content change, added by add_charts.py — not a
    rendering regression. */
-const EXPECT_TERMS=995, EXPECT_CHARTS=78, EXPECT_SECTIONS=48;
+/* TERMS 995 -> 1002 and SECTIONS 48 -> 49 on 2026-08-14: a "Named systems
+   & frameworks" section, added by add_systems.py, covering seven systems
+   that come with a name attached — Orochi, the Turtle system, Connors
+   RSI-2, Darvas box, dual momentum, pairs trading and statistical
+   arbitrage. They are glossary ENTRIES describing frameworks, never rule
+   sets, and none of them went anywhere near the strategy library, which
+   test group 18 still requires to ship empty. No charts, so EXPECT_CHARTS
+   is unchanged. Intended content change. */
+const EXPECT_TERMS=1002, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
