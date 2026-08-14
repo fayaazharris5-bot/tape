@@ -14,7 +14,13 @@ const FILE=path.join(__dirname,"index.html");
 /* CHARTS 73 -> 72: Support and Resistance each carried a chart; merged
    into Support / resistance, one chart renders in the grid and the other
    in the detail panel via viz2 — so the grid shows one fewer. */
-const EXPECT_TERMS=995, EXPECT_CHARTS=72, EXPECT_SECTIONS=48;
+/* CHARTS 72 -> 75 on 2026-08-14: Break of structure, Change of character
+   and False breakout are among the most-referenced structural terms and
+   shipped with no chart at all. Each gained a primary chart (which lands
+   in the grid, hence this count) plus a counter-case second chart (which
+   renders in the detail panel only and does not). Intended content
+   change, added by add_charts.py — not a rendering regression. */
+const EXPECT_TERMS=995, EXPECT_CHARTS=75, EXPECT_SECTIONS=48;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};

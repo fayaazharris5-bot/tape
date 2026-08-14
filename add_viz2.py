@@ -168,4 +168,5 @@ def main():
     return 1 if missing else 0
 
 
-sys.exit(main())
+if __name__ == '__main__':          # importable: add_charts.py reuses the parser
+    sys.exit(main())
