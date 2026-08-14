@@ -749,6 +749,24 @@ d.dispatchEvent(new w.CustomEvent("tape:strats-changed"));
 await wait(30);
 ok(!!d.getElementById("sdetwrap"),"the overlay survives a re-render");
 ok(d.activeElement===outside,"a re-render does not steal focus when focus is elsewhere");
+/* Untrusted text reaches this view: a shared library link carries another
+   person's JSON straight into these fields. Nothing may render as markup. */
+{
+const lib=JSON.parse(w.localStorage.getItem("tg.strats.v1")||"[]");
+if(lib[0]){
+  const payload='<img src=x onerror="window.__pwnedDetail=true">';
+  lib[0].notes=payload; lib[0].entry=payload; lib[0].tags=[payload];
+  lib[0].trades=[{d:"2026-08-14",dir:"long",r:1.5,n:payload}];
+  lib[0].sampleSize=1;
+  w.localStorage.setItem("tg.strats.v1",JSON.stringify(lib));
+  d.dispatchEvent(new w.CustomEvent("tape:strats-changed"));
+  await wait(40);
+  const live=d.querySelector(".sdet");
+  ok(!w.__pwnedDetail,"an injected payload does not execute in the detail view");
+  eq(live?live.querySelectorAll("img").length:0,0,"no element is created from injected markup");
+  ok(live&&/<img/.test(live.textContent),"the payload is shown as literal text instead");
+}
+}
 /* the overlay's nodes were just replaced, so re-query before using them */
 const dp2=d.querySelector(".sdet");
 const foc=dp2.querySelectorAll('button:not([disabled]),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
