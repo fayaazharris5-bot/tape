@@ -49,8 +49,11 @@ Python is `py -3` on this machine — plain `python` hits the Store shim and fai
 `unwritten 0`. Run it after ANY content change; it regenerates
 `unwritten.json`, which is what writer briefs read their term lists from.
 
-Two audit scripts, both exiting non-zero on a finding so they work as
-gates. Run them after content changes alongside the suite:
+**Run `py -3 check.py`** — one command, every gate, non-zero if any fail.
+`--quick` skips the 24s suite. Use it instead of running the audits
+piecemeal; a skipped gate is how a regression ships.
+
+The individual audits, all exiting non-zero on a finding:
 
 - `py -3 audit_claims.py` — re-checks every body actually spliced into
   index.html: the ban regexes, and that each closes with the
@@ -133,6 +136,14 @@ subtracted costs twice and $151.04 came back as $146.08. Spread is already
 inside the fill prices and its column name deliberately does not match the
 importer's fee hints. Group 21b asserts the round trip is exact — if you
 change either side of this, that test is the one that will catch you.
+
+Cells are also hardened against **spreadsheet formula injection**: a value
+starting with `= + - @` tab or CR is prefixed with an apostrophe, because
+instrument and strategy names are free text and a strategy name can arrive
+from someone else's shared library link. Genuine numbers are explicitly
+excluded from that rule — prefixing a negative P&L would export it as text
+and break the round trip. Both properties are asserted together, so a fix
+to one that breaks the other fails the suite.
 
 ## Getting a bot's results in — the honest integration
 
