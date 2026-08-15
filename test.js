@@ -1009,6 +1009,42 @@ eq(evilBack.stats.n,3,"the neutralised row still imports as a trade");
 ok(/,-?\d/.test(evilRow),"numeric cells are left as numbers, not quoted into text");
 }
 
+console.log("\n21c. New terms are reachable by cross-link, not only by search");
+{
+/* The app navigates by Related chips. A term nothing links TO is
+   reachable only by search or by scrolling its section — which is how
+   the named-systems and VWAP terms first shipped. These assert the
+   general term points at the specific named instance of it. */
+const inbound={};
+(w.D||[]).forEach(function(x){
+  (x.rel||[]).forEach(function(r){inbound[r]=(inbound[r]||0)+1;});
+});
+[["Connors RSI-2","RSI"],["Turtle system","Donchian Channel"],
+ ["Dual momentum","Momentum factor"],["Pairs trading","Arbitrage"],
+ ["Normal distribution","Fat tails"],["TPO","Market profile"],
+ ["VWAP standard deviation bands","VWAP"],["Value development","Value area"],
+ ["Cumulative volume delta","Delta"],["Single print","Fair value gap"],
+ ["Wolfe wave","Harmonic patterns"],["Dogs of the Dow","Dividend yield"],
+ ["Darvas box","Breakout"],["All Weather portfolio","Risk parity"],
+ ["Value averaging","Dollar cost averaging"]].forEach(function(p){
+  ok(inbound[p[0]]>0,"'"+p[0]+"' has an inbound link (expected from "+p[1]+")");
+});
+/* and a chip must actually navigate, not just render */
+const src=(w.D||[]).find(function(x){return x.t==="RSI";});
+d.getElementById("term-"+src.slug).dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(40);
+const chip=[...d.querySelectorAll("#tpanel .tprel *")]
+  .find(function(e){return e.textContent.trim()==="Connors RSI-2";});
+ok(!!chip,"the related chip renders in the panel");
+if(chip){
+  chip.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+  await wait(40);
+  eq(d.getElementById("tp-title").textContent,"Connors RSI-2",
+     "clicking the chip opens that term");
+}
+d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+}
+
 console.log("\n22b. Strategy templates and the testability hint");
 {
 const domT=boot(); await wait(700);
