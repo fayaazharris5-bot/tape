@@ -31,8 +31,12 @@ const FILE=path.join(__dirname,"index.html");
    is unchanged. Intended content change.
    1002 -> 1010: a second batch into the same section (add_systems2.py) —
    60/40, permanent portfolio, All Weather, value averaging, Dogs of the
-   Dow, London breakout, Wolfe wave and the three-drive pattern. */
-const EXPECT_TERMS=1010, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
+   Dow, London breakout, Wolfe wave and the three-drive pattern.
+   1010 -> 1017: VWAP / value-development terms from material the user
+   supplied (add_vwap.py) — value development, VWAP standard deviation
+   bands, poor high/low, single print, TPO, cumulative volume delta and
+   normal distribution. Existing sections, so SECTIONS is unchanged. */
+const EXPECT_TERMS=1017, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
