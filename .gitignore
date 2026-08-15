@@ -4,3 +4,7 @@ package-lock.json
 .DS_Store
 build-monetise.py
 _artifact_preview.html
+
+# Python build artefacts — these were tracked until the first publish.
+__pycache__/
+*.pyc
