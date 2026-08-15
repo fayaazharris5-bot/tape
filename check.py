@@ -19,6 +19,9 @@ GATES = [
     ('claims audit',   [sys.executable, 'audit_claims.py'],   'py'),
     ('coverage audit', [sys.executable, 'audit_coverage.py'], 'py'),
     ('contrast audit', [sys.executable, 'audit_contrast.py'], 'py'),
+    # rel/see chips that point at a retired or misspelled name render a
+    # link that goes nowhere; merge_agent only checks agent-written bodies.
+    ('link audit',     [sys.executable, 'audit_links.py'],    'py'),
     # The Strategy Lab bridge writes strategy records with evidence badges on
     # them, so its mapping rules are an honesty surface like any other. Builds
     # its own synthetic database, so it runs without the Lab present.

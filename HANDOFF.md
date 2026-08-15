@@ -60,6 +60,14 @@ The individual audits, all exiting non-zero on a finding:
   "Where people get fooled:" paragraph. Currently 994 bodies, 0 hits.
 - `py -3 audit_coverage.py` — field coverage. Currently 0 bodies missing
   `usage`, 0 missing `see`, 0 terms missing an example, 48 sections.
+- `py -3 audit_links.py` — cross-reference integrity. `merge_agent.py`
+  only validates `see` links on bodies it merges, so `rel` on term
+  objects and any hand-written `see` had never been checked: 13 were
+  dead, rendering chips that went nowhere ("Costs", "Turtle",
+  "Markowitz", "Red flags" — names that never existed or were retired).
+  All repaired; two of them by terms the named-systems section added.
+  Also reports orphans (terms nothing links to) as information, not a
+  failure — some legitimately have no inbound reference.
 - `py -3 audit_contrast.py` — WCAG AA on every text token, in all four
   theme contexts (light base, light explicit, dark media, dark explicit).
   Currently 0 pairs below AA. It resolves the cascade rather than reading
