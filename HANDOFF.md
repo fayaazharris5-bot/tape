@@ -268,6 +268,14 @@ Sonnet writers work fine for this and cost less.
 - Bash heredocs eat backslashes -> write scripts via the Write tool.
 - Piped test runs mask exit codes.
 - Term-object key order: alt AFTER c:, never between t: and c:.
+- **`alt` was dead in search until 2026-08-15.** The grid haystack was
+  built from `t + d + e` only, so all 29 terms carrying an `alt` were
+  unfindable by their synonym — and the claim elsewhere in this file that
+  names retired in the dedupe passes "remain searchable via alt text on
+  their keepers" was simply false: "multiple comparisons", "killzone",
+  "order book depth" and "power of three" all returned nothing. The
+  haystack now includes `alt` and five assertions in group 3 hold it
+  there. If you retire a name, put it in `alt` AND check it searches.
 - Test harness bare-evals blocks lacking the literal document.getElementById.
 - Hard-coded fixtures go stale as writing progresses — keep fixtures dynamic.
 - jsdom polyfills (TextEncoder/CompressionStream) in boot() must stay.

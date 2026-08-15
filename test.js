@@ -121,6 +121,21 @@ q.value="rr"; q.dispatchEvent(new w.Event("input"));
 ok(shown().length<8&&shown().some(e=>/Risk:reward/.test(e.textContent)),"synonym: 'rr' finds Risk:reward without flooding");
 q.value="liquidity"; q.dispatchEvent(new w.Event("input"));
 ok(d.querySelectorAll("#grid mark").length>0,"matches get highlighted");
+
+/* The `alt` field was absent from the search haystack, so all 29 terms
+   carrying one were unfindable by their synonym — including the names
+   retired in the dedupe passes, which the handoff claimed stayed
+   searchable. They did not. These assert the field is actually wired. */
+const findsVia=function(query,expected){
+  q.value=query; q.dispatchEvent(new w.Event("input"));
+  return shown().some(function(e){return e.textContent.indexOf(expected)>-1;});
+};
+ok(findsVia("multiple comparisons","Multiple testing"),
+   "a name retired in a dedupe pass is still findable through alt");
+ok(findsVia("killzone","Kill zone"),"alt matches a spelling variant");
+ok(findsVia("order book depth","Order book / DOM"),"alt matches a retired duplicate name");
+ok(findsVia("cvd","Cumulative volume delta"),"alt matches an abbreviation");
+ok(findsVia("gaussian","Normal distribution"),"alt matches an alternative name for the same concept");
 q.value=""; q.dispatchEvent(new w.Event("input"));
 eq(d.querySelectorAll("#grid mark").length,0,"highlights cleared on empty search");
 eq(shown().length,EXPECT_TERMS,"all terms restored");
