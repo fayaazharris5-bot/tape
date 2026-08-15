@@ -73,9 +73,20 @@ These three are the only things standing between this and a finished,
 published, populated app. Whichever chat the user answers in, **write the
 answer into this file immediately**, then act on it.
 
-- **GitHub username** — publishing is two commands in `README.md`; the site
-  lands at `https://USERNAME.github.io/tape/`. Nothing has been pushed.
-  → username:
+- **GitHub username** — **ANSWERED: `fayaazharris5-bot`.** It was already set as
+  the `origin` remote in this repo the whole time — check `git remote -v` before
+  ever asking again. Site will land at <https://fayaazharris5-bot.github.io/tape/>.
+  Git Credential Manager is authenticated (a push returns a fast authenticated
+  404, not a hang), and commit emails were scrubbed to
+  `fayaazharris5-bot@users.noreply.github.com` before any push — do not
+  reintroduce the real gmail into history.
+  **Remaining blocker: the repo does not exist on GitHub yet.** It must be
+  created EMPTY (no README, no .gitignore, no licence) at <https://github.com/new>
+  or the first push is rejected as a non-fast-forward. Creating it needs the
+  user's account — the assistant cannot and must not do it. Once it exists:
+  `git push -u origin main`, then Settings → Pages → Source: `main` / root.
+  If the push still 404s, the authenticated account is not `fayaazharris5-bot`
+  and the remote URL needs to match whichever account was authorised.
 - **The user's own strategy rules** — including a session play around the 10am
   and 10pm windows, and one from the creator TJR. Take them one field at a
   time, verbatim. If the user is vague about a field, ask rather than filling
