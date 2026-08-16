@@ -46,14 +46,19 @@ const FILE=path.join(__dirname,"index.html");
    the worst possible gap for a section whose entries ARE shapes.
    add_cpat.py adds 18, each validated against the pattern's own defining
    property (body/wick ratio, containment, engulfment, run direction)
-   before being written. */
+   before being written.
+   CHARTS 106 -> 114: the Wyckoff section had 0 of 12 charted, and it is
+   the section where position inside a structure IS the meaning.
+   add_wyckoff.py adds 8, validated the same way, and is the only place
+   using the engine's volume array — for the climax and effort-vs-result
+   the volume is the point. */
 /* TERMS 1017 -> 1039: definition gaps found by probing the corpus against
    a candidate list (add_defs.py). Ergodicity, path dependence and variance
    drain matter most — they are why a positive expected value and a broke
    trader are not a contradiction. Candidates already covered were dropped
    rather than duplicated: Time in force documents GTC/IOC/FOK, and Kelly
    criterion plus Kelly fraction in practice cover fractional Kelly. */
-const EXPECT_TERMS=1039, EXPECT_CHARTS=106, EXPECT_SECTIONS=49;
+const EXPECT_TERMS=1039, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
