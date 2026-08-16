@@ -72,7 +72,12 @@ const FILE=path.join(__dirname,"index.html");
    EOD vs intraday floor, rewritten rulebooks, multi-model ranges), and the
    remaining names live in one landscape entry so there is one thing to
    re-verify rather than fifteen. Researched 2026-08-15. */
-const EXPECT_TERMS=1059, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
+/* CHARTS 114 -> 118 on 2026-08-17: equity charts on the four drawdown-
+   mechanics terms (add_dd_charts.py). Every floor series is computed —
+   floor = high-water - 2.5 — so the charts draw the same arithmetic the
+   Funded tab runs. Static and Trailing share one equity series on purpose:
+   identical trading, only the floor rule differs. */
+const EXPECT_TERMS=1059, EXPECT_CHARTS=118, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};

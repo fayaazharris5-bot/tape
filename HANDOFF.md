@@ -1,16 +1,48 @@
 # Tape — session handoff. Read fully, then continue.
 
 Repo: `C:\Users\fayaa\Downloads\tape`.
-**995 terms, 5 tabs, suite green at 261 assertions.**
+**1,059 terms, 6 tabs, suite green at 423 assertions.** (Counts below in older
+sections describe the state when they were written — trust this line and the
+gates, not prose further down.)
 
 ```bash
 cd C:\Users\fayaa\Downloads\tape
 npm i jsdom     # if node_modules missing
-node test.js    # MUST print PASSED before any change
+py -3 check.py  # ALL SIX gates — suite, claims, coverage, contrast, links, sync
 ```
 
 Never pipe the test run when you need its status: `node test.js > out 2>&1; echo $?`.
 Python is `py -3` on this machine — plain `python` hits the Store shim and fails.
+
+## Published — the repo is public
+
+Pushed to `https://github.com/fayaazharris5-bot/tape` (origin, authenticated
+via Git Credential Manager; pushes just work). Commit emails were scrubbed to
+the GitHub noreply address before the first push — NEVER reintroduce the real
+gmail into commits. GitHub Pages is NOT enabled yet; that toggle needs the
+user's browser (Settings → Pages → main / root). Until then the live URL 404s.
+
+## The sixth tab: Funded (module_funded.html, test group 25)
+
+A funded-account rule tracker: user types their own numbers, the tab shows the
+floor arithmetic (static / trailing-EOD / trailing-intraday with peak-equity),
+daily allowance, consistency cap, minimum days. Three rules learned the hard
+way, all enforced by tests:
+- NN8 scan is scoped to form CONTROLS (ids/names/types/placeholders), not
+  innerHTML — the panel's own reassurance prose mentions "account number".
+- The scan must run AFTER an account is added, or there are zero controls and
+  it passes vacuously.
+- An intraday floor trails PEAK EQUITY, not peak balance. First version got
+  this wrong and reported +1,500 room on an already-breached account.
+
+## Prop-firm content (2026-08-15/16, researched live, not recall)
+
+35 prop terms including named firms (FTMO, Topstep, Apex, FundedNext, The5ers,
+Lucid Trading) and a landscape entry. Firm figures are dated inline because the
+sector rewrites terms constantly (Apex replaced its rulebook 1 March 2026).
+The My Forex Funds entry reports the CFTC case WITH its dismissal-with-
+prejudice — never quote the allegations without the outcome. "Daily loss
+limit" lives in `style`, deliberately not duplicated in `prop`.
 
 ## Already DONE — do not redo
 
