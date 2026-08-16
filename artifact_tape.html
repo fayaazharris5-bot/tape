@@ -7841,11 +7841,22 @@ return {el:el,esc:esc,escText:escText,slug:slug,store:store,K:K};
     }
   }
   Array.prototype.forEach.call(grid.querySelectorAll(".star"),function(b){
-    if(STAR[b.dataset.star]===1)b.classList.add("on");
+    /* A toggle has to announce its state. The class alone is visual, so a
+       screen reader read "Save Instrument" identically whether the term was
+       saved or not, and there was no pressed state to fall back on. */
+    var term=b.getAttribute("aria-label").replace(/^(Save|Unsave) /,"");
+    var paint=function(on){
+      b.classList.toggle("on",on);
+      b.setAttribute("aria-pressed",on?"true":"false");
+      b.setAttribute("aria-label",(on?"Unsave ":"Save ")+term);
+      b.title=on?"Saved — click to remove":"Save this term";
+    };
+    paint(STAR[b.dataset.star]===1);
     b.onclick=function(ev){
       ev.stopPropagation();
-      if(STAR[b.dataset.star]===1){delete STAR[b.dataset.star];b.classList.remove("on");}
-      else{STAR[b.dataset.star]=1;b.classList.add("on");}
+      var on=STAR[b.dataset.star]!==1;
+      if(on)STAR[b.dataset.star]=1; else delete STAR[b.dataset.star];
+      paint(on);
       starSave();
       if(active==="starred")apply();
     };
@@ -12068,13 +12079,27 @@ function applySettings(){
   renderSummary();sizePreview();
   $("pp-msg").innerHTML="Settings applied.";
 }
-function resetAccount(){
-  var ok=false;
-  try{ok=window.confirm("Reset the paper account? Open positions and the closed-trade record here are cleared and the balance returns to the starting balance. Trades already logged to strategies stay logged.");}catch(e){ok=false;}
-  if(!ok)return;
+/* Two-click arm rather than window.confirm, for two reasons. It matches
+   how the rest of the app guards destructive actions (deleting a strategy,
+   resetting quiz progress), and a browser dialog is suppressed in
+   sandboxed contexts — including the published artifact — where confirm
+   throws or returns false and the reset silently does nothing. */
+function resetAccount(btn){
+  if(!btn){ return; }
+  if(!btn.dataset.armed){
+    btn.dataset.armed="1";
+    btn.textContent="Tap again to reset — this clears the record";
+    ppMsg("Open positions and the closed-trade record here will be cleared and the balance returns to the starting balance. Trades already logged to strategies stay logged.");
+    setTimeout(function(){
+      if(btn.parentNode){ btn.removeAttribute("data-armed"); btn.textContent="Reset paper account"; }
+    },4000);
+    return;
+  }
+  btn.removeAttribute("data-armed");
+  btn.textContent="Reset paper account";
   S.positions=[];S.closed=[];S.balance=S.startBalance;
   save();renderAll();
-  $("pp-msg").innerHTML="Paper account reset.";
+  ppMsg("Paper account reset.");
 }
 
 /* ---------- boot: tab, panel, wiring ---------- */
@@ -12135,7 +12160,7 @@ function boot(){
     if(!el)return;
     if(el.id==="pp-open-btn"){openTrade();return;}
     if(el.id==="pp-set-apply"){applySettings();return;}
-    if(el.id==="pp-reset"){resetAccount();return;}
+    if(el.id==="pp-reset"){resetAccount(el);return;}
     if(el.id==="pp-export"){exportClosed();return;}
     var act=el.getAttribute("data-act")||"",id=el.getAttribute("data-id")||"";
     if(act==="close"){closeTrade(id);return;}

@@ -1031,6 +1031,54 @@ eq(evilBack.stats.n,3,"the neutralised row still imports as a trade");
 ok(/,-?\d/.test(evilRow),"numeric cells are left as numbers, not quoted into text");
 }
 
+console.log("\n20b. Destructive actions and toggles work without browser dialogs");
+{
+const domR=boot(); await wait(700);
+const wr=domR.window, dr=domR.window.document;
+/* window.confirm is suppressed in sandboxed contexts — including the
+   published artifact — where it throws or returns false. The paper reset
+   used one, so it silently did nothing there. Everything else in the app
+   already used a two-click arm; this now matches. */
+wr.confirm=function(){throw new Error("blocked, as in a sandboxed viewer");};
+dr.getElementById("tab-paper").dispatchEvent(new wr.Event("click"));
+await wait(40);
+const put=function(id,v){const e=dr.getElementById(id);e.value=v;
+  e.dispatchEvent(new wr.Event("input",{bubbles:true}));
+  e.dispatchEvent(new wr.Event("change",{bubbles:true}));};
+put("pp-entry","23450");put("pp-stop","23440");put("pp-risk","1");
+dr.getElementById("pp-open-btn").click();
+const st=JSON.parse(wr.localStorage.getItem("tape.paper.v1"));
+put("pp-exit-"+st.positions[0].id,"23470");
+dr.querySelector('#pp-open button[data-act="close"]').click();
+eq(JSON.parse(wr.localStorage.getItem("tape.paper.v1")).closed.length,1,"a closed trade exists to reset");
+const rb=dr.getElementById("pp-reset");
+rb.click();
+eq(JSON.parse(wr.localStorage.getItem("tape.paper.v1")).closed.length,1,
+   "the first click arms rather than resetting");
+ok(/Tap again/.test(rb.textContent),"the button says it needs a second click");
+ok(/cleared/.test(dr.getElementById("pp-msg").textContent),"and explains what will be cleared");
+rb.click();
+const done=JSON.parse(wr.localStorage.getItem("tape.paper.v1"));
+eq(done.closed.length,0,"the second click resets even with dialogs unavailable");
+eq(done.balance,done.startBalance,"the balance returns to the starting balance");
+ok(!/Tap again/.test(rb.textContent),"the label restores afterwards");
+/* no browser dialog anywhere: they cannot be relied on in a sandbox */
+const src=fs.readFileSync(FILE,"utf8").replace(/\/\*[\s\S]*?\*\//g,"");
+ok(!/\bwindow\.confirm\s*\(/.test(src),"no code path depends on window.confirm");
+
+/* the save star is a toggle, so it must announce its state */
+dr.getElementById("tab-terms").dispatchEvent(new wr.Event("click"));
+await wait(40);
+const star=dr.querySelector("#grid .star");
+eq(star.getAttribute("aria-pressed"),"false","an unsaved term reads as not pressed");
+const label0=star.getAttribute("aria-label");
+star.click();
+eq(star.getAttribute("aria-pressed"),"true","saving sets the pressed state");
+ok(star.getAttribute("aria-label")!==label0,"and the label changes with it");
+star.click();
+eq(star.getAttribute("aria-pressed"),"false","unsaving clears it again");
+}
+
 console.log("\n21e. Every candle in every chart is structurally valid");
 {
 /* An OHLC bar where the high is not the highest or the low not the lowest
