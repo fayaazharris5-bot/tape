@@ -65,7 +65,14 @@ const FILE=path.join(__dirname,"index.html");
    both self-imposed and firm-imposed cases, and a second copy would repeat the
    Chop duplicate. Firm-specific figures are dated inline because this industry
    rewrites its terms often; Apex replaced its whole rulebook in March 2026. */
-const EXPECT_TERMS=1052, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
+/* TERMS 1052 -> 1059: Lucid Trading (add_lucid.py) plus FTMO, Topstep, Apex
+   Trader Funding, FundedNext, The5ers and a landscape entry (add_firms.py).
+   Named firms rather than fifteen profiles on purpose — each of these six has
+   a genuine structural difference worth a term (subscription vs one-off fee,
+   EOD vs intraday floor, rewritten rulebooks, multi-model ranges), and the
+   remaining names live in one landscape entry so there is one thing to
+   re-verify rather than fifteen. Researched 2026-08-15. */
+const EXPECT_TERMS=1059, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
