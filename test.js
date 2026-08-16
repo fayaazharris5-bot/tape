@@ -41,8 +41,13 @@ const FILE=path.join(__dirname,"index.html");
    did not; engulfing did, bearish engulfing did not; spring did, upthrust
    did not — and double top/bottom, head and shoulders with its inverse,
    and the two flags had no chart on either side. add_bear.py adds the
-   missing ten. Intended content change. */
-const EXPECT_TERMS=1017, EXPECT_CHARTS=88, EXPECT_SECTIONS=49;
+   missing ten. Intended content change.
+   CHARTS 88 -> 106: the candlestick section had 3 of 25 charted, which is
+   the worst possible gap for a section whose entries ARE shapes.
+   add_cpat.py adds 18, each validated against the pattern's own defining
+   property (body/wick ratio, containment, engulfment, run direction)
+   before being written. */
+const EXPECT_TERMS=1017, EXPECT_CHARTS=106, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
@@ -1013,6 +1018,40 @@ ok(!/(^|,)=cmd/.test(evilRow),"no cell begins with a bare = after neutralising")
 const evilBack=wx.__parseStatement(evilCsv,"evil.csv");
 eq(evilBack.stats.n,3,"the neutralised row still imports as a trade");
 ok(/,-?\d/.test(evilRow),"numeric cells are left as numbers, not quoted into text");
+}
+
+console.log("\n21e. Every candle in every chart is structurally valid");
+{
+/* An OHLC bar where the high is not the highest or the low not the lowest
+   renders an impossible candle — a wick pointing the wrong way. Group 1
+   already checks this for grid charts, but it reads only `x.v`, so the
+   20 viz2 second charts were never validated. This covers both, and also
+   checks that each spec actually renders rather than only that its
+   numbers are sane. */
+let invalid=0, corrupt=0, candles=0;
+(w.D||[]).forEach(function(x){
+  const specs=[];
+  if(x.v) specs.push(x.v);
+  (x.viz2||[]).forEach(function(z){specs.push(z.v||z);});
+  specs.forEach(function(sp){
+    if(!sp||sp.k!=="c"||!sp.d) return;
+    sp.d.forEach(function(c){
+      candles++;
+      const o=c[0],h=c[1],l=c[2],cl=c[3];
+      if(!(h>=Math.max(o,cl)&&l<=Math.min(o,cl)&&h>=l)) invalid++;
+    });
+    const svg=w.svgFor(sp);
+    if(!svg||/NaN|undefined/.test(svg)) corrupt++;
+  });
+});
+ok(candles>700,"there are candles to check  (got "+candles+")");
+eq(invalid,0,"no candle has a high below its body or a low above it, second charts included");
+eq(corrupt,0,"no chart renders NaN or undefined");
+/* the candlestick section is the one whose entries ARE shapes */
+const cpat=(w.D||[]).filter(function(x){return x.c==="cpat";});
+ok(cpat.filter(function(x){return x.v;}).length>=21,
+   "the candlestick section is substantially charted  (got "+
+   cpat.filter(function(x){return x.v;}).length+"/"+cpat.length+")");
 }
 
 console.log("\n21d. Bearish counterparts are charted, not just the bullish side");
