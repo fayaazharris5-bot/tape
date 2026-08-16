@@ -35,8 +35,14 @@ const FILE=path.join(__dirname,"index.html");
    1010 -> 1017: VWAP / value-development terms from material the user
    supplied (add_vwap.py) — value development, VWAP standard deviation
    bands, poor high/low, single print, TPO, cumulative volume delta and
-   normal distribution. Existing sections, so SECTIONS is unchanged. */
-const EXPECT_TERMS=1017, EXPECT_CHARTS=78, EXPECT_SECTIONS=49;
+   normal distribution. Existing sections, so SECTIONS is unchanged.
+   CHARTS 78 -> 88 on 2026-08-16: the corpus charted the bullish side and
+   not the bearish one — hammer had a chart, shooting star and hanging man
+   did not; engulfing did, bearish engulfing did not; spring did, upthrust
+   did not — and double top/bottom, head and shoulders with its inverse,
+   and the two flags had no chart on either side. add_bear.py adds the
+   missing ten. Intended content change. */
+const EXPECT_TERMS=1017, EXPECT_CHARTS=88, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
@@ -1007,6 +1013,39 @@ ok(!/(^|,)=cmd/.test(evilRow),"no cell begins with a bare = after neutralising")
 const evilBack=wx.__parseStatement(evilCsv,"evil.csv");
 eq(evilBack.stats.n,3,"the neutralised row still imports as a trade");
 ok(/,-?\d/.test(evilRow),"numeric cells are left as numbers, not quoted into text");
+}
+
+console.log("\n21d. Bearish counterparts are charted, not just the bullish side");
+{
+const byName=function(n){return (w.D||[]).find(function(x){return x.t===n;});};
+[["Shooting star","Hammer"],["Hanging man","Hammer"],
+ ["Bearish engulfing","Engulfing"],["Upthrust","Spring"],
+ ["Double top","Double bottom"],["Head and shoulders","Inverse head and shoulders"],
+ ["Bull flag","Bear flag"]].forEach(function(p){
+  const a=byName(p[0]), b=byName(p[1]);
+  ok(a&&a.v,"'"+p[0]+"' has a chart");
+  ok(b&&b.v,"'"+p[1]+"' has a chart (its counterpart)");
+});
+/* Hanging man's entire teaching point is that the candle is IDENTICAL to a
+   hammer and only the context differs. The caption says so, so the data
+   has to actually match — it did not on the first attempt. */
+const geom=function(c){return {body:+Math.abs(c[3]-c[0]).toFixed(2),
+  lower:+(Math.min(c[0],c[3])-c[2]).toFixed(2),
+  upper:+(c[1]-Math.max(c[0],c[3])).toFixed(2)};};
+const ham=byName("Hammer"), hang=byName("Hanging man");
+const hamC=geom(ham.v.d[1]), hangC=geom(hang.v.d[5]);
+eq(JSON.stringify(hangC),JSON.stringify(hamC),
+   "hanging man is the same candle geometry as the hammer");
+ok(hang.v.d[0][3]<hang.v.d[4][3],"hanging man arrives after an advance");
+ok(ham.v.d[0][0]>ham.v.d[0][3],"the hammer arrives after a decline");
+/* every new chart must render clean */
+["Shooting star","Hanging man","Bearish engulfing","Upthrust","Double top",
+ "Double bottom","Head and shoulders","Inverse head and shoulders",
+ "Bull flag","Bear flag"].forEach(function(n){
+  const t=byName(n), svg=w.svgFor(t.v);
+  ok(svg&&/<svg/.test(svg)&&!/NaN|undefined/.test(svg),"'"+n+"' renders a clean chart");
+  ok(!!t.cap,"'"+n+"' carries a caption");
+});
 }
 
 console.log("\n21c. New terms are reachable by cross-link, not only by search");
