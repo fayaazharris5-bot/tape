@@ -1,5 +1,17 @@
 {
- "sys": [
-  "Connors RSI-2"
+ "prop": [
+  "Static drawdown",
+  "Drawdown lock",
+  "Instant funding",
+  "Futures prop vs CFD prop",
+  "Payout compliance review",
+  "Prop firm pass rate",
+  "Prohibited strategy clause",
+  "Cross-account hedging",
+  "Payout cap",
+  "Overnight and weekend holding rule",
+  "Prop firm regulatory status",
+  "Account sharing",
+  "Reading a prop firm rulebook"
  ]
 }

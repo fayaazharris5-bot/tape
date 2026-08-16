@@ -58,7 +58,14 @@ const FILE=path.join(__dirname,"index.html");
    trader are not a contradiction. Candidates already covered were dropped
    rather than duplicated: Time in force documents GTC/IOC/FOK, and Kelly
    criterion plus Kelly fraction in practice cover fractional Kelly. */
-const EXPECT_TERMS=1039, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
+/* TERMS 1039 -> 1052: 13 prop-firm entries (add_prop.py) covering the firm
+   categories, the rules that actually end evaluations, and payout mechanics.
+   Researched 2026-08-15, not written from recall. "Daily loss limit" was
+   deliberately NOT re-added — it already exists in the style section covering
+   both self-imposed and firm-imposed cases, and a second copy would repeat the
+   Chop duplicate. Firm-specific figures are dated inline because this industry
+   rewrites its terms often; Apex replaced its whole rulebook in March 2026. */
+const EXPECT_TERMS=1052, EXPECT_CHARTS=114, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
