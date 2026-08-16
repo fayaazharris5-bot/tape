@@ -1358,6 +1358,24 @@ ok(/OVER/.test(statusText()),"a best day above the consistency cap is flagged");
 /* every figure shows its working rather than asserting a number */
 ok(/high-water|start -/.test(statusText()),"the floor shows the arithmetic behind it");
 ok(/system of record/i.test(statusText()),"the panel defers to the firm's own dashboard");
+
+/* An intraday floor trails PEAK EQUITY, not peak balance. This was wrong in
+   the first version — it used the closed balance, which understates the floor
+   for the one account type the tab exists to warn about. A spike that ran to
+   58,000 unrealised and came back moves the floor to 55,500 even though the
+   balance never showed 58,000. */
+await setF("consistency",""); await setF("bestDay","");
+await setF("high",56000); await setF("balance",55000); await setF("maxDD",2500);
+await setF("ddType","trailing-intraday"); await setF("peakEquity",58000);
+ok(/55,500/.test(statusText()),"an intraday floor trails peak equity, not peak balance");
+ok(/never banked/i.test(statusText()),"and says the spike was never banked");
+ok(/Room lost to an unbanked spike/.test(statusText()),"the room lost to the spike is surfaced");
+ok(/2,000/.test(statusText()),"and quantified: 58,000 peak - 56,000 balance");
+
+/* the same spike must NOT move an end-of-day floor */
+await setF("ddType","trailing-eod");
+ok(/53,500/.test(statusText()),"an end-of-day floor ignores the unrealised spike");
+ok(!/Room lost to an unbanked spike/.test(statusText()),"and does not report spike loss");
 }
 
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");

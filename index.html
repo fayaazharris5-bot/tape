@@ -12386,6 +12386,7 @@ if(document.readyState==="loading"){
 <style>
 /* ---------- funded-account tracker ---------- */
 #panel-funded{padding:0 16px 40px}
+.fd-h2{margin:16px 0 2px;font-size:1.15rem}
 .fd-intro{max-width:70ch;color:var(--muted);font-size:.94rem;line-height:1.55;margin:14px 0 18px}
 .fd-intro strong{color:var(--ink)}
 .fd-wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
@@ -12469,7 +12470,7 @@ function blank(){
   return {name:"",firm:"",size:50000,phase:"evaluation",
           ddType:"trailing-eod",maxDD:2500,lockAt:"",dailyLimit:"",
           target:3000,consistency:"",minDays:"",
-          balance:50000,high:50000,bestDay:"",daysTraded:0,todayPnl:0};
+          balance:50000,high:50000,bestDay:"",daysTraded:0,todayPnl:0,peakEquity:""};
 }
 
 /* ---- the arithmetic, each step reported so it can be checked ---- */
@@ -12478,8 +12479,20 @@ function floorNow(a){
   if(a.ddType==="static"){
     return {v:size-maxDD, how:money(size)+" start - "+money(maxDD)+" max drawdown"};
   }
-  var trailed=high-maxDD;
-  var how=money(high)+" high-water - "+money(maxDD)+" max drawdown";
+
+  /* An intraday floor trails PEAK EQUITY, not peak balance — an open position
+     that ran in your favour and came back moved the floor on the way up and
+     did not move it back. Using the closed balance here would have understated
+     the floor for exactly the account type this tab exists to warn about, so
+     peak unrealised equity is folded in when it is higher. */
+  var mark=high, markHow=money(high)+" high-water balance";
+  if(a.ddType==="trailing-intraday" && a.peakEquity!=="" && n(a.peakEquity)>high){
+    mark=n(a.peakEquity);
+    markHow=money(mark)+" peak equity (unrealised, never banked)";
+  }
+
+  var trailed=mark-maxDD;
+  var how=markHow+" - "+money(maxDD)+" max drawdown";
   if(lock!==null && trailed>lock){
     return {v:lock, how:"floor locked at "+money(lock)+" (trailing stopped there)"};
   }
@@ -12514,6 +12527,16 @@ function renderStatus(){
       "balance "+money(bal)+" - floor "+money(f.v)+"   [floor = "+f.how+"]",
       room<=0?"fd-bad":(room<n(a.maxDD)*0.25?"fd-warn":"fd-ok"),
       roomPct, room<=0?"bad":(room<n(a.maxDD)*0.25?"warn":""));
+
+  /* the cost of a spike that was never banked: only an intraday floor does
+     this, and it is invisible in the balance, which is why people are caught */
+  if(a.ddType==="trailing-intraday" && a.peakEquity!=="" && n(a.peakEquity)>high){
+    var lost=n(a.peakEquity)-high;
+    h+=metric("Room lost to an unbanked spike", money(lost),
+        "peak equity "+money(n(a.peakEquity))+" - high-water balance "+money(high)+
+        "   the floor followed the spike up and did not come back down with it",
+        "fd-warn", null, "");
+  }
 
   /* today's remaining daily allowance */
   if(a.dailyLimit!==""){
@@ -12601,6 +12624,7 @@ var FIELDS=[
   ["minDays","Minimum trading days","number",""],
   ["balance","Current balance","number",""],
   ["high","Highest balance reached","number","Drives a trailing floor"],
+  ["peakEquity","Peak equity (unrealised)","number","Intraday floors only: the highest your account touched with a position open. A spike you never banked still moved the floor."],
   ["bestDay","Best single day","number",""],
   ["daysTraded","Days traded","number",""],
   ["todayPnl","Today's P&L","number","Negative if down"]
@@ -12646,7 +12670,12 @@ function renderForm(){
 function renderAll(){ renderList(); renderForm(); renderStatus(); }
 
 function shellHTML(){
-  return '<p class="fd-intro">Your own numbers, and the arithmetic the rules imply. '+
+  /* The panel needs its own h2 before the h3 cards, matching the Paper tab.
+     Without it the document only avoids an h1->h3 jump by accident, because
+     Paper's h2 happens to sit earlier in the DOM — reorder the panels and the
+     heading order breaks. It also gives the panel a real heading to land on. */
+  return '<h2 class="fd-h2">Funded</h2>'+
+    '<p class="fd-intro">Your own numbers, and the arithmetic the rules imply. '+
     '<strong>Nothing here connects to a firm</strong> — there is no field for an account '+
     'number, key or password, and there will not be one. A trailing floor follows your '+
     'high-water mark, so profit tightens the leash; this shows where the floor actually '+
