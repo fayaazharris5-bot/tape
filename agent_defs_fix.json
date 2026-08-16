@@ -1,0 +1,24 @@
+{
+ "Fully diluted valuation": {
+  "long": "Fully diluted valuation multiplies the current token price by the total supply that will ever exist, including everything still locked, vesting or unissued. Market capitalisation uses only the tokens circulating now.\n\nThe difference between the two figures is the part that matters. A token trading at a modest market cap can carry an FDV many times larger, and that gap represents supply scheduled to arrive later — held by teams, early investors and treasuries, most of it eventually saleable. Every unlock moves tokens from the locked column to the tradeable one at no cost to the holder.\n\nComparing projects on market cap alone therefore compares them on how much of their supply happens to be released so far, which is a scheduling decision rather than a measure of anything.\n\nWhere people get fooled: which number gets quoted depends on which is more flattering. Early on, a low float makes market cap look small and the token look cheap; the same project quoted on FDV looks expensive. Neither figure is dishonest on its own, and presenting only one is the technique. Read both together with the unlock schedule, and treat the gap as future supply with a calendar attached.",
+  "usage": "Typically compared against market cap and the unlock schedule; the gap between them is supply that has not yet arrived.",
+  "see": [
+   "Circulating supply",
+   "Tokenomics",
+   "Vesting / unlock",
+   "Market capitalisation",
+   "Free float"
+  ]
+ },
+ "Pre-mortem": {
+  "long": "A pre-mortem inverts the post-mortem. Before committing, you assume the plan has already failed and write down the reasons, in the past tense, as though explaining what went wrong.\n\nThe technique comes from decision research, and the reason it works is that the framing removes the need to defend anything. Asked what might go wrong, people generate a short list of hedged concerns. Told it has already failed and asked why, they produce specifics — the assumption that was never checked, the scenario that was ignored, the dependency nobody owned.\n\nApplied to trading, the output is concrete: this failed because the level was obvious and everyone was watching it; because the position was sized for a normal week and the release was scheduled; because there was no rule for what to do if it gapped through the stop.\n\nWhere people get fooled: doing it after entering. Once the position exists, every reason it might fail is also an argument that you have already made a mistake, and the mind supplies reassurance instead of analysis. The exercise only produces honest answers while nothing is at stake — which means before the trade, and preferably written down where it can be checked afterwards.",
+  "usage": "Typically run before entry: assume the plan failed and write the reasons in the past tense, while nothing is committed.",
+  "see": [
+   "Decision journal",
+   "Process vs outcome",
+   "Journaling the near-misses",
+   "Unknown unknowns",
+   "Trading journal"
+  ]
+ }
+}

@@ -47,7 +47,13 @@ const FILE=path.join(__dirname,"index.html");
    add_cpat.py adds 18, each validated against the pattern's own defining
    property (body/wick ratio, containment, engulfment, run direction)
    before being written. */
-const EXPECT_TERMS=1017, EXPECT_CHARTS=106, EXPECT_SECTIONS=49;
+/* TERMS 1017 -> 1039: definition gaps found by probing the corpus against
+   a candidate list (add_defs.py). Ergodicity, path dependence and variance
+   drain matter most — they are why a positive expected value and a broke
+   trader are not a contradiction. Candidates already covered were dropped
+   rather than duplicated: Time in force documents GTC/IOC/FOK, and Kelly
+   criterion plus Kelly fraction in practice cover fractional Kelly. */
+const EXPECT_TERMS=1039, EXPECT_CHARTS=106, EXPECT_SECTIONS=49;
 
 let pass=0,fail=0;
 const ok=(c,m)=>{if(c){pass++;}else{fail++;console.log("  FAIL  "+m);}};
