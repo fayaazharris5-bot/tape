@@ -1,0 +1,339 @@
+<style>
+/* ---------- funded-account tracker ---------- */
+#panel-funded{padding:0 16px 40px}
+.fd-intro{max-width:70ch;color:var(--muted);font-size:.94rem;line-height:1.55;margin:14px 0 18px}
+.fd-intro strong{color:var(--ink)}
+.fd-wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.fd-col{flex:1 1 320px;min-width:0}
+.fd-card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;background:var(--card)}
+.fd-card h3{margin:0 0 10px;font-size:.95rem;letter-spacing:.02em}
+.fd-row{display:flex;gap:10px;margin-bottom:9px;align-items:center}
+.fd-row label{flex:0 0 46%;font-size:.85rem;color:var(--muted)}
+.fd-row input,.fd-row select{flex:1 1 auto;min-width:0;padding:6px 8px;border:1px solid var(--line);
+  border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:.88rem;box-sizing:border-box}
+.fd-hint{font-size:.78rem;color:var(--muted);margin:-4px 0 10px;line-height:1.45}
+.fd-btn{padding:7px 13px;border:1px solid var(--line);border-radius:7px;background:var(--bg);
+  color:var(--ink);font:inherit;font-size:.86rem;cursor:pointer}
+.fd-btn:hover{border-color:var(--accent)}
+.fd-btn.danger:hover{border-color:var(--warn)}
+.fd-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.fd-list{list-style:none;margin:0;padding:0}
+.fd-item{border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:8px;cursor:pointer;background:var(--bg)}
+.fd-item:hover{border-color:var(--accent)}
+.fd-item.on{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.fd-item b{display:block;font-size:.9rem}
+.fd-item span{font-size:.78rem;color:var(--muted)}
+.fd-metric{border-top:1px solid var(--line);padding:9px 0}
+.fd-metric:first-of-type{border-top:0}
+.fd-metric .fd-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.fd-metric .fd-name{font-size:.86rem;color:var(--muted)}
+.fd-metric .fd-val{font-size:1.02rem;font-variant-numeric:tabular-nums;font-weight:600}
+.fd-metric .fd-work{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:3px;line-height:1.5}
+.fd-ok{color:var(--accent)}
+.fd-warn{color:var(--warn,#e0a03a)}
+.fd-bad{color:var(--danger,#e06c6c)}
+.fd-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:6px}
+.fd-bar i{display:block;height:100%;background:var(--accent)}
+.fd-bar i.warn{background:var(--warn,#e0a03a)}
+.fd-bar i.bad{background:var(--danger,#e06c6c)}
+.fd-empty{color:var(--muted);font-size:.88rem;padding:10px 0}
+.fd-note{font-size:.8rem;color:var(--muted);line-height:1.5;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.fd-note a{color:var(--accent)}
+</style>
+
+<script>
+/* Funded-account rule tracker.
+ *
+ * WHAT THIS IS: arithmetic on numbers the user types in, so the rules that
+ * actually end evaluations are visible before they are breached rather than
+ * afterwards. The glossary already explains those rules; this applies them.
+ *
+ * WHAT IT IS NOT, deliberately:
+ *   - It does not connect to any firm. There is no field here for an API key,
+ *     a token, a password or an account number, and there must never be one --
+ *     this file is shared by link and browser storage is readable.
+ *   - It is not the system of record. The firm's own dashboard is, and where
+ *     the two disagree the firm wins. That is stated in the UI, not just here.
+ *   - It gives no advice. It reports distance-to-limit and lets the reader
+ *     decide. No sizing suggestions, no "you can risk X more today".
+ *
+ * The floor arithmetic is the point of the whole tab: a trailing floor tracks
+ * the high-water mark, so profit tightens the leash, and most people discover
+ * that at the worst possible moment.
+ */
+(function(){
+"use strict";
+var NS=window.TAPE_NS, esc=NS.esc, store=NS.store;
+var KEY="tape.funded.v1";
+var accounts=[], sel=0;
+
+function $(id){return document.getElementById(id);}
+function n(v){var x=parseFloat(v);return isFinite(x)?x:0;}
+function money(x){
+  var s=Math.abs(x).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");
+  return (x<0?"-":"")+s;
+}
+
+function load(){
+  var raw=store.json(KEY,null);
+  accounts=(raw&&raw.length)?raw:[];
+}
+function save(){ store.setJson(KEY,accounts); }
+
+function blank(){
+  return {name:"",firm:"",size:50000,phase:"evaluation",
+          ddType:"trailing-eod",maxDD:2500,lockAt:"",dailyLimit:"",
+          target:3000,consistency:"",minDays:"",
+          balance:50000,high:50000,bestDay:"",daysTraded:0,todayPnl:0};
+}
+
+/* ---- the arithmetic, each step reported so it can be checked ---- */
+function floorNow(a){
+  var size=n(a.size), maxDD=n(a.maxDD), high=n(a.high), lock=a.lockAt===""?null:n(a.lockAt);
+  if(a.ddType==="static"){
+    return {v:size-maxDD, how:money(size)+" start - "+money(maxDD)+" max drawdown"};
+  }
+  var trailed=high-maxDD;
+  var how=money(high)+" high-water - "+money(maxDD)+" max drawdown";
+  if(lock!==null && trailed>lock){
+    return {v:lock, how:"floor locked at "+money(lock)+" (trailing stopped there)"};
+  }
+  return {v:trailed, how:how+(a.ddType==="trailing-intraday"
+    ? " -- moves on intraday equity, including spikes you never banked"
+    : " -- moves on the closing balance only")};
+}
+
+function metric(name,val,work,cls,pct,barCls){
+  var h='<div class="fd-metric"><div class="fd-top"><span class="fd-name">'+esc(name)+
+        '</span><span class="fd-val '+(cls||"")+'">'+esc(val)+'</span></div>';
+  if(work) h+='<div class="fd-work">'+esc(work)+'</div>';
+  if(pct!=null){
+    var w=Math.max(0,Math.min(100,pct));
+    h+='<div class="fd-bar"><i class="'+(barCls||"")+'" style="width:'+w.toFixed(1)+'%"></i></div>';
+  }
+  return h+'</div>';
+}
+
+function renderStatus(){
+  var box=$("fd-status"); if(!box) return;
+  var a=accounts[sel];
+  if(!a){ box.innerHTML='<p class="fd-empty">No account selected. Add one on the left.</p>'; return; }
+
+  var size=n(a.size), bal=n(a.balance), high=n(a.high);
+  var f=floorNow(a), room=bal-f.v, profit=bal-size;
+  var h="";
+
+  /* distance to the floor -- the number that ends runs */
+  var roomPct=(bal-f.v)/Math.max(1,(high-f.v))*100;
+  h+=metric("Room to the floor", money(room),
+      "balance "+money(bal)+" - floor "+money(f.v)+"   [floor = "+f.how+"]",
+      room<=0?"fd-bad":(room<n(a.maxDD)*0.25?"fd-warn":"fd-ok"),
+      roomPct, room<=0?"bad":(room<n(a.maxDD)*0.25?"warn":""));
+
+  /* today's remaining daily allowance */
+  if(a.dailyLimit!==""){
+    var lim=n(a.dailyLimit), today=n(a.todayPnl);
+    var left=lim+Math.min(0,today);
+    h+=metric("Daily loss allowance left", money(left),
+        "limit "+money(lim)+(today<0?" - "+money(-today)+" lost today":" (nothing lost today)"),
+        left<=0?"fd-bad":(left<lim*0.3?"fd-warn":"fd-ok"),
+        left/Math.max(1,lim)*100, left<=0?"bad":(left<lim*0.3?"warn":""));
+  }
+
+  /* progress toward the target */
+  if(n(a.target)>0){
+    var tg=n(a.target);
+    h+=metric("Progress to target", money(profit)+" of "+money(tg),
+        profit>=tg?"target met on these numbers":money(tg-profit)+" still needed",
+        profit>=tg?"fd-ok":"", profit/tg*100, "");
+  }
+
+  /* the consistency cap -- passes the target and still fails */
+  if(a.consistency!=="" && a.bestDay!==""){
+    var cap=n(a.consistency), best=n(a.bestDay);
+    var share=profit>0?(best/profit*100):0;
+    var over=share>cap;
+    h+=metric("Best day vs consistency cap", share.toFixed(1)+"% of profit",
+        "best day "+money(best)+" / total profit "+money(profit)+
+        "   cap is "+cap+"%"+(over?"  -- OVER: profit must grow to "+money(best/(cap/100))+" for this day to fit":""),
+        over?"fd-bad":"fd-ok", share/Math.max(1,cap)*100, over?"bad":"");
+  }
+
+  /* minimum trading days */
+  if(a.minDays!==""){
+    var md=n(a.minDays), dt=n(a.daysTraded);
+    h+=metric("Trading days", dt+" of "+md,
+        dt>=md?"minimum met":(md-dt)+" more day(s) required before a payout request",
+        dt>=md?"fd-ok":"", dt/Math.max(1,md)*100, "");
+  }
+
+  h+='<div class="fd-note">These are your typed numbers, not the firm\'s. '+
+     'The firm\'s dashboard is the system of record and its rules are judged at '+
+     'the payout review, over your whole history. Where the two disagree, the firm wins. '+
+     'See <a href="#" data-fd-term="payout-compliance-review">Payout compliance review</a> and '+
+     '<a href="#" data-fd-term="reading-a-prop-firm-rulebook">Reading a prop firm rulebook</a>.</div>';
+  box.innerHTML=h;
+
+  Array.prototype.forEach.call(box.querySelectorAll("[data-fd-term]"),function(el){
+    el.addEventListener("click",function(ev){
+      ev.preventDefault();
+      if(NS.openTerm) NS.openTerm(el.getAttribute("data-fd-term"));
+    });
+  });
+}
+
+function renderList(){
+  var ul=$("fd-list"); if(!ul) return;
+  if(!accounts.length){ ul.innerHTML='<li class="fd-empty">No accounts yet.</li>'; return; }
+  var h="";
+  accounts.forEach(function(a,i){
+    var f=floorNow(a), room=n(a.balance)-f.v;
+    h+='<li class="fd-item'+(i===sel?" on":"")+'" data-i="'+i+'">'+
+       '<b>'+esc(a.name||"(unnamed account)")+'</b>'+
+       '<span>'+esc(a.firm||"no firm set")+' &middot; '+esc(a.phase)+
+       ' &middot; room '+esc(money(room))+'</span></li>';
+  });
+  ul.innerHTML=h;
+  Array.prototype.forEach.call(ul.querySelectorAll(".fd-item"),function(li){
+    li.addEventListener("click",function(){
+      sel=parseInt(li.getAttribute("data-i"),10)||0;
+      renderAll();
+    });
+  });
+}
+
+var FIELDS=[
+  ["name","Nickname","text","What you call it, e.g. “Apex 50k eval”"],
+  ["firm","Firm","text",""],
+  ["size","Account size","number",""],
+  ["phase","Phase","select-phase",""],
+  ["ddType","Drawdown type","select-dd",""],
+  ["maxDD","Max drawdown","number",""],
+  ["lockAt","Floor locks at","number","Blank = it never stops trailing"],
+  ["dailyLimit","Daily loss limit","number","Blank if the firm has none"],
+  ["target","Profit target","number",""],
+  ["consistency","Consistency cap %","number","Max share of profit from one day"],
+  ["minDays","Minimum trading days","number",""],
+  ["balance","Current balance","number",""],
+  ["high","Highest balance reached","number","Drives a trailing floor"],
+  ["bestDay","Best single day","number",""],
+  ["daysTraded","Days traded","number",""],
+  ["todayPnl","Today's P&L","number","Negative if down"]
+];
+
+function renderForm(){
+  var box=$("fd-form"); if(!box) return;
+  var a=accounts[sel];
+  if(!a){ box.innerHTML='<p class="fd-empty">Add an account to begin.</p>'; return; }
+  var h="";
+  FIELDS.forEach(function(f){
+    var id="fd-f-"+f[0], v=a[f[0]];
+    h+='<div class="fd-row"><label for="'+id+'">'+esc(f[1])+'</label>';
+    if(f[2]==="select-phase"){
+      h+='<select id="'+id+'" data-k="'+f[0]+'">'+
+         '<option value="evaluation"'+(v==="evaluation"?" selected":"")+'>Evaluation</option>'+
+         '<option value="funded"'+(v==="funded"?" selected":"")+'>Funded</option></select>';
+    }else if(f[2]==="select-dd"){
+      h+='<select id="'+id+'" data-k="'+f[0]+'">'+
+         '<option value="static"'+(v==="static"?" selected":"")+'>Static</option>'+
+         '<option value="trailing-eod"'+(v==="trailing-eod"?" selected":"")+'>Trailing, end of day</option>'+
+         '<option value="trailing-intraday"'+(v==="trailing-intraday"?" selected":"")+'>Trailing, intraday</option>'+
+         '</select>';
+    }else{
+      h+='<input id="'+id+'" data-k="'+f[0]+'" type="'+f[2]+'" value="'+esc(v)+'">';
+    }
+    h+='</div>';
+    if(f[3]) h+='<div class="fd-hint">'+esc(f[3])+'</div>';
+  });
+  box.innerHTML=h;
+  Array.prototype.forEach.call(box.querySelectorAll("[data-k]"),function(el){
+    el.addEventListener("input",function(){
+      accounts[sel][el.getAttribute("data-k")]=el.value;
+      save(); renderStatus(); renderList();
+    });
+    el.addEventListener("change",function(){
+      accounts[sel][el.getAttribute("data-k")]=el.value;
+      save(); renderStatus(); renderList();
+    });
+  });
+}
+
+function renderAll(){ renderList(); renderForm(); renderStatus(); }
+
+function shellHTML(){
+  return '<p class="fd-intro">Your own numbers, and the arithmetic the rules imply. '+
+    '<strong>Nothing here connects to a firm</strong> — there is no field for an account '+
+    'number, key or password, and there will not be one. A trailing floor follows your '+
+    'high-water mark, so profit tightens the leash; this shows where the floor actually '+
+    'sits right now rather than where the headline number suggests.</p>'+
+    '<div class="fd-wrap">'+
+      '<div class="fd-col" style="flex:0 1 300px">'+
+        '<div class="fd-card"><h3>Accounts</h3><ul class="fd-list" id="fd-list"></ul>'+
+        '<div class="fd-actions">'+
+          '<button class="fd-btn" id="fd-add" type="button">Add account</button>'+
+          '<button class="fd-btn danger" id="fd-del" type="button">Delete</button>'+
+        '</div></div>'+
+      '</div>'+
+      '<div class="fd-col"><div class="fd-card"><h3>Rules and state</h3>'+
+        '<div id="fd-form"></div></div></div>'+
+      '<div class="fd-col"><div class="fd-card"><h3>Where you stand</h3>'+
+        '<div id="fd-status"></div></div></div>'+
+    '</div>';
+}
+
+function boot(){
+  if(document.getElementById("panel-funded")) return;
+  var nav=document.querySelector("nav.tabs");
+  if(!nav) return;
+
+  var btn=document.createElement("button");
+  btn.id="tab-funded";
+  btn.className="tab";
+  btn.setAttribute("role","tab");
+  btn.setAttribute("aria-selected","false");
+  btn.setAttribute("aria-controls","panel-funded");
+  btn.textContent="Funded";
+  var anchor=null,i;
+  for(i=0;i<nav.children.length;i++){
+    if(nav.children[i].getAttribute("role")!=="tab"){anchor=nav.children[i];break;}
+  }
+  if(anchor)nav.insertBefore(btn,anchor);else nav.appendChild(btn);
+
+  var sec=document.createElement("section");
+  sec.id="panel-funded";
+  sec.setAttribute("role","tabpanel");
+  sec.setAttribute("aria-labelledby","tab-funded");
+  sec.hidden=true;
+  var panels=document.querySelectorAll('[role="tabpanel"]');
+  var last=panels.length?panels[panels.length-1]:null;
+  if(last&&last.parentNode){last.parentNode.insertBefore(sec,last.nextSibling);}
+  else{document.body.appendChild(sec);}
+
+  sec.innerHTML=shellHTML();
+  load();
+  renderAll();
+
+  document.getElementById("fd-add").addEventListener("click",function(){
+    accounts.push(blank()); sel=accounts.length-1; save(); renderAll();
+  });
+  document.getElementById("fd-del").addEventListener("click",function(){
+    if(!accounts.length) return;
+    accounts.splice(sel,1);
+    if(sel>=accounts.length) sel=Math.max(0,accounts.length-1);
+    save(); renderAll();
+  });
+
+  btn.addEventListener("click",function(){
+    var ps=document.querySelectorAll('[role="tabpanel"]'),k;
+    for(k=0;k<ps.length;k++)ps[k].hidden=true;
+    sec.hidden=false;
+    var tabs=document.querySelectorAll('[role="tab"]');
+    for(k=0;k<tabs.length;k++)tabs[k].setAttribute("aria-selected",tabs[k]===btn?"true":"false");
+    renderAll();
+  });
+}
+
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);
+else boot();
+})();
+</script>

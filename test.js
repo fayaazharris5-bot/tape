@@ -256,8 +256,12 @@ console.log("9. Accessibility basics");
 eq(d.getElementById("count").getAttribute("aria-live"),"polite","term count is announced");
 eq(d.getElementById("sstats").getAttribute("aria-live"),"polite","strategy stats announced");
 /* 4 -> 5 on 2026-08-13: the Paper tab (local simulator, Task 9) was added
-   deliberately. */
-eq(d.querySelectorAll('[role="tab"]').length,5,"five tabs with role=tab");
+   deliberately.
+   5 -> 6 on 2026-08-16: the Funded tab (funded-account rule tracker) was added
+   deliberately. It stores only numbers the user types — there is no field for
+   an account number, key or password, and the credential scan below covers
+   that. */
+eq(d.querySelectorAll('[role="tab"]').length,6,"six tabs with role=tab");
 ok([...d.querySelectorAll('[role="tab"]')].every(t=>t.getAttribute("aria-controls")),"tabs point at their panels");
 ok([...d.querySelectorAll(".lnk")].every(b=>b.getAttribute("aria-label")),"copy-link buttons are labelled");
 
@@ -1289,6 +1293,71 @@ d.getElementById("term-"+lsTerm.slug).dispatchEvent(new w.MouseEvent("click",{bu
 await wait(40);
 ok(d.querySelectorAll("#tpanel .tpfig").length>=2,"the detail panel shows both charts");
 d.getElementById("tp-close").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+}
+
+/* ---------------------------------------------------------------- 25 */
+{
+console.log("\n25. Funded-account tracker");
+
+const fbtn=d.getElementById("tab-funded"), fpanel=d.getElementById("panel-funded");
+ok(!!fbtn && !!fpanel,"the funded tab and panel exist");
+eq(fbtn.getAttribute("aria-controls"),"panel-funded","the tab points at its panel");
+
+/* NN8: no credential surface, ever. This tab takes account numbers in the
+   colloquial sense (balances) and must never take one in the identifier
+   sense, nor a key or a password. Scoped to the funded panel's own markup so
+   it fails loudly if someone adds a field later. */
+/* Add an account first: with none stored the form renders a placeholder and
+   has no controls at all, so scanning before this point scans nothing and
+   passes vacuously — which is worse than failing. */
+d.getElementById("fd-add").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(20);
+
+/* Scoped to the FORM CONTROLS, not the panel's prose. The first version of
+   this scanned innerHTML and failed on the tab's own reassurance line ("there
+   is no field for an account number..."), i.e. it banned the words rather than
+   the thing. Same call as the corpus audits: ban the claim, not the word. */
+const fctl=[].slice.call(fpanel.querySelectorAll("input,select,textarea"));
+const fattrs=fctl.map(e=>[e.id,e.name,e.type,e.getAttribute("placeholder")||""].join(" ")).join(" | ");
+ok(fctl.length>0,"the funded tab has form controls to scan");
+ok(!/password/i.test(fattrs),"no password field in the funded tab");
+ok(!/(api[-_ ]?key|secret|token|passphrase)/i.test(fattrs),"no credential-named field in the funded tab");
+ok(!/account\s*(number|no\.|#)|\bacct\b|\biban\b/i.test(fattrs),"no account-identifier field in the funded tab");
+ok(fctl.every(e=>e.type!=="password"),"no control is of type password");
+ok(/there is no field for an account/i.test(fpanel.innerHTML),"the tab says so in the UI, not just in a comment");
+
+/* the floor arithmetic is the reason this tab exists: a trailing floor
+   follows the high-water mark, so profit tightens the leash. These three
+   cases are the ones people get wrong. */
+const setF=async(k,v)=>{
+  const el=d.getElementById("fd-f-"+k);
+  el.value=String(v);
+  el.dispatchEvent(new w.Event(el.tagName==="SELECT"?"change":"input",{bubbles:true}));
+  await wait(5);
+};
+const statusText=()=>d.getElementById("fd-status").textContent;
+
+/* static: the floor never moves off the starting balance */
+await setF("size",50000); await setF("maxDD",2500); await setF("lockAt","");
+await setF("high",56000); await setF("balance",55000); await setF("ddType","static");
+ok(/47,500/.test(statusText()),"static floor stays at start minus the drawdown");
+
+/* trailing: the floor follows the high-water mark, not the balance */
+await setF("ddType","trailing-eod");
+ok(/53,500/.test(statusText()),"trailing floor tracks the high-water mark");
+
+/* and it stops where the lock says, rather than trailing forever */
+await setF("lockAt",50000);
+ok(/50,000/.test(statusText()),"a locked floor stops trailing at the lock level");
+ok(/locked/i.test(statusText()),"and the panel says the floor is locked");
+
+/* the consistency cap is the rule that fails people who hit the target */
+await setF("lockAt",""); await setF("consistency",30); await setF("bestDay",4000);
+ok(/OVER/.test(statusText()),"a best day above the consistency cap is flagged");
+
+/* every figure shows its working rather than asserting a number */
+ok(/high-water|start -/.test(statusText()),"the floor shows the arithmetic behind it");
+ok(/system of record/i.test(statusText()),"the panel defers to the firm's own dashboard");
 }
 
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
