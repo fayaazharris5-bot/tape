@@ -1,7 +1,7 @@
 # Tape — session handoff. Read fully, then continue.
 
 Repo: `C:\Users\fayaa\Downloads\tape`.
-**1,059 terms, 6 tabs, suite green at 423 assertions.** (Counts below in older
+**1,059 terms, 7 tabs, suite green at 437 assertions.** (Counts below in older
 sections describe the state when they were written — trust this line and the
 gates, not prose further down.)
 
@@ -34,6 +34,16 @@ way, all enforced by tests:
   it passes vacuously.
 - An intraday floor trails PEAK EQUITY, not peak balance. First version got
   this wrong and reported +1,500 room on an already-breached account.
+
+## The seventh tab: Numbers (module_numbers.html, test group 26)
+
+Expectancy + variance simulator: reader types Win %, avg win/loss in R, cost
+per trade — sees the expectancy arithmetic, the break-even Win %, and 30 of
+200 simulated equity curves from those exact inputs (seeded LCG, deterministic
+under test; reroll button reseeds). Defaults teach the core lesson: +0.075R
+per trade still leaves 63 of 200 runs below zero after 100 trades. Charts go
+through svgFor — never a second engine. No advice, no predictions; the intro
+says it measures nothing about the reader's own trading.
 
 ## Prop-firm content (2026-08-15/16, researched live, not recall)
 

@@ -1,0 +1,261 @@
+<style>
+/* ---------- numbers: the arithmetic playground ---------- */
+#panel-numbers{padding:0 16px 40px}
+.nm-h2{margin:16px 0 2px;font-size:1.15rem}
+.nm-intro{max-width:70ch;color:var(--muted);font-size:.94rem;line-height:1.55;margin:14px 0 18px}
+.nm-wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.nm-col{flex:1 1 300px;min-width:0}
+.nm-card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;background:var(--card)}
+.nm-card h3{margin:0 0 10px;font-size:.95rem;letter-spacing:.02em}
+.nm-row{display:flex;gap:10px;margin-bottom:9px;align-items:center}
+.nm-row label{flex:0 0 52%;font-size:.85rem;color:var(--muted)}
+.nm-row input{flex:1 1 auto;min-width:0;padding:6px 8px;border:1px solid var(--line);
+  border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:.88rem;box-sizing:border-box}
+.nm-hint{font-size:.78rem;color:var(--muted);margin:-4px 0 10px;line-height:1.45}
+.nm-work{font-size:.85rem;line-height:1.6;font-variant-numeric:tabular-nums}
+.nm-work b{font-size:1.02rem}
+.nm-work .nm-eq{color:var(--muted);font-size:.8rem;display:block;margin-top:2px}
+.nm-pos{color:var(--accent)}
+.nm-neg{color:var(--danger,#e06c6c)}
+.nm-stats{font-size:.84rem;line-height:1.65;font-variant-numeric:tabular-nums}
+.nm-lesson{font-size:.84rem;line-height:1.55;margin-top:10px;border-top:1px solid var(--line);padding-top:9px;color:var(--muted)}
+.nm-btn{padding:7px 13px;border:1px solid var(--line);border-radius:7px;background:var(--bg);
+  color:var(--ink);font:inherit;font-size:.86rem;cursor:pointer;margin-top:8px}
+.nm-btn:hover{border-color:var(--accent)}
+.nm-fig{margin:8px 0 0}
+.nm-fig svg{width:100%;height:auto;display:block}
+.nm-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.nm-chip{padding:4px 10px;border:1px solid var(--line);border-radius:14px;background:var(--bg);
+  color:var(--ink);font:inherit;font-size:.78rem;cursor:pointer}
+.nm-chip:hover{border-color:var(--accent)}
+</style>
+
+<script>
+/* Numbers — the arithmetic playground.
+ *
+ * The glossary SAYS a 40% hit rate can beat a 70% one, that a positive edge
+ * still produces brutal losing runs, and that costs quietly eat the rest.
+ * This tab lets the reader type numbers and watch those three facts happen.
+ *
+ * Honesty rules, same as everywhere else in this file:
+ *  - Everything shown is arithmetic on numbers the READER typed. Nothing here
+ *    measures their trading, and nothing predicts anything. The intro says so.
+ *  - The simulation is a seeded LCG, not Math.random, for two reasons: the
+ *    test suite needs identical output on every run, and a visible "reroll"
+ *    makes the honest point that each picture is one possible history.
+ *  - Charts go through svgFor — the one chart engine. Never a second one.
+ *  - No advice. It reports expectancy and spread; the reader decides.
+ */
+(function(){
+"use strict";
+var NS=window.TAPE_NS, esc=NS.esc, store=NS.store;
+var KEY="tape.numbers.v1";
+var seed=12345;                       /* fixed start: deterministic for tests */
+function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
+
+var RUNS=200, DRAW=30;
+
+function $(id){return document.getElementById(id);}
+function n(v,fb){var x=parseFloat(v);return isFinite(x)?x:fb;}
+function fmtR(x,dp){var s=x.toFixed(dp==null?2:dp);return (x>0?"+":"")+s+"R";}
+
+function inputs(){
+  return {
+    p:  Math.min(100,Math.max(0,n($("nm-p").value,45)))/100,
+    w:  Math.max(0,n($("nm-w").value,1.5)),
+    l:  Math.max(0,n($("nm-l").value,1)),
+    c:  Math.max(0,n($("nm-c").value,0.05)),
+    nt: Math.min(300,Math.max(10,Math.round(n($("nm-n").value,100))))
+  };
+}
+
+function simulate(v){
+  /* RUNS full runs; the first DRAW are kept as curves for the chart */
+  var finals=[],maxdds=[],curves=[],run,t,eq,peak,dd,series;
+  for(run=0;run<RUNS;run++){
+    eq=0;peak=0;dd=0;series=run<DRAW?[0]:null;
+    for(t=0;t<v.nt;t++){
+      eq+=(rnd()<v.p?v.w:-v.l)-v.c;
+      if(eq>peak)peak=eq;
+      if(peak-eq>dd)dd=peak-eq;
+      if(series)series.push(Math.round(eq*100)/100);
+    }
+    finals.push(eq);maxdds.push(dd);
+    if(series)curves.push(series);
+  }
+  var sf=finals.slice().sort(function(a,b){return a-b;});
+  var sd=maxdds.slice().sort(function(a,b){return a-b;});
+  return {
+    curves:curves,
+    med:sf[Math.floor(RUNS/2)], best:sf[RUNS-1], worst:sf[0],
+    neg:finals.filter(function(x){return x<0;}).length,
+    medDD:sd[Math.floor(RUNS/2)], worstDD:sd[RUNS-1],
+    drawFinals:curves.map(function(cv){return cv[cv.length-1];})
+  };
+}
+
+function renderMath(v){
+  var E=v.p*v.w-(1-v.p)*v.l-v.c;
+  var be=(v.w+v.l)>0?((v.l+v.c)/(v.w+v.l))*100:0;
+  var cls=E>0?"nm-pos":"nm-neg";
+  var h='<div class="nm-work">Expectancy per trade, after costs: '+
+    '<b class="'+cls+'">'+esc(fmtR(E,3))+'</b>'+
+    '<span class="nm-eq">= '+(v.p*100).toFixed(0)+'% × '+esc(fmtR(v.w))+
+    ' − '+((1-v.p)*100).toFixed(0)+'% × '+esc(fmtR(-v.l))+
+    ' − '+v.c.toFixed(2)+'R costs</span>'+
+    '<span class="nm-eq">Over '+v.nt+' trades that compounds to about '+
+    esc(fmtR(E*v.nt,1))+' — IF the average holds, which one run of '+
+    v.nt+' rarely shows.</span></div>'+
+    '<div class="nm-work" style="margin-top:9px">Break-even Win %: <b>'+
+    be.toFixed(1)+'%</b>'+
+    '<span class="nm-eq">= (avg loss + costs) ÷ (avg win + avg loss). '+
+    'Below this, the edge is negative no matter how good it feels.</span></div>'+
+    '<div class="nm-lesson">This is why Win % never travels alone: at 1R for 1R '+
+    'you need better than half; at 3R wins you need barely a quarter. The pair '+
+    'of numbers is the edge — either alone is marketing.</div>';
+  $("nm-math").innerHTML=h;
+}
+
+function renderSim(v){
+  var s=simulate(v);
+  /* highlight the curve whose finish is the median of the drawn set */
+  var df=s.drawFinals.slice().sort(function(a,b){return a-b;});
+  var medDraw=df[Math.floor(DRAW/2)];
+  var medIdx=s.drawFinals.indexOf(medDraw);
+  var series=s.curves.map(function(cv,i){
+    return i===medIdx?{v:cv,c:"a",t:"median of these "+DRAW}:{v:cv,c:"r"};
+  });
+  $("nm-fig").innerHTML=svgFor({k:"e",base:0,s:series},
+    DRAW+" simulated equity curves from the same inputs");
+  $("nm-stats").innerHTML=
+    'Across <b>'+RUNS+'</b> simulated runs of '+v.nt+' trades each:<br>'+
+    'median finish <b>'+esc(fmtR(s.med,1))+'</b> · best '+esc(fmtR(s.best,1))+
+    ' · worst '+esc(fmtR(s.worst,1))+'<br>'+
+    '<b>'+s.neg+' of '+RUNS+'</b> finished below zero<br>'+
+    'median worst drawdown <b>'+esc(fmtR(-s.medDD,1))+'</b> · '+
+    'deepest anywhere '+esc(fmtR(-s.worstDD,1));
+  var E=v.p*v.w-(1-v.p)*v.l-v.c;
+  var lesson;
+  if(E>0&&s.neg>0){
+    lesson='A positive edge and a losing stretch are not a contradiction — '+
+      'the same inputs produced every one of these curves. If your sample is one '+
+      'of the bad ones, you cannot tell it from a missing edge for a long time.';
+  }else if(E>0){
+    lesson='Every run finished ahead here — that is what a large edge over '+
+      'this many trades looks like. Real edges after costs are rarely this large.';
+  }else{
+    lesson='This edge is negative after costs. The spread of finishes is luck '+
+      'arranged around a falling line — the good-looking runs are the trap.';
+  }
+  $("nm-lesson").textContent=lesson;
+}
+
+function persist(){
+  store.setJson(KEY,{p:$("nm-p").value,w:$("nm-w").value,l:$("nm-l").value,
+                     c:$("nm-c").value,n:$("nm-n").value});
+}
+function restore(){
+  var s=store.json(KEY,null);
+  if(!s)return;
+  $("nm-p").value=s.p;$("nm-w").value=s.w;$("nm-l").value=s.l;
+  $("nm-c").value=s.c;$("nm-n").value=s.n;
+}
+
+function renderAll(){var v=inputs();renderMath(v);renderSim(v);}
+
+var FIELDS=[
+ ["nm-p","Win %","45","Out of 100. The number sold alone — meaningless alone."],
+ ["nm-w","Average win, in R","1.5","1R = the amount you risk on one trade."],
+ ["nm-l","Average loss, in R","1","Usually 1 if you honour the stop. Bigger if you don't."],
+ ["nm-c","Cost per trade, in R","0.05","Spread + commission + slippage, as a share of your risk."],
+ ["nm-n","Trades per run","100","How long one simulated history is."]
+];
+
+function shellHTML(){
+  var h='<h2 class="nm-h2">Numbers</h2>'+
+  '<p class="nm-intro">Type a win percentage, a payoff and a cost, and watch what '+
+  'that edge actually looks like lived one trade at a time. Everything below is '+
+  'arithmetic on the numbers you type — <strong>it does not measure your trading '+
+  'and it predicts nothing</strong>. Its one job is to show how much of any short '+
+  'record is luck.</p>'+
+  '<div class="nm-wrap">'+
+  '<div class="nm-col" style="flex:0 1 300px"><div class="nm-card"><h3>Inputs</h3>';
+  FIELDS.forEach(function(f){
+    h+='<div class="nm-row"><label for="'+f[0]+'">'+esc(f[1])+'</label>'+
+       '<input id="'+f[0]+'" type="number" step="any" value="'+esc(f[2])+'"></div>'+
+       '<div class="nm-hint">'+esc(f[3])+'</div>';
+  });
+  h+='</div></div>'+
+  '<div class="nm-col"><div class="nm-card"><h3>The arithmetic</h3>'+
+  '<div id="nm-math"></div></div></div>'+
+  '<div class="nm-col" style="flex:1.4 1 340px"><div class="nm-card">'+
+  '<h3>'+DRAW+' alternate histories</h3>'+
+  '<figure class="nm-fig" id="nm-fig"></figure>'+
+  '<div class="nm-stats" id="nm-stats" style="margin-top:8px"></div>'+
+  '<div class="nm-lesson" id="nm-lesson"></div>'+
+  '<button class="nm-btn" id="nm-reroll" type="button">Reroll the luck</button>'+
+  '<div class="nm-chips" id="nm-chips"></div>'+
+  '</div></div></div>';
+  return h;
+}
+
+var CHIPS=[["Expectancy","expectancy"],["Variance drain","variance-drain"],
+  ["Risk of ruin","risk-of-ruin"],["Cost drag","cost-drag"],
+  ["Random trader benchmark","random-trader-benchmark"],["Ergodicity","ergodicity"]];
+
+function boot(){
+  if($("panel-numbers"))return;
+  var nav=document.querySelector("nav.tabs");
+  if(!nav)return;
+
+  var btn=document.createElement("button");
+  btn.id="tab-numbers";btn.className="tab";
+  btn.setAttribute("role","tab");
+  btn.setAttribute("aria-selected","false");
+  btn.setAttribute("aria-controls","panel-numbers");
+  btn.textContent="Numbers";
+  var anchor=null,i;
+  for(i=0;i<nav.children.length;i++){
+    if(nav.children[i].getAttribute("role")!=="tab"){anchor=nav.children[i];break;}
+  }
+  if(anchor)nav.insertBefore(btn,anchor);else nav.appendChild(btn);
+
+  var sec=document.createElement("section");
+  sec.id="panel-numbers";
+  sec.setAttribute("role","tabpanel");
+  sec.setAttribute("aria-labelledby","tab-numbers");
+  sec.hidden=true;
+  var panels=document.querySelectorAll('[role="tabpanel"]');
+  var last=panels.length?panels[panels.length-1]:null;
+  if(last&&last.parentNode){last.parentNode.insertBefore(sec,last.nextSibling);}
+  else{document.body.appendChild(sec);}
+
+  sec.innerHTML=shellHTML();
+  var chips=$("nm-chips");
+  CHIPS.forEach(function(cp){
+    var b=document.createElement("button");
+    b.className="nm-chip";b.type="button";b.textContent=cp[0];
+    b.addEventListener("click",function(){if(NS.openTerm)NS.openTerm(cp[1]);});
+    chips.appendChild(b);
+  });
+  restore();
+  renderAll();
+
+  ["nm-p","nm-w","nm-l","nm-c","nm-n"].forEach(function(id){
+    $(id).addEventListener("input",function(){persist();renderAll();});
+  });
+  $("nm-reroll").addEventListener("click",function(){renderAll();});
+
+  btn.addEventListener("click",function(){
+    var ps=document.querySelectorAll('[role="tabpanel"]'),k;
+    for(k=0;k<ps.length;k++)ps[k].hidden=true;
+    sec.hidden=false;
+    var tabs=document.querySelectorAll('[role="tab"]');
+    for(k=0;k<tabs.length;k++)tabs[k].setAttribute("aria-selected",tabs[k]===btn?"true":"false");
+  });
+}
+
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);
+else boot();
+})();
+</script>

@@ -265,8 +265,10 @@ eq(d.getElementById("sstats").getAttribute("aria-live"),"polite","strategy stats
    5 -> 6 on 2026-08-16: the Funded tab (funded-account rule tracker) was added
    deliberately. It stores only numbers the user types — there is no field for
    an account number, key or password, and the credential scan below covers
-   that. */
-eq(d.querySelectorAll('[role="tab"]').length,6,"six tabs with role=tab");
+   that.
+   6 -> 7 on 2026-08-17: the Numbers tab (expectancy + variance simulator) was
+   added deliberately. Seeded LCG, so its output is deterministic under test. */
+eq(d.querySelectorAll('[role="tab"]').length,7,"seven tabs with role=tab");
 ok([...d.querySelectorAll('[role="tab"]')].every(t=>t.getAttribute("aria-controls")),"tabs point at their panels");
 ok([...d.querySelectorAll(".lnk")].every(b=>b.getAttribute("aria-label")),"copy-link buttons are labelled");
 
@@ -1381,6 +1383,58 @@ ok(/2,000/.test(statusText()),"and quantified: 58,000 peak - 56,000 balance");
 await setF("ddType","trailing-eod");
 ok(/53,500/.test(statusText()),"an end-of-day floor ignores the unrealised spike");
 ok(!/Room lost to an unbanked spike/.test(statusText()),"and does not report spike loss");
+}
+
+/* ---------------------------------------------------------------- 26 */
+{
+console.log("\n26. Numbers tab — expectancy and variance simulator");
+
+const nbtn=d.getElementById("tab-numbers"), npanel=d.getElementById("panel-numbers");
+ok(!!nbtn && !!npanel,"the numbers tab and panel exist");
+eq(nbtn.getAttribute("aria-controls"),"panel-numbers","the tab points at its panel");
+
+/* defaults: 45% / +1.5R / -1R / 0.05R costs. E = .675 - .55 - .05 = +0.075R,
+   breakeven = (1+.05)/(1.5+1) = 42.0%. Computed here independently so the
+   module's arithmetic is checked against a second derivation, not itself. */
+const mathText=()=>d.getElementById("nm-math").textContent;
+ok(/\+0\.075R/.test(mathText()),"default expectancy computes to +0.075R");
+ok(/42\.0%/.test(mathText()),"default break-even Win % computes to 42.0%");
+
+/* the chart is 30 curves through the ONE chart engine */
+const fig=d.getElementById("nm-fig");
+ok(fig.querySelectorAll("svg").length===1,"the histories figure renders one svg");
+ok(fig.querySelectorAll("polyline").length>=30,"with at least 30 simulated curves");
+ok(!/NaN|undefined/.test(fig.innerHTML),"and no NaN or undefined in the markup");
+
+/* stats come from 200 runs and say so */
+const statsText=()=>d.getElementById("nm-stats").textContent;
+ok(/200/.test(statsText()),"stats are computed over 200 runs");
+ok(/drawdown/i.test(statsText()),"and report drawdowns, not only finishes");
+
+/* a clearly negative edge after costs: 30% at 1R for 1R. E = -0.45R per
+   trade, about -45R per run — no run of 100 survives that, so the count is
+   deterministic even beyond the fixed seed. */
+const setN=async(id,v)=>{
+  const el=d.getElementById(id);
+  el.value=String(v);
+  el.dispatchEvent(new w.Event("input",{bubbles:true}));
+  await wait(5);
+};
+await setN("nm-p",30); await setN("nm-w",1); await setN("nm-l",1);
+ok(/-0\.450R/.test(mathText()),"negative edge computes to -0.450R");
+ok(/200 of 200/.test(statsText()),"every simulated run finishes below zero");
+ok(/negative after costs/i.test(d.getElementById("nm-lesson").textContent),
+   "the lesson says the edge is negative, not that the trader was unlucky");
+
+/* reroll actually rerolls: same inputs, different luck, different curves */
+const before=fig.innerHTML;
+d.getElementById("nm-reroll").dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
+await wait(10);
+ok(fig.innerHTML!==before,"reroll redraws different curves from the same inputs");
+
+/* inputs persist through the storage wrapper */
+const saved=JSON.parse(w.localStorage.getItem("tape.numbers.v1")||"{}");
+eq(String(saved.p),"30","typed inputs persist under tape.numbers.v1");
 }
 
 console.log("\n"+(fail?"FAILED":"PASSED")+" \u2014 "+pass+" assertions passed, "+fail+" failed\n");
